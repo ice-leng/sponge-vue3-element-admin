@@ -1,0 +1,26 @@
+# Binaries for programs and plugins
+server/*.exe
+server/*.exe~
+server/*.dll
+server/*.so
+server/*.dylib
+server/*.log
+
+# Test binary, built with `go test -c`
+server/*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+server/*.out
+
+# Dependency directories (remove the comment below to include it)
+server/vendor/
+server/dist/
+
+# idea
+.idea
+server/*.iml
+server/*.ipr
+server/*.iws
+
+server/cmd/admin/admin
+

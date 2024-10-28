@@ -1,0 +1,1418 @@
+definitions:
+  types.ConfigObjDetail:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      description:
+        description: 描述
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      key:
+        description: 配置键
+        type: string
+      name:
+        description: 配置名称
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      value:
+        description: 配置值
+        type: string
+    type: object
+  types.CreateConfigReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.CreateConfigRequest:
+    properties:
+      description:
+        description: 描述
+        type: string
+      key:
+        description: 配置键
+        type: string
+      name:
+        description: 配置名称
+        type: string
+      value:
+        description: 配置值
+        type: string
+    type: object
+  types.CreateMenuReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.CreateMenuRequest:
+    properties:
+      alwaysShow:
+        description: 始终显示
+        type: integer
+      component:
+        description: 组件路径(vue页面完整路径，省略.vue后缀)
+        type: string
+      icon:
+        description: 菜单图标
+        type: string
+      keepAlive:
+        description: 始终显示
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      params:
+        description: 路由参数
+        type: string
+      parentID:
+        description: 父级
+        type: integer
+      path:
+        description: 路由路径
+        type: string
+      perm:
+        description: 权限标识
+        type: string
+      redirect:
+        description: 跳转路径
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      type:
+        description: 菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)
+        type: string
+      visible:
+        description: 显示状态
+        type: integer
+    type: object
+  types.CreatePlatformReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.CreatePlatformRequest:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      claimTimeLimit:
+        description: 领取时间限制（小时）
+        type: integer
+      lastTime:
+        description: 上次登录时间
+        type: string
+      password:
+        description: 密码
+        type: string
+      roleID:
+        description: 角色
+        type: string
+      status:
+        description: 状态
+        type: integer
+      username:
+        description: 账号
+        type: string
+    type: object
+  types.CreateRoleMenuReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.CreateRoleMenuRequest:
+    properties:
+      menuID:
+        description: 菜单ID
+        type: integer
+      roleID:
+        description: 角色ID
+        type: integer
+    type: object
+  types.CreateRoleReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.CreateRoleRequest:
+    properties:
+      code:
+        description: 角色编码
+        type: string
+      name:
+        description: 角色名称
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      status:
+        description: 状态
+        type: integer
+    type: object
+  types.DeleteConfigByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeleteMenuByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeletePlatformByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeleteRoleByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeleteRoleMenuByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetConfigByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          config:
+            $ref: '#/definitions/types.ConfigObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetMenuByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          menu:
+            $ref: '#/definitions/types.MenuObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetPlatformByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          platform:
+            $ref: '#/definitions/types.PlatformObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetRoleByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          role:
+            $ref: '#/definitions/types.RoleObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetRoleMenuByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          roleMenu:
+            $ref: '#/definitions/types.RoleMenuObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListConfigsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          configs:
+            items:
+              $ref: '#/definitions/types.ConfigObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListMenusReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          menus:
+            items:
+              $ref: '#/definitions/types.MenuObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListPlatformsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          platforms:
+            items:
+              $ref: '#/definitions/types.PlatformObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListRoleMenusReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          roleMenus:
+            items:
+              $ref: '#/definitions/types.RoleMenuObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListRolesReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          roles:
+            items:
+              $ref: '#/definitions/types.RoleObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.MenuObjDetail:
+    properties:
+      alwaysShow:
+        description: 始终显示
+        type: integer
+      component:
+        description: 组件路径(vue页面完整路径，省略.vue后缀)
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      icon:
+        description: 菜单图标
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      keepAlive:
+        description: 始终显示
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      params:
+        description: 路由参数
+        type: string
+      parentID:
+        description: 父级
+        type: integer
+      path:
+        description: 路由路径
+        type: string
+      perm:
+        description: 权限标识
+        type: string
+      redirect:
+        description: 跳转路径
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      type:
+        description: 菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      visible:
+        description: 显示状态
+        type: integer
+    type: object
+  types.PlatformObjDetail:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      claimTimeLimit:
+        description: 领取时间限制（小时）
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      lastTime:
+        description: 上次登录时间
+        type: string
+      password:
+        description: 密码
+        type: string
+      roleID:
+        description: 角色
+        type: string
+      status:
+        description: 状态
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      username:
+        description: 账号
+        type: string
+    type: object
+  types.RoleMenuObjDetail:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      menuID:
+        description: 菜单ID
+        type: integer
+      roleID:
+        description: 角色ID
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  types.RoleObjDetail:
+    properties:
+      code:
+        description: 角色编码
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      name:
+        description: 角色名称
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      status:
+        description: 状态
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  types.UpdateConfigByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.UpdateConfigByIDRequest:
+    properties:
+      description:
+        description: 描述
+        type: string
+      id:
+        description: uint64 id
+        type: integer
+      key:
+        description: 配置键
+        type: string
+      name:
+        description: 配置名称
+        type: string
+      value:
+        description: 配置值
+        type: string
+    type: object
+  types.UpdateMenuByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.UpdateMenuByIDRequest:
+    properties:
+      alwaysShow:
+        description: 始终显示
+        type: integer
+      component:
+        description: 组件路径(vue页面完整路径，省略.vue后缀)
+        type: string
+      icon:
+        description: 菜单图标
+        type: string
+      id:
+        description: uint64 id
+        type: integer
+      keepAlive:
+        description: 始终显示
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      params:
+        description: 路由参数
+        type: string
+      parentID:
+        description: 父级
+        type: integer
+      path:
+        description: 路由路径
+        type: string
+      perm:
+        description: 权限标识
+        type: string
+      redirect:
+        description: 跳转路径
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      type:
+        description: 菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)
+        type: string
+      visible:
+        description: 显示状态
+        type: integer
+    type: object
+  types.UpdatePlatformByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.UpdatePlatformByIDRequest:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      claimTimeLimit:
+        description: 领取时间限制（小时）
+        type: integer
+      id:
+        description: uint64 id
+        type: integer
+      lastTime:
+        description: 上次登录时间
+        type: string
+      password:
+        description: 密码
+        type: string
+      roleID:
+        description: 角色
+        type: string
+      status:
+        description: 状态
+        type: integer
+      username:
+        description: 账号
+        type: string
+    type: object
+  types.UpdateRoleByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.UpdateRoleByIDRequest:
+    properties:
+      code:
+        description: 角色编码
+        type: string
+      id:
+        description: uint64 id
+        type: integer
+      name:
+        description: 角色名称
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      status:
+        description: 状态
+        type: integer
+    type: object
+  types.UpdateRoleMenuByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.UpdateRoleMenuByIDRequest:
+    properties:
+      id:
+        description: uint64 id
+        type: integer
+      menuID:
+        description: 菜单ID
+        type: integer
+      roleID:
+        description: 角色ID
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: http server api docs
+  title: admin api docs
+  version: "2.0"
+paths:
+  /api/v1/config:
+    post:
+      consumes:
+      - application/json
+      description: submit information to create config
+      parameters:
+      - description: config information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreateConfigReply'
+      security:
+      - BearerAuth: []
+      summary: create config
+      tags:
+      - config
+  /api/v1/config/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete config by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteConfigByIDReply'
+      security:
+      - BearerAuth: []
+      summary: delete config
+      tags:
+      - config
+    get:
+      consumes:
+      - application/json
+      description: get config detail by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetConfigByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get config detail
+      tags:
+      - config
+    put:
+      consumes:
+      - application/json
+      description: update config information by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: config information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateConfigByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateConfigByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update config
+      tags:
+      - config
+  /api/v1/config/list:
+    get:
+      consumes:
+      - application/json
+      description: list of configs by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListConfigsReply'
+      security:
+      - BearerAuth: []
+      summary: list of configs by query parameters
+      tags:
+      - config
+  /api/v1/menu:
+    post:
+      consumes:
+      - application/json
+      description: submit information to create menu
+      parameters:
+      - description: menu information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreateMenuReply'
+      security:
+      - BearerAuth: []
+      summary: create menu
+      tags:
+      - menu
+  /api/v1/menu/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete menu by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteMenuByIDReply'
+      security:
+      - BearerAuth: []
+      summary: delete menu
+      tags:
+      - menu
+    get:
+      consumes:
+      - application/json
+      description: get menu detail by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetMenuByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get menu detail
+      tags:
+      - menu
+    put:
+      consumes:
+      - application/json
+      description: update menu information by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: menu information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateMenuByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateMenuByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update menu
+      tags:
+      - menu
+  /api/v1/menu/list:
+    get:
+      consumes:
+      - application/json
+      description: list of menus by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListMenusReply'
+      security:
+      - BearerAuth: []
+      summary: list of menus by query parameters
+      tags:
+      - menu
+  /api/v1/platform:
+    post:
+      consumes:
+      - application/json
+      description: submit information to create platform
+      parameters:
+      - description: platform information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreatePlatformRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreatePlatformReply'
+      security:
+      - BearerAuth: []
+      summary: create platform
+      tags:
+      - platform
+  /api/v1/platform/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete platform by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeletePlatformByIDReply'
+      security:
+      - BearerAuth: []
+      summary: delete platform
+      tags:
+      - platform
+    get:
+      consumes:
+      - application/json
+      description: get platform detail by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetPlatformByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get platform detail
+      tags:
+      - platform
+    put:
+      consumes:
+      - application/json
+      description: update platform information by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: platform information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdatePlatformByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdatePlatformByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update platform
+      tags:
+      - platform
+  /api/v1/platform/list:
+    get:
+      consumes:
+      - application/json
+      description: list of platforms by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListPlatformsReply'
+      security:
+      - BearerAuth: []
+      summary: list of platforms by query parameters
+      tags:
+      - platform
+  /api/v1/role:
+    post:
+      consumes:
+      - application/json
+      description: submit information to create role
+      parameters:
+      - description: role information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreateRoleReply'
+      security:
+      - BearerAuth: []
+      summary: create role
+      tags:
+      - role
+  /api/v1/role/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete role by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteRoleByIDReply'
+      security:
+      - BearerAuth: []
+      summary: delete role
+      tags:
+      - role
+    get:
+      consumes:
+      - application/json
+      description: get role detail by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetRoleByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get role detail
+      tags:
+      - role
+    put:
+      consumes:
+      - application/json
+      description: update role information by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: role information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateRoleByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateRoleByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update role
+      tags:
+      - role
+  /api/v1/role/list:
+    get:
+      consumes:
+      - application/json
+      description: list of roles by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListRolesReply'
+      security:
+      - BearerAuth: []
+      summary: list of roles by query parameters
+      tags:
+      - role
+  /api/v1/roleMenu:
+    post:
+      consumes:
+      - application/json
+      description: submit information to create roleMenu
+      parameters:
+      - description: roleMenu information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateRoleMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreateRoleMenuReply'
+      security:
+      - BearerAuth: []
+      summary: create roleMenu
+      tags:
+      - roleMenu
+  /api/v1/roleMenu/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete roleMenu by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteRoleMenuByIDReply'
+      security:
+      - BearerAuth: []
+      summary: delete roleMenu
+      tags:
+      - roleMenu
+    get:
+      consumes:
+      - application/json
+      description: get roleMenu detail by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetRoleMenuByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get roleMenu detail
+      tags:
+      - roleMenu
+    put:
+      consumes:
+      - application/json
+      description: update roleMenu information by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: roleMenu information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateRoleMenuByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateRoleMenuByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update roleMenu
+      tags:
+      - roleMenu
+  /api/v1/roleMenu/list:
+    get:
+      consumes:
+      - application/json
+      description: list of roleMenus by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListRoleMenusReply'
+      security:
+      - BearerAuth: []
+      summary: list of roleMenus by query parameters
+      tags:
+      - roleMenu
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: Type Bearer your-jwt-token to Value
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
