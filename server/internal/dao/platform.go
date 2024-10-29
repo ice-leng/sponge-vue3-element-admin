@@ -118,7 +118,7 @@ func (d *platformDao) updateDataByID(ctx context.Context, db *gorm.DB, table *mo
 	if table.Avatar != "" {
 		update["avatar"] = table.Avatar
 	}
-	if table.RoleID != nil {
+	if table.RoleID != "" {
 		update["role_id"] = table.RoleID
 	}
 	if table.Status != 0 {

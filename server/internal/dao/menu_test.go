@@ -108,7 +108,7 @@ func Test_menuDao_GetByID(t *testing.T) {
 		AddRow(testData.ID)
 
 	d.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(testData.ID).
+		WithArgs(testData.ID, 1).
 		WillReturnRows(rows)
 
 	_, err := d.IDao.(MenuDao).GetByID(d.Ctx, testData.ID)
