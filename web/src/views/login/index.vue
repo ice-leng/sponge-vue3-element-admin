@@ -15,7 +15,7 @@
     <el-card class="login-card">
       <div class="text-center relative">
         <h2>{{ defaultSettings.title }}</h2>
-        <el-tag class="ml-2 absolute-rt">{{ defaultSettings.version }}</el-tag>
+        <!--        <el-tag class="ml-2 absolute-rt">{{ defaultSettings.version }}</el-tag>-->
       </div>
 
       <el-form
@@ -27,7 +27,9 @@
         <!-- 用户名 -->
         <el-form-item prop="username">
           <div class="input-wrapper">
-            <i-ep-user class="mx-2" />
+            <el-icon class="mx-2">
+              <User />
+            </el-icon>
             <el-input
               ref="username"
               v-model="loginData.username"
@@ -47,17 +49,19 @@
         >
           <el-form-item prop="password">
             <div class="input-wrapper">
-              <i-ep-lock class="mx-2" />
+              <el-icon class="mx-2">
+                <Lock />
+              </el-icon>
               <el-input
                 v-model="loginData.password"
                 :placeholder="$t('login.password')"
                 type="password"
                 name="password"
+                size="large"
+                class="h-[48px]"
+                show-password
                 @keyup="checkCapslock"
                 @keyup.enter="handleLoginSubmit"
-                size="large"
-                class="h-[48px] pr-2"
-                show-password
               />
             </div>
           </el-form-item>
@@ -77,9 +81,9 @@
             />
 
             <el-image
-              @click="getCaptcha"
               :src="captchaBase64"
               class="captcha-image"
+              @click="getCaptcha"
             />
           </div>
         </el-form-item>
@@ -94,17 +98,11 @@
         >
           {{ $t("login.login") }}
         </el-button>
-
-        <!-- 账号密码提示 -->
-        <div class="mt-10 text-sm">
-          <span>{{ $t("login.username") }}: admin</span>
-          <span class="ml-4">{{ $t("login.password") }}: 123456</span>
-        </div>
       </el-form>
     </el-card>
 
     <!-- ICP备案 -->
-    <div class="icp-info" v-show="icpVisible">
+    <div v-show="icpVisible" class="icp-info">
       <p>
         Copyright © 2021 - 2024 youlai.tech All Rights Reserved. 有来技术
         版权所有
@@ -127,10 +125,6 @@ import { ThemeEnum } from "@/enums/ThemeEnum";
 
 // 类型定义
 import type { FormInstance } from "element-plus";
-
-// 导入 login.scss 文件
-import "@/styles/login.scss";
-
 // 使用导入的依赖和库
 const userStore = useUserStore();
 const settingsStore = useSettingsStore();
@@ -206,7 +200,9 @@ function handleLoginSubmit() {
       loading.value = true;
       userStore
         .login(loginData.value)
-        .then(() => {
+        .then(async () => {
+          await userStore.getUserInfo();
+          // 跳转到登录前的页面
           const { path, queryParams } = parseRedirect();
           router.push({ path: path, query: queryParams });
         })
@@ -220,7 +216,11 @@ function handleLoginSubmit() {
   });
 }
 
-/** 解析 redirect 字符串 为 path 和  queryParams */
+/**
+ * 解析 redirect 字符串 为 path 和  queryParams
+ *
+ * @returns { path: string, queryParams: Record<string, string> } 解析后的 path 和 queryParams
+ */
 function parseRedirect(): {
   path: string;
   queryParams: Record<string, string>;
@@ -239,7 +239,7 @@ function parseRedirect(): {
   return { path, queryParams };
 }
 
-/** 主题切换 */
+// 主题切换
 const toggleTheme = () => {
   const newTheme =
     settingsStore.theme === ThemeEnum.DARK ? ThemeEnum.LIGHT : ThemeEnum.DARK;
@@ -268,4 +268,86 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background: url("@/assets/images/login-background-light.jpg") no-repeat center
+    right;
+
+  .top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .login-card {
+    width: 400px;
+    background: transparent;
+    border: none;
+    border-radius: 4%;
+
+    @media (width <= 640px) {
+      width: 340px;
+    }
+
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .captcha-image {
+      height: 48px;
+      cursor: pointer;
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+  }
+
+  .icp-info {
+    position: absolute;
+    bottom: 4px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  :deep(.el-form-item) {
+    background: var(--el-input-bg-color);
+    border: 1px solid var(--el-border-color);
+    border-radius: 5px;
+  }
+
+  :deep(.el-input) {
+    .el-input__wrapper {
+      padding: 0;
+      background-color: transparent;
+      box-shadow: none;
+
+      &.is-focus,
+      &:hover {
+        box-shadow: none !important;
+      }
+
+      input:-webkit-autofill {
+        /* 通过延时渲染背景色变相去除背景颜色 */
+        transition: background-color 1000s ease-in-out 0s;
+      }
+    }
+  }
+}
+
+html.dark .login-container {
+  background: url("@/assets/images/login-background-dark.jpg") no-repeat center
+    right;
+}
+</style>

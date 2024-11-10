@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
-    <div class="search-container">
+    <div class="search-bar">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-form-item label="关键字" prop="keywords">
           <el-input
-            v-model="queryParams.name"
+            v-model="queryParams.keywords"
             placeholder="菜单名称"
             clearable
             @keyup.enter="handleQuery"
@@ -12,25 +12,25 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleQuery">
-            <template #icon><i-ep-search /></template>
+            <template #icon><Search /></template>
             搜索
           </el-button>
           <el-button @click="handleResetQuery">
-            <template #icon><i-ep-refresh /></template>
+            <template #icon><Refresh /></template>
             重置
           </el-button>
         </el-form-item>
       </el-form>
     </div>
 
-    <el-card shadow="never" class="table-container">
+    <el-card shadow="never" class="table-wrapper">
       <template #header>
         <el-button
           v-hasPerm="['sys:menu:add']"
           type="success"
           @click="handleOpenDialog(0)"
         >
-          <template #icon><i-ep-plus /></template>
+          <template #icon><Plus /></template>
           新增
         </el-button>
       </template>
@@ -41,11 +41,11 @@
         highlight-current-row
         row-key="id"
         :expand-row-keys="['1']"
-        @row-click="handleRowClick"
         :tree-props="{
           children: 'children',
           hasChildren: 'hasChildren',
         }"
+        @row-click="handleRowClick"
       >
         <el-table-column label="菜单名称" min-width="200">
           <template #default="scope">
@@ -97,7 +97,7 @@
           label="路由路径"
           align="left"
           width="150"
-          prop="path"
+          prop="routePath"
         />
 
         <el-table-column
@@ -133,7 +133,7 @@
               size="small"
               @click.stop="handleOpenDialog(scope.row.id)"
             >
-              <i-ep-plus />
+              <template #icon><Plus /></template>
               新增
             </el-button>
 
@@ -144,7 +144,7 @@
               size="small"
               @click.stop="handleOpenDialog(undefined, scope.row.id)"
             >
-              <i-ep-edit />
+              <template #icon><Edit /></template>
               编辑
             </el-button>
             <el-button
@@ -154,7 +154,7 @@
               size="small"
               @click.stop="handleDelete(scope.row.id)"
             >
-              <i-ep-delete />
+              <template #icon><Delete /></template>
               删除
             </el-button>
           </template>
@@ -165,8 +165,8 @@
     <el-drawer
       v-model="dialog.visible"
       :title="dialog.title"
-      @close="handleCloseDialog"
       size="50%"
+      @close="handleCloseDialog"
     >
       <el-form
         ref="menuFormRef"
@@ -207,7 +207,7 @@
           prop="path"
         >
           <el-input
-            v-model="formData.path"
+            v-model="formData.routePath"
             placeholder="请输入外链完整路径"
           />
         </el-form-item>
@@ -217,14 +217,17 @@
           prop="routeName"
         >
           <template #label>
-            <div>
+            <div class="flex-y-center">
               路由名称
               <el-tooltip placement="bottom" effect="light">
                 <template #content>
                   如果需要开启缓存，需保证页面 defineOptions 中的 name
                   与此处一致，建议使用驼峰。
                 </template>
-                <i-ep-QuestionFilled class="inline-block" />
+
+                <el-icon class="ml-1 cursor-pointer">
+                  <QuestionFilled />
+                </el-icon>
               </el-tooltip>
             </div>
           </template>
@@ -236,10 +239,10 @@
             formData.type == MenuTypeEnum.CATALOG ||
             formData.type == MenuTypeEnum.MENU
           "
-          prop="path"
+          prop="routePath"
         >
           <template #label>
-            <div>
+            <div class="flex-y-center">
               路由路径
               <el-tooltip placement="bottom" effect="light">
                 <template #content>
@@ -247,16 +250,18 @@
                   开头，菜单项不用。例如：系统管理目录
                   /system，系统管理下的用户管理菜单 user。
                 </template>
-                <i-ep-QuestionFilled class="inline-block" />
+                <el-icon class="ml-1 cursor-pointer">
+                  <QuestionFilled />
+                </el-icon>
               </el-tooltip>
             </div>
           </template>
           <el-input
             v-if="formData.type == MenuTypeEnum.CATALOG"
-            v-model="formData.path"
+            v-model="formData.routePath"
             placeholder="system"
           />
-          <el-input v-else v-model="formData.path" placeholder="user" />
+          <el-input v-else v-model="formData.routePath" placeholder="user" />
         </el-form-item>
 
         <el-form-item
@@ -264,14 +269,16 @@
           prop="component"
         >
           <template #label>
-            <div>
+            <div class="flex-y-center">
               组件路径
               <el-tooltip placement="bottom" effect="light">
                 <template #content>
                   组件页面完整路径，相对于 src/views/，如
                   system/user/index，缺省后缀 .vue
                 </template>
-                <i-ep-QuestionFilled class="inline-block" />
+                <el-icon class="ml-1 cursor-pointer">
+                  <QuestionFilled />
+                </el-icon>
               </el-tooltip>
             </div>
           </template>
@@ -292,13 +299,15 @@
 
         <el-form-item v-if="formData.type == MenuTypeEnum.MENU">
           <template #label>
-            <div>
+            <div class="flex-y-center">
               路由参数
               <el-tooltip placement="bottom" effect="light">
                 <template #content>
                   组件页面使用 `useRoute().query.参数名` 获取路由参数值。
                 </template>
-                <i-ep-QuestionFilled class="inline-block" />
+                <el-icon class="ml-1 cursor-pointer">
+                  <QuestionFilled />
+                </el-icon>
               </el-tooltip>
             </div>
           </template>
@@ -318,7 +327,7 @@
               <el-input
                 v-model="item.key"
                 placeholder="参数名"
-                class="w-[100px]"
+                style="width: 100px"
               />
 
               <span class="mx-1">=</span>
@@ -326,15 +335,15 @@
               <el-input
                 v-model="item.value"
                 placeholder="参数值"
-                class="w-[100px]"
+                style="width: 100px"
               />
 
               <el-icon
-                class="ml-2 cursor-pointer color-[var(--el-color-success)]"
-                style="vertical-align: -0.15em"
                 v-if="
                   formData.params.indexOf(item) === formData.params.length - 1
                 "
+                class="ml-2 cursor-pointer color-[var(--el-color-success)]"
+                style="vertical-align: -0.15em"
                 @click="formData.params.push({ key: '', value: '' })"
               >
                 <CirclePlusFilled />
@@ -370,7 +379,7 @@
           "
         >
           <template #label>
-            <div>
+            <div class="flex-y-center">
               始终显示
               <el-tooltip placement="bottom" effect="light">
                 <template #content>
@@ -380,7 +389,9 @@
                   <br />
                   如果是叶子节点，请选择“否”。
                 </template>
-                <i-ep-QuestionFilled class="inline-block" />
+                <el-icon class="ml-1 cursor-pointer">
+                  <QuestionFilled />
+                </el-icon>
               </el-tooltip>
             </div>
           </template>
@@ -393,7 +404,7 @@
 
         <el-form-item
           v-if="formData.type === MenuTypeEnum.MENU"
-          label="页面缓存"
+          label="缓存页面"
         >
           <el-radio-group v-model="formData.keepAlive">
             <el-radio :value="1">开启</el-radio>
@@ -448,11 +459,11 @@
 
 <script setup lang="ts">
 defineOptions({
-  name: "Menu",
+  name: "SysMenu",
   inheritAttrs: false,
 });
 
-import MenuAPI, { MenuQuery, MenuForm, MenuVO } from "@/api/menu";
+import MenuAPI, { MenuQuery, MenuForm, MenuVO } from "@/api/system/menu";
 import { MenuTypeEnum } from "@/enums/MenuTypeEnum";
 
 const queryFormRef = ref(ElForm);
@@ -492,7 +503,7 @@ const rules = reactive({
   name: [{ required: true, message: "请输入菜单名称", trigger: "blur" }],
   type: [{ required: true, message: "请选择菜单类型", trigger: "blur" }],
   routeName: [{ required: true, message: "请输入路由名称", trigger: "blur" }],
-  path: [{ required: true, message: "请输入路由路径", trigger: "blur" }],
+  routePath: [{ required: true, message: "请输入路由路径", trigger: "blur" }],
   component: [{ required: true, message: "请输入组件路径", trigger: "blur" }],
   visible: [{ required: true, message: "请输入路由路径", trigger: "blur" }],
 });
@@ -515,7 +526,6 @@ function handleQuery() {
 // 重置查询
 function handleResetQuery() {
   queryFormRef.value.resetFields();
-  queryParams.name = undefined;
   handleQuery();
 }
 
@@ -561,7 +571,7 @@ function handleMenuTypeChange() {
         formData.value.component = "";
       } else {
         // 其他情况，保留原有的组件路径
-        formData.value.path = initialMenuFormData.value.path;
+        formData.value.routePath = initialMenuFormData.value.routePath;
         formData.value.component = initialMenuFormData.value.component;
       }
     }

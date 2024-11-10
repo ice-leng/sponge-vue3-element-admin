@@ -16,14 +16,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/config": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "submit information to create config",
+        "/api/v1/auth/captcha": {
+            "get": {
+                "description": "get a captcha",
                 "consumes": [
                     "application/json"
                 ],
@@ -31,17 +26,40 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "config"
+                    "auth"
                 ],
-                "summary": "create config",
+                "summary": "get a captcha",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CaptchaReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "description": "with username and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "with username and password",
                 "parameters": [
                     {
-                        "description": "config information",
+                        "description": "login information",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.CreateConfigRequest"
+                            "$ref": "#/definitions/types.LoginRequest"
                         }
                     }
                 ],
@@ -49,13 +67,69 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.CreateConfigReply"
+                            "$ref": "#/definitions/types.LoginReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/config/list": {
+        "/api/v1/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "logout",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "logout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/refreshToken": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "refresh token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.LoginReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/config": {
             "get": {
                 "security": [
                     {
@@ -110,6 +184,43 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/types.ListConfigsReply"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "submit information to create config",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "config"
+                ],
+                "summary": "create config",
+                "parameters": [
+                    {
+                        "description": "config information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateConfigRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateConfigReply"
                         }
                     }
                 }
@@ -231,7 +342,131 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/dashboard/echarts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "data echarts",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dashboard"
+                ],
+                "summary": "data echarts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.DashboardEchartsReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/dashboard/statistics": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "data statistics",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dashboard"
+                ],
+                "summary": "data statistics",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.DashboardStatisticsReply"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/menu": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "list of menus by paging and conditions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu"
+                ],
+                "summary": "list of menus by query parameters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "keywords",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "parentId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "startTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.ListMenusReply"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -270,14 +505,49 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/menu/list": {
+        "/api/v1/menu/options": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "list of menus by paging and conditions",
+                "description": "get role options",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "get role options",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "onlyParent",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.OptionsReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/menu/routes": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "list routes",
                 "consumes": [
                     "application/json"
                 ],
@@ -287,44 +557,12 @@ const docTemplate = `{
                 "tags": [
                     "menu"
                 ],
-                "summary": "list of menus by query parameters",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "结束时间",
-                        "name": "endTime",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "分页",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "分页大小",
-                        "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "开始时间",
-                        "name": "startTime",
-                        "in": "query"
-                    }
-                ],
+                "summary": "list of routes",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ListMenusReply"
+                            "$ref": "#/definitions/types.Result"
                         }
                     }
                 }
@@ -447,45 +685,6 @@ const docTemplate = `{
             }
         },
         "/api/v1/platform": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "submit information to create platform",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "platform"
-                ],
-                "summary": "create platform",
-                "parameters": [
-                    {
-                        "description": "platform information",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.CreatePlatformRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.CreatePlatformReply"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/platform/list": {
             "get": {
                 "security": [
                     {
@@ -533,6 +732,18 @@ const docTemplate = `{
                         "description": "开始时间",
                         "name": "startTime",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "账号",
+                        "name": "username",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -540,6 +751,214 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/types.ListPlatformsReply"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "submit information to create platform",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform"
+                ],
+                "summary": "create platform",
+                "parameters": [
+                    {
+                        "description": "platform information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreatePlatformRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreatePlatformReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/platform/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "current information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform"
+                ],
+                "summary": "current information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.MeReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/platform/password": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "change password by self",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform"
+                ],
+                "summary": "change password by self",
+                "parameters": [
+                    {
+                        "description": "platform information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ChangePasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/platform/password/reset": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "reset password by self",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform"
+                ],
+                "summary": "reset password by self",
+                "parameters": [
+                    {
+                        "description": "platform information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/platform/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "current information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform"
+                ],
+                "summary": "current information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.ProfileReply"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "update platform information by self",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform"
+                ],
+                "summary": "update platform",
+                "parameters": [
+                    {
+                        "description": "platform information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdatePlatformByIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
                         }
                     }
                 }
@@ -662,45 +1081,6 @@ const docTemplate = `{
             }
         },
         "/api/v1/role": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "submit information to create role",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "role"
-                ],
-                "summary": "create role",
-                "parameters": [
-                    {
-                        "description": "role information",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.CreateRoleRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.CreateRoleReply"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/role/list": {
             "get": {
                 "security": [
                     {
@@ -748,6 +1128,12 @@ const docTemplate = `{
                         "description": "开始时间",
                         "name": "startTime",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "状态",
+                        "name": "status",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -755,6 +1141,71 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/types.ListRolesReply"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "submit information to create role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "create role",
+                "parameters": [
+                    {
+                        "description": "role information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateRoleReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/role/options": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get role options",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "get role options",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.OptionsReply"
                         }
                     }
                 }
@@ -876,14 +1327,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/roleMenu": {
-            "post": {
+        "/api/v1/role/{id}/menus": {
+            "put": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "submit information to create roleMenu",
+                "description": "update permission",
                 "consumes": [
                     "application/json"
                 ],
@@ -891,31 +1342,29 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "roleMenu"
+                    "role"
                 ],
-                "summary": "create roleMenu",
+                "summary": "update permission",
                 "parameters": [
                     {
-                        "description": "roleMenu information",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.CreateRoleMenuRequest"
-                        }
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.CreateRoleMenuReply"
+                            "$ref": "#/definitions/types.UpdateRoleByIDReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/roleMenu/list": {
+        "/api/v1/roleMenu": {
             "get": {
                 "security": [
                     {
@@ -953,6 +1402,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "排序",
+                        "name": "roleId",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "排序",
                         "name": "sort",
@@ -970,6 +1425,43 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/types.ListRoleMenusReply"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "submit information to create roleMenu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roleMenu"
+                ],
+                "summary": "create roleMenu",
+                "parameters": [
+                    {
+                        "description": "roleMenu information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateRoleMenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateRoleMenuReply"
                         }
                     }
                 }
@@ -1090,9 +1582,132 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/roles/{id}/menuIds": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get role menuIds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "get role menuIds",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/upload/local": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "upload local file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "upload"
+                ],
+                "summary": "upload local file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.UploadLocalReply"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "types.CaptchaItem": {
+            "type": "object",
+            "properties": {
+                "captchaBase64": {
+                    "type": "string"
+                },
+                "captchaKey": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.CaptchaReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.CaptchaItem"
+                        }
+                    ]
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ChangePasswordRequest": {
+            "type": "object",
+            "required": [
+                "confirmPassword",
+                "newPassword",
+                "oldPassword"
+            ],
+            "properties": {
+                "confirmPassword": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "uint64 id",
+                    "type": "integer"
+                },
+                "newPassword": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "oldPassword": {
+                    "description": "密码",
+                    "type": "string"
+                }
+            }
+        },
         "types.ConfigObjDetail": {
             "type": "object",
             "properties": {
@@ -1220,13 +1835,9 @@ const docTemplate = `{
                     "description": "路由参数",
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "description": "父级",
                     "type": "integer"
-                },
-                "path": {
-                    "description": "路由路径",
-                    "type": "string"
                 },
                 "perm": {
                     "description": "权限标识",
@@ -1234,6 +1845,10 @@ const docTemplate = `{
                 },
                 "redirect": {
                     "description": "跳转路径",
+                    "type": "string"
+                },
+                "routePath": {
+                    "description": "路由路径",
                     "type": "string"
                 },
                 "sort": {
@@ -1280,21 +1895,16 @@ const docTemplate = `{
                     "description": "头像",
                     "type": "string"
                 },
-                "claimTimeLimit": {
-                    "description": "领取时间限制（小时）",
-                    "type": "integer"
-                },
-                "lastTime": {
-                    "description": "上次登录时间",
-                    "type": "string"
-                },
                 "password": {
                     "description": "密码",
                     "type": "string"
                 },
-                "roleID": {
+                "roleId": {
                     "description": "角色",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "status": {
                     "description": "状态",
@@ -1383,6 +1993,95 @@ const docTemplate = `{
                 "status": {
                     "description": "状态",
                     "type": "integer"
+                }
+            }
+        },
+        "types.DashboardEchartsReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "dates": {
+                            "description": "日期",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "ipList": {
+                            "description": "ip 列表",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        "pvList": {
+                            "description": "pv 列表",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DashboardStatisticsItem": {
+            "type": "object",
+            "properties": {
+                "granularityLabel": {
+                    "description": "粒度标签",
+                    "type": "string"
+                },
+                "growthRate": {
+                    "description": "增长率",
+                    "type": "number"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                },
+                "todayCount": {
+                    "description": "今日数量",
+                    "type": "integer"
+                },
+                "totalCount": {
+                    "description": "总数量",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "类型 \"pv\" | \"uv\" | \"ip\"",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DashboardStatisticsReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.DashboardStatisticsItem"
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
                 }
             }
         },
@@ -1475,12 +2174,11 @@ const docTemplate = `{
                 },
                 "data": {
                     "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "config": {
+                    "allOf": [
+                        {
                             "$ref": "#/definitions/types.ConfigObjDetail"
                         }
-                    }
+                    ]
                 },
                 "msg": {
                     "description": "return information description",
@@ -1497,12 +2195,11 @@ const docTemplate = `{
                 },
                 "data": {
                     "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "menu": {
+                    "allOf": [
+                        {
                             "$ref": "#/definitions/types.MenuObjDetail"
                         }
-                    }
+                    ]
                 },
                 "msg": {
                     "description": "return information description",
@@ -1519,12 +2216,11 @@ const docTemplate = `{
                 },
                 "data": {
                     "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "platform": {
+                    "allOf": [
+                        {
                             "$ref": "#/definitions/types.PlatformObjDetail"
                         }
-                    }
+                    ]
                 },
                 "msg": {
                     "description": "return information description",
@@ -1541,12 +2237,11 @@ const docTemplate = `{
                 },
                 "data": {
                     "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "role": {
+                    "allOf": [
+                        {
                             "$ref": "#/definitions/types.RoleObjDetail"
                         }
-                    }
+                    ]
                 },
                 "msg": {
                     "description": "return information description",
@@ -1563,12 +2258,11 @@ const docTemplate = `{
                 },
                 "data": {
                     "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "roleMenu": {
+                    "allOf": [
+                        {
                             "$ref": "#/definitions/types.RoleMenuObjDetail"
                         }
-                    }
+                    ]
                 },
                 "msg": {
                     "description": "return information description",
@@ -1612,11 +2306,14 @@ const docTemplate = `{
                     "description": "return data",
                     "type": "object",
                     "properties": {
-                        "menus": {
+                        "list": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.MenuObjDetail"
+                                "$ref": "#/definitions/types.MenuObjPage"
                             }
+                        },
+                        "total": {
+                            "type": "integer"
                         }
                     }
                 },
@@ -1637,11 +2334,14 @@ const docTemplate = `{
                     "description": "return data",
                     "type": "object",
                     "properties": {
-                        "platforms": {
+                        "list": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/types.PlatformObjDetail"
                             }
+                        },
+                        "total": {
+                            "type": "integer"
                         }
                     }
                 },
@@ -1692,8 +2392,122 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/types.RoleObjDetail"
                             }
+                        },
+                        "total": {
+                            "type": "integer"
                         }
                     }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.LoginItem": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "description": "access token",
+                    "type": "string"
+                },
+                "expires": {
+                    "description": "expire time",
+                    "type": "integer"
+                },
+                "tokenType": {
+                    "description": "token type",
+                    "type": "string"
+                }
+            }
+        },
+        "types.LoginReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.LoginItem"
+                        }
+                    ]
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "captchaCode": {
+                    "description": "验证码code",
+                    "type": "string"
+                },
+                "captchaKey": {
+                    "description": "验证码key",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "账号",
+                    "type": "string"
+                }
+            }
+        },
+        "types.MeItem": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "convert to uint64 id",
+                    "type": "integer"
+                },
+                "perms": {
+                    "description": "权限组",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roles": {
+                    "description": "角色组",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "username": {
+                    "description": "账号",
+                    "type": "string"
+                }
+            }
+        },
+        "types.MeReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.MeItem"
+                        }
+                    ]
                 },
                 "msg": {
                     "description": "return information description",
@@ -1729,20 +2543,15 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name": {
-                    "description": "菜单名称",
                     "type": "string"
                 },
                 "params": {
                     "description": "路由参数",
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "description": "父级",
                     "type": "integer"
-                },
-                "path": {
-                    "description": "路由路径",
-                    "type": "string"
                 },
                 "perm": {
                     "description": "权限标识",
@@ -1750,6 +2559,14 @@ const docTemplate = `{
                 },
                 "redirect": {
                     "description": "跳转路径",
+                    "type": "string"
+                },
+                "routeName": {
+                    "description": "路由名称",
+                    "type": "string"
+                },
+                "routePath": {
+                    "description": "路由路径",
                     "type": "string"
                 },
                 "sort": {
@@ -1770,16 +2587,109 @@ const docTemplate = `{
                 }
             }
         },
+        "types.MenuObjPage": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.MenuObjPage"
+                    }
+                },
+                "component": {
+                    "description": "组件路径(vue页面完整路径，省略.vue后缀)",
+                    "type": "string"
+                },
+                "icon": {
+                    "description": "菜单图标",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "convert to uint64 id",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "父级",
+                    "type": "integer"
+                },
+                "perm": {
+                    "description": "权限标识",
+                    "type": "string"
+                },
+                "redirect": {
+                    "description": "跳转路径",
+                    "type": "string"
+                },
+                "routeName": {
+                    "description": "路由名称",
+                    "type": "string"
+                },
+                "routePath": {
+                    "description": "路由路径",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)",
+                    "type": "string"
+                },
+                "visible": {
+                    "description": "显示状态",
+                    "type": "integer"
+                }
+            }
+        },
+        "types.Options": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Options"
+                    }
+                },
+                "label": {
+                    "description": "标签",
+                    "type": "string"
+                },
+                "value": {
+                    "description": "值"
+                }
+            }
+        },
+        "types.OptionsReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Options"
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
         "types.PlatformObjDetail": {
             "type": "object",
             "properties": {
                 "avatar": {
                     "description": "头像",
                     "type": "string"
-                },
-                "claimTimeLimit": {
-                    "description": "领取时间限制（小时）",
-                    "type": "integer"
                 },
                 "createdAt": {
                     "description": "创建时间",
@@ -1793,13 +2703,12 @@ const docTemplate = `{
                     "description": "上次登录时间",
                     "type": "string"
                 },
-                "password": {
-                    "description": "密码",
-                    "type": "string"
-                },
-                "roleID": {
+                "roleId": {
                     "description": "角色",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "status": {
                     "description": "状态",
@@ -1811,6 +2720,84 @@ const docTemplate = `{
                 },
                 "username": {
                     "description": "账号",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ProfileItem": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "convert to uint64 id",
+                    "type": "integer"
+                },
+                "roleNames": {
+                    "description": "角色组",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "账号",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ProfileReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.ProfileItem"
+                        }
+                    ]
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ResetPasswordRequest": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "id": {
+                    "description": "uint64 id",
+                    "type": "integer"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                }
+            }
+        },
+        "types.Result": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
                     "type": "string"
                 }
             }
@@ -1961,13 +2948,9 @@ const docTemplate = `{
                     "description": "路由参数",
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "description": "父级",
                     "type": "integer"
-                },
-                "path": {
-                    "description": "路由路径",
-                    "type": "string"
                 },
                 "perm": {
                     "description": "权限标识",
@@ -1975,6 +2958,10 @@ const docTemplate = `{
                 },
                 "redirect": {
                     "description": "跳转路径",
+                    "type": "string"
+                },
+                "routePath": {
+                    "description": "路由路径",
                     "type": "string"
                 },
                 "sort": {
@@ -2014,25 +3001,20 @@ const docTemplate = `{
                     "description": "头像",
                     "type": "string"
                 },
-                "claimTimeLimit": {
-                    "description": "领取时间限制（小时）",
-                    "type": "integer"
-                },
                 "id": {
                     "description": "uint64 id",
                     "type": "integer"
-                },
-                "lastTime": {
-                    "description": "上次登录时间",
-                    "type": "string"
                 },
                 "password": {
                     "description": "密码",
                     "type": "string"
                 },
-                "roleID": {
+                "roleId": {
                     "description": "角色",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "status": {
                     "description": "状态",
@@ -2115,6 +3097,44 @@ const docTemplate = `{
                 "roleID": {
                     "description": "角色ID",
                     "type": "integer"
+                }
+            }
+        },
+        "types.UploadItem": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "文件名称",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "path",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "url",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UploadLocalReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.UploadItem"
+                        }
+                    ]
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
                 }
             }
         }

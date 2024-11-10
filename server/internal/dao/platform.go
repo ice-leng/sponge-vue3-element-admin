@@ -28,6 +28,7 @@ type PlatformDao interface {
 	GetByID(ctx context.Context, id uint64) (*model.Platform, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Platform, int64, error)
 	GetByParams(ctx context.Context, params *types.ListPlatformsRequest) ([]*model.Platform, int64, error)
+	GetByUsername(ctx context.Context, username string) (*model.Platform, error)
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Platform) (uint64, error)
 	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
@@ -118,17 +119,14 @@ func (d *platformDao) updateDataByID(ctx context.Context, db *gorm.DB, table *mo
 	if table.Avatar != "" {
 		update["avatar"] = table.Avatar
 	}
-	if table.RoleID != "" {
+	if table.RoleID != nil {
 		update["role_id"] = table.RoleID
 	}
-	if table.Status != 0 {
+	if table.Status != nil {
 		update["status"] = table.Status
 	}
-	if table.LastTime.IsZero() == false {
+	if table.LastTime != nil {
 		update["last_time"] = table.LastTime
-	}
-	if table.ClaimTimeLimit != 0 {
-		update["claim_time_limit"] = table.ClaimTimeLimit
 	}
 
 	return db.WithContext(ctx).Model(table).Updates(update).Error
@@ -188,6 +186,12 @@ func (d *platformDao) GetByID(ctx context.Context, id uint64) (*model.Platform, 
 	return nil, err
 }
 
+func (d *platformDao) GetByUsername(ctx context.Context, username string) (*model.Platform, error) {
+	record := &model.Platform{}
+	err := d.db.WithContext(ctx).Where("username = ?", username).First(record).Error
+	return record, err
+}
+
 // GetByColumns get paging records by column information,
 // Note: query performance degrades when table rows are very large because of the use of offset.
 //
@@ -229,7 +233,7 @@ func (d *platformDao) GetByColumns(ctx context.Context, params *query.Params) ([
 
 	var total int64
 	if params.Sort != "ignore count" { // determine if count is required
-		err = d.db.WithContext(ctx).Model(&model.Platform{}).Select([]string{"id"}).Where(queryStr, args...).Count(&total).Error
+		err = d.db.WithContext(ctx).Model(&model.Platform{}).Where(queryStr, args...).Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}
@@ -253,12 +257,19 @@ func (d *platformDao) GetByParams(ctx context.Context, request *types.ListPlatfo
 
 	db := d.db.WithContext(ctx).Model(&model.Platform{}).Order(page.Sort())
 	if request.StartTime != "" && request.EndTime != "" {
-		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime)
+		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime+" 23:59:59")
+	}
+
+	if request.Username != "" {
+		db = db.Where("username like ?", "%"+request.Username+"%")
+	}
+	if request.Status != nil {
+		db = db.Where("status = ?", request.Status)
 	}
 
 	var total int64 = 0
 	if request.Sort != "ignore count" { // determine if count is required
-		err := db.Select([]string{"id"}).Count(&total).Error
+		err := db.Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}

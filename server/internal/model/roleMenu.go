@@ -8,8 +8,8 @@ import (
 type RoleMenu struct {
 	ggorm.Model `gorm:"embedded"` // embed id and time
 
-	RoleID int `gorm:"column:role_id;type:int(11);default:0;NOT NULL" json:"roleID"` // 角色ID
-	MenuID int `gorm:"column:menu_id;type:int(11);default:0;NOT NULL" json:"menuID"` // 菜单ID
+	RoleID uint64 `gorm:"column:role_id;type:int(11);default:0;NOT NULL" json:"roleID"` // 角色ID
+	MenuID uint64 `gorm:"column:menu_id;type:int(11);default:0;NOT NULL" json:"menuID"` // 菜单ID
 }
 
 // TableName table name

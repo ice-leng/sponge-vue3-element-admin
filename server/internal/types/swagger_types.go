@@ -33,3 +33,16 @@ type Column struct {
 type Conditions struct {
 	Columns []Column `json:"columns"` // columns info
 }
+
+type Options struct {
+	Label    string      `json:"label"` // 标签
+	Value    interface{} `json:"value"` // 值
+	Children []Options   `json:"children"`
+}
+
+// OptionsReply only for api docs
+type OptionsReply struct {
+	Code int       `json:"code"` // return code
+	Msg  string    `json:"msg"`  // return information description
+	Data []Options `json:"data"` // return data
+}

@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"admin/internal/pkg/util"
+	"encoding/json"
 	"errors"
 	"strings"
 
@@ -28,6 +30,8 @@ type MenuHandler interface {
 	UpdateByID(c *gin.Context)
 	GetByID(c *gin.Context)
 	List(c *gin.Context)
+	Routes(c *gin.Context)
+	Options(c *gin.Context)
 }
 
 type menuHandler struct {
@@ -197,9 +201,10 @@ func (h *menuHandler) GetByID(c *gin.Context) {
 		response.Error(c, ecode.ErrGetByIDMenu)
 		return
 	}
+	data.RouteName = util.UcFirst(data.Path)
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 
-	response.Success(c, gin.H{"menu": data})
+	response.Success(c, data)
 }
 
 // List of records by query parameters
@@ -210,7 +215,7 @@ func (h *menuHandler) GetByID(c *gin.Context) {
 // @Produce json
 // @Param request query types.ListMenusRequest true "query parameters"
 // @Success 200 {object} types.ListMenusReply{}
-// @Router /api/v1/menu/list [get]
+// @Router /api/v1/menu [get]
 // @Security BearerAuth
 func (h *menuHandler) List(c *gin.Context) {
 	request := &types.ListMenusRequest{}
@@ -222,23 +227,72 @@ func (h *menuHandler) List(c *gin.Context) {
 	}
 
 	ctx := middleware.WrapCtx(c)
-	menus, total, err := h.iDao.GetByParams(ctx, request)
+	var pid uint64 = 0
+	request.Sort = "id"
+	if request.ParentID == nil {
+		request.ParentID = &pid
+	}
+	menus, _, err := h.iDao.GetByParams(ctx, request)
 	if err != nil {
 		logger.Error("GetByParams error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
 
-	data, err := convertMenus(menus)
+	data, err := h.convertMenus(c, request, menus)
 	if err != nil {
 		response.Error(c, ecode.ErrListMenu)
 		return
 	}
 
-	response.Success(c, gin.H{
-		"list":  data,
-		"total": total,
-	})
+	response.Success(c, data)
+}
+
+// Routes of records routes
+// @Summary list of routes
+// @Description list routes
+// @Tags menu
+// @accept json
+// @Produce json
+// @Success 200 {object} types.Result{}
+// @Router /api/v1/menu/routes [get]
+// @Security BearerAuth
+func (h *menuHandler) Routes(c *gin.Context) {
+	ctx := middleware.WrapCtx(c)
+	roleId := c.GetString("roleId")
+	var roleIds []uint64
+	_ = json.Unmarshal([]byte(roleId), &roleIds)
+	result, err := h.iDao.Routes(ctx, roleIds)
+	if err != nil {
+		logger.Error("Routes error", logger.Err(err), logger.Any("roleIds", roleIds), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		return
+	}
+	response.Success(c, result)
+}
+
+// Options get role options
+// @Summary get role options
+// @Description get role options
+// @Tags role
+// @Accept json
+// @Produce json
+// @Param request query types.OptionMenusRequest true "query parameters"
+// @Success 200 {object} types.OptionsReply{}
+// @Router /api/v1/menu/options [get]
+// @Security BearerAuth
+func (h *menuHandler) Options(c *gin.Context) {
+	request := &types.OptionMenusRequest{}
+	err := c.ShouldBindQuery(request)
+	if err != nil {
+		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
+		response.Error(c, ecode.InvalidParams)
+		return
+	}
+
+	ctx := middleware.WrapCtx(c)
+	options, _ := h.iDao.Options(ctx, request)
+	response.Success(c, options)
 }
 
 func getMenuIDFromPath(c *gin.Context) (string, uint64, bool) {
@@ -252,21 +306,33 @@ func getMenuIDFromPath(c *gin.Context) (string, uint64, bool) {
 	return idStr, id, false
 }
 
-func convertMenu(menu *model.Menu) (*types.MenuObjDetail, error) {
-	data := &types.MenuObjDetail{}
+func (h *menuHandler) convertMenu(c *gin.Context, request *types.ListMenusRequest, menu *model.Menu) (*types.MenuObjPage, error) {
+	data := &types.MenuObjPage{}
 	err := copier.Copy(data, menu)
 	if err != nil {
 		return nil, err
 	}
 	// Note: if copier.Copy cannot assign a value to a field, add it here
+	data.RouteName = menu.Name
+	ctx := middleware.WrapCtx(c)
 
+	request.ParentID = &menu.ID
+	menus, _, err2 := h.iDao.GetByParams(ctx, request)
+	if err2 != nil {
+		return nil, err2
+	}
+	children, err3 := h.convertMenus(c, request, menus)
+	if err3 != nil {
+		return nil, err3
+	}
+	data.Children = children
 	return data, nil
 }
 
-func convertMenus(fromValues []*model.Menu) ([]*types.MenuObjDetail, error) {
-	toValues := []*types.MenuObjDetail{}
+func (h *menuHandler) convertMenus(c *gin.Context, request *types.ListMenusRequest, fromValues []*model.Menu) ([]*types.MenuObjPage, error) {
+	toValues := []*types.MenuObjPage{}
 	for _, v := range fromValues {
-		data, err := convertMenu(v)
+		data, err := h.convertMenu(c, request, v)
 		if err != nil {
 			return nil, err
 		}

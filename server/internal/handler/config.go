@@ -199,7 +199,7 @@ func (h *configHandler) GetByID(c *gin.Context) {
 	}
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 
-	response.Success(c, gin.H{"config": data})
+	response.Success(c, data)
 }
 
 // List of records by query parameters
@@ -210,7 +210,7 @@ func (h *configHandler) GetByID(c *gin.Context) {
 // @Produce json
 // @Param request query types.ListConfigsRequest true "query parameters"
 // @Success 200 {object} types.ListConfigsReply{}
-// @Router /api/v1/config/list [get]
+// @Router /api/v1/config [get]
 // @Security BearerAuth
 func (h *configHandler) List(c *gin.Context) {
 	request := &types.ListConfigsRequest{}

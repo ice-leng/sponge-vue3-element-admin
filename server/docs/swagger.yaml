@@ -1,4 +1,43 @@
 definitions:
+  types.CaptchaItem:
+    properties:
+      captchaBase64:
+        type: string
+      captchaKey:
+        type: string
+    type: object
+  types.CaptchaReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/types.CaptchaItem'
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ChangePasswordRequest:
+    properties:
+      confirmPassword:
+        description: 密码
+        type: string
+      id:
+        description: uint64 id
+        type: integer
+      newPassword:
+        description: 密码
+        type: string
+      oldPassword:
+        description: 密码
+        type: string
+    required:
+    - confirmPassword
+    - newPassword
+    - oldPassword
+    type: object
   types.ConfigObjDetail:
     properties:
       createdAt:
@@ -90,17 +129,17 @@ definitions:
       params:
         description: 路由参数
         type: string
-      parentID:
+      parentId:
         description: 父级
         type: integer
-      path:
-        description: 路由路径
-        type: string
       perm:
         description: 权限标识
         type: string
       redirect:
         description: 跳转路径
+        type: string
+      routePath:
+        description: 路由路径
         type: string
       sort:
         description: 排序
@@ -133,18 +172,14 @@ definitions:
       avatar:
         description: 头像
         type: string
-      claimTimeLimit:
-        description: 领取时间限制（小时）
-        type: integer
-      lastTime:
-        description: 上次登录时间
-        type: string
       password:
         description: 密码
         type: string
-      roleID:
+      roleId:
         description: 角色
-        type: string
+        items:
+          type: integer
+        type: array
       status:
         description: 状态
         type: integer
@@ -208,6 +243,69 @@ definitions:
         description: 状态
         type: integer
     type: object
+  types.DashboardEchartsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          dates:
+            description: 日期
+            items:
+              type: string
+            type: array
+          ipList:
+            description: ip 列表
+            items:
+              type: integer
+            type: array
+          pvList:
+            description: pv 列表
+            items:
+              type: integer
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DashboardStatisticsItem:
+    properties:
+      granularityLabel:
+        description: 粒度标签
+        type: string
+      growthRate:
+        description: 增长率
+        type: number
+      title:
+        description: 标题
+        type: string
+      todayCount:
+        description: 今日数量
+        type: integer
+      totalCount:
+        description: 总数量
+        type: integer
+      type:
+        description: 类型 "pv" | "uv" | "ip"
+        type: string
+    type: object
+  types.DashboardStatisticsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        items:
+          $ref: '#/definitions/types.DashboardStatisticsItem'
+        type: array
+      msg:
+        description: return information description
+        type: string
+    type: object
   types.DeleteConfigByIDReply:
     properties:
       code:
@@ -269,11 +367,9 @@ definitions:
         description: return code
         type: integer
       data:
+        allOf:
+        - $ref: '#/definitions/types.ConfigObjDetail'
         description: return data
-        properties:
-          config:
-            $ref: '#/definitions/types.ConfigObjDetail'
-        type: object
       msg:
         description: return information description
         type: string
@@ -284,11 +380,9 @@ definitions:
         description: return code
         type: integer
       data:
+        allOf:
+        - $ref: '#/definitions/types.MenuObjDetail'
         description: return data
-        properties:
-          menu:
-            $ref: '#/definitions/types.MenuObjDetail'
-        type: object
       msg:
         description: return information description
         type: string
@@ -299,11 +393,9 @@ definitions:
         description: return code
         type: integer
       data:
+        allOf:
+        - $ref: '#/definitions/types.PlatformObjDetail'
         description: return data
-        properties:
-          platform:
-            $ref: '#/definitions/types.PlatformObjDetail'
-        type: object
       msg:
         description: return information description
         type: string
@@ -314,11 +406,9 @@ definitions:
         description: return code
         type: integer
       data:
+        allOf:
+        - $ref: '#/definitions/types.RoleObjDetail'
         description: return data
-        properties:
-          role:
-            $ref: '#/definitions/types.RoleObjDetail'
-        type: object
       msg:
         description: return information description
         type: string
@@ -329,11 +419,9 @@ definitions:
         description: return code
         type: integer
       data:
+        allOf:
+        - $ref: '#/definitions/types.RoleMenuObjDetail'
         description: return data
-        properties:
-          roleMenu:
-            $ref: '#/definitions/types.RoleMenuObjDetail'
-        type: object
       msg:
         description: return information description
         type: string
@@ -363,10 +451,12 @@ definitions:
       data:
         description: return data
         properties:
-          menus:
+          list:
             items:
-              $ref: '#/definitions/types.MenuObjDetail'
+              $ref: '#/definitions/types.MenuObjPage'
             type: array
+          total:
+            type: integer
         type: object
       msg:
         description: return information description
@@ -380,10 +470,12 @@ definitions:
       data:
         description: return data
         properties:
-          platforms:
+          list:
             items:
               $ref: '#/definitions/types.PlatformObjDetail'
             type: array
+          total:
+            type: integer
         type: object
       msg:
         description: return information description
@@ -418,7 +510,84 @@ definitions:
             items:
               $ref: '#/definitions/types.RoleObjDetail'
             type: array
+          total:
+            type: integer
         type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.LoginItem:
+    properties:
+      accessToken:
+        description: access token
+        type: string
+      expires:
+        description: expire time
+        type: integer
+      tokenType:
+        description: token type
+        type: string
+    type: object
+  types.LoginReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/types.LoginItem'
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.LoginRequest:
+    properties:
+      captchaCode:
+        description: 验证码code
+        type: string
+      captchaKey:
+        description: 验证码key
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 账号
+        type: string
+    type: object
+  types.MeItem:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      perms:
+        description: 权限组
+        items:
+          type: string
+        type: array
+      roles:
+        description: 角色组
+        items:
+          type: string
+        type: array
+      username:
+        description: 账号
+        type: string
+    type: object
+  types.MeReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/types.MeItem'
+        description: return data
       msg:
         description: return information description
         type: string
@@ -444,22 +613,24 @@ definitions:
         description: 始终显示
         type: integer
       name:
-        description: 菜单名称
         type: string
       params:
         description: 路由参数
         type: string
-      parentID:
+      parentId:
         description: 父级
         type: integer
-      path:
-        description: 路由路径
-        type: string
       perm:
         description: 权限标识
         type: string
       redirect:
         description: 跳转路径
+        type: string
+      routeName:
+        description: 路由名称
+        type: string
+      routePath:
+        description: 路由路径
         type: string
       sort:
         description: 排序
@@ -474,14 +645,80 @@ definitions:
         description: 显示状态
         type: integer
     type: object
+  types.MenuObjPage:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/types.MenuObjPage'
+        type: array
+      component:
+        description: 组件路径(vue页面完整路径，省略.vue后缀)
+        type: string
+      icon:
+        description: 菜单图标
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      parentId:
+        description: 父级
+        type: integer
+      perm:
+        description: 权限标识
+        type: string
+      redirect:
+        description: 跳转路径
+        type: string
+      routeName:
+        description: 路由名称
+        type: string
+      routePath:
+        description: 路由路径
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      type:
+        description: 菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)
+        type: string
+      visible:
+        description: 显示状态
+        type: integer
+    type: object
+  types.Options:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/types.Options'
+        type: array
+      label:
+        description: 标签
+        type: string
+      value:
+        description: 值
+    type: object
+  types.OptionsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        items:
+          $ref: '#/definitions/types.Options'
+        type: array
+      msg:
+        description: return information description
+        type: string
+    type: object
   types.PlatformObjDetail:
     properties:
       avatar:
         description: 头像
         type: string
-      claimTimeLimit:
-        description: 领取时间限制（小时）
-        type: integer
       createdAt:
         description: 创建时间
         type: string
@@ -491,12 +728,11 @@ definitions:
       lastTime:
         description: 上次登录时间
         type: string
-      password:
-        description: 密码
-        type: string
-      roleID:
+      roleId:
         description: 角色
-        type: string
+        items:
+          type: integer
+        type: array
       status:
         description: 状态
         type: integer
@@ -505,6 +741,59 @@ definitions:
         type: string
       username:
         description: 账号
+        type: string
+    type: object
+  types.ProfileItem:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      roleNames:
+        description: 角色组
+        type: string
+      username:
+        description: 账号
+        type: string
+    type: object
+  types.ProfileReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/types.ProfileItem'
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ResetPasswordRequest:
+    properties:
+      id:
+        description: uint64 id
+        type: integer
+      password:
+        description: 密码
+        type: string
+    required:
+    - password
+    type: object
+  types.Result:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
         type: string
     type: object
   types.RoleMenuObjDetail:
@@ -612,17 +901,17 @@ definitions:
       params:
         description: 路由参数
         type: string
-      parentID:
+      parentId:
         description: 父级
         type: integer
-      path:
-        description: 路由路径
-        type: string
       perm:
         description: 权限标识
         type: string
       redirect:
         description: 跳转路径
+        type: string
+      routePath:
+        description: 路由路径
         type: string
       sort:
         description: 排序
@@ -650,21 +939,17 @@ definitions:
       avatar:
         description: 头像
         type: string
-      claimTimeLimit:
-        description: 领取时间限制（小时）
-        type: integer
       id:
         description: uint64 id
         type: integer
-      lastTime:
-        description: 上次登录时间
-        type: string
       password:
         description: 密码
         type: string
-      roleID:
+      roleId:
         description: 角色
-        type: string
+        items:
+          type: integer
+        type: array
       status:
         description: 状态
         type: integer
@@ -724,6 +1009,31 @@ definitions:
         description: 角色ID
         type: integer
     type: object
+  types.UploadItem:
+    properties:
+      name:
+        description: 文件名称
+        type: string
+      path:
+        description: path
+        type: string
+      url:
+        description: url
+        type: string
+    type: object
+  types.UploadLocalReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/types.UploadItem'
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -731,7 +1041,115 @@ info:
   title: admin api docs
   version: "2.0"
 paths:
+  /api/v1/auth/captcha:
+    get:
+      consumes:
+      - application/json
+      description: get a captcha
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CaptchaReply'
+      summary: get a captcha
+      tags:
+      - auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: with username and password
+      parameters:
+      - description: login information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.LoginReply'
+      summary: with username and password
+      tags:
+      - auth
+  /api/v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Result'
+      security:
+      - BearerAuth: []
+      summary: logout
+      tags:
+      - auth
+  /api/v1/auth/refreshToken:
+    post:
+      consumes:
+      - application/json
+      description: refresh token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.LoginReply'
+      security:
+      - BearerAuth: []
+      summary: refresh token
+      tags:
+      - auth
   /api/v1/config:
+    get:
+      consumes:
+      - application/json
+      description: list of configs by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListConfigsReply'
+      security:
+      - BearerAuth: []
+      summary: list of configs by query parameters
+      tags:
+      - config
     post:
       consumes:
       - application/json
@@ -828,15 +1246,52 @@ paths:
       summary: update config
       tags:
       - config
-  /api/v1/config/list:
+  /api/v1/dashboard/echarts:
     get:
       consumes:
       - application/json
-      description: list of configs by paging and conditions
+      description: data echarts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DashboardEchartsReply'
+      security:
+      - BearerAuth: []
+      summary: data echarts
+      tags:
+      - dashboard
+  /api/v1/dashboard/statistics:
+    get:
+      consumes:
+      - application/json
+      description: data statistics
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DashboardStatisticsReply'
+      security:
+      - BearerAuth: []
+      summary: data statistics
+      tags:
+      - dashboard
+  /api/v1/menu:
+    get:
+      consumes:
+      - application/json
+      description: list of menus by paging and conditions
       parameters:
       - description: 结束时间
         in: query
         name: endTime
+        type: string
+      - in: query
+        name: keywords
         type: string
       - description: 分页
         in: query
@@ -845,6 +1300,9 @@ paths:
       - description: 分页大小
         in: query
         name: pageSize
+        type: integer
+      - in: query
+        name: parentId
         type: integer
       - description: 排序
         in: query
@@ -860,13 +1318,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListConfigsReply'
+            $ref: '#/definitions/types.ListMenusReply'
       security:
       - BearerAuth: []
-      summary: list of configs by query parameters
+      summary: list of menus by query parameters
       tags:
-      - config
-  /api/v1/menu:
+      - menu
     post:
       consumes:
       - application/json
@@ -963,11 +1420,49 @@ paths:
       summary: update menu
       tags:
       - menu
-  /api/v1/menu/list:
+  /api/v1/menu/options:
     get:
       consumes:
       - application/json
-      description: list of menus by paging and conditions
+      description: get role options
+      parameters:
+      - in: query
+        name: onlyParent
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.OptionsReply'
+      security:
+      - BearerAuth: []
+      summary: get role options
+      tags:
+      - role
+  /api/v1/menu/routes:
+    get:
+      consumes:
+      - application/json
+      description: list routes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Result'
+      security:
+      - BearerAuth: []
+      summary: list of routes
+      tags:
+      - menu
+  /api/v1/platform:
+    get:
+      consumes:
+      - application/json
+      description: list of platforms by paging and conditions
       parameters:
       - description: 结束时间
         in: query
@@ -989,19 +1484,26 @@ paths:
         in: query
         name: startTime
         type: string
+      - description: 状态
+        in: query
+        name: status
+        type: integer
+      - description: 账号
+        in: query
+        name: username
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListMenusReply'
+            $ref: '#/definitions/types.ListPlatformsReply'
       security:
       - BearerAuth: []
-      summary: list of menus by query parameters
+      summary: list of platforms by query parameters
       tags:
-      - menu
-  /api/v1/platform:
+      - platform
     post:
       consumes:
       - application/json
@@ -1102,7 +1604,112 @@ paths:
     get:
       consumes:
       - application/json
-      description: list of platforms by paging and conditions
+      description: current information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.MeReply'
+      security:
+      - BearerAuth: []
+      summary: current information
+      tags:
+      - platform
+  /api/v1/platform/password:
+    put:
+      consumes:
+      - application/json
+      description: change password by self
+      parameters:
+      - description: platform information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Result'
+      security:
+      - BearerAuth: []
+      summary: change password by self
+      tags:
+      - platform
+  /api/v1/platform/password/reset:
+    put:
+      consumes:
+      - application/json
+      description: reset password by self
+      parameters:
+      - description: platform information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Result'
+      security:
+      - BearerAuth: []
+      summary: reset password by self
+      tags:
+      - platform
+  /api/v1/platform/profile:
+    get:
+      consumes:
+      - application/json
+      description: current information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ProfileReply'
+      security:
+      - BearerAuth: []
+      summary: current information
+      tags:
+      - platform
+    put:
+      consumes:
+      - application/json
+      description: update platform information by self
+      parameters:
+      - description: platform information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdatePlatformByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Result'
+      security:
+      - BearerAuth: []
+      summary: update platform
+      tags:
+      - platform
+  /api/v1/role:
+    get:
+      consumes:
+      - application/json
+      description: list of roles by paging and conditions
       parameters:
       - description: 结束时间
         in: query
@@ -1124,19 +1731,22 @@ paths:
         in: query
         name: startTime
         type: string
+      - description: 状态
+        in: query
+        name: status
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListPlatformsReply'
+            $ref: '#/definitions/types.ListRolesReply'
       security:
       - BearerAuth: []
-      summary: list of platforms by query parameters
+      summary: list of roles by query parameters
       tags:
-      - platform
-  /api/v1/role:
+      - role
     post:
       consumes:
       - application/json
@@ -1233,11 +1843,51 @@ paths:
       summary: update role
       tags:
       - role
-  /api/v1/role/list:
+  /api/v1/role/{id}/menus:
+    put:
+      consumes:
+      - application/json
+      description: update permission
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateRoleByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update permission
+      tags:
+      - role
+  /api/v1/role/options:
     get:
       consumes:
       - application/json
-      description: list of roles by paging and conditions
+      description: get role options
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.OptionsReply'
+      security:
+      - BearerAuth: []
+      summary: get role options
+      tags:
+      - role
+  /api/v1/roleMenu:
+    get:
+      consumes:
+      - application/json
+      description: list of roleMenus by paging and conditions
       parameters:
       - description: 结束时间
         in: query
@@ -1253,6 +1903,10 @@ paths:
         type: integer
       - description: 排序
         in: query
+        name: roleId
+        type: integer
+      - description: 排序
+        in: query
         name: sort
         type: string
       - description: 开始时间
@@ -1265,13 +1919,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListRolesReply'
+            $ref: '#/definitions/types.ListRoleMenusReply'
       security:
       - BearerAuth: []
-      summary: list of roles by query parameters
+      summary: list of roleMenus by query parameters
       tags:
-      - role
-  /api/v1/roleMenu:
+      - roleMenu
     post:
       consumes:
       - application/json
@@ -1368,44 +2021,46 @@ paths:
       summary: update roleMenu
       tags:
       - roleMenu
-  /api/v1/roleMenu/list:
+  /api/v1/roles/{id}/menuIds:
     get:
       consumes:
       - application/json
-      description: list of roleMenus by paging and conditions
-      parameters:
-      - description: 结束时间
-        in: query
-        name: endTime
-        type: string
-      - description: 分页
-        in: query
-        name: page
-        type: integer
-      - description: 分页大小
-        in: query
-        name: pageSize
-        type: integer
-      - description: 排序
-        in: query
-        name: sort
-        type: string
-      - description: 开始时间
-        in: query
-        name: startTime
-        type: string
+      description: get role menuIds
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListRoleMenusReply'
+            $ref: '#/definitions/types.Result'
       security:
       - BearerAuth: []
-      summary: list of roleMenus by query parameters
+      summary: get role menuIds
       tags:
-      - roleMenu
+      - role
+  /api/v1/upload/local:
+    post:
+      consumes:
+      - application/json
+      description: upload local file
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UploadLocalReply'
+      security:
+      - BearerAuth: []
+      summary: upload local file
+      tags:
+      - upload
 schemes:
 - http
 - https

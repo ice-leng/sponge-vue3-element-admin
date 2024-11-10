@@ -53,11 +53,9 @@ type UpdateRoleMenuByIDReply struct {
 
 // GetRoleMenuByIDReply only for api docs
 type GetRoleMenuByIDReply struct {
-	Code int    `json:"code"` // return code
-	Msg  string `json:"msg"`  // return information description
-	Data struct {
-		RoleMenu RoleMenuObjDetail `json:"roleMenu"`
-	} `json:"data"` // return data
+	Code int               `json:"code"` // return code
+	Msg  string            `json:"msg"`  // return information description
+	Data RoleMenuObjDetail `json:"data"` // return data
 }
 
 // ListRoleMenusRequest request params
@@ -66,8 +64,9 @@ type ListRoleMenusRequest struct {
 	PageSize int    `json:"pageSize,omitempty" form:"pageSize" binding:""` // 分页大小
 	Sort     string `json:"sort,omitempty" form:"sort" binding:""`         // 排序
 
-	StartTime string `json:"startTime,omitempty" form:"startTime" binding:""` // 开始时间
-	EndTime   string `json:"endTime,omitempty" form:"endTime" binding:""`     // 结束时间
+	RoleId    *uint64 `json:"roleId,omitempty" form:"roleId" binding:""`       // 排序
+	StartTime string  `json:"startTime,omitempty" form:"startTime" binding:""` // 开始时间
+	EndTime   string  `json:"endTime,omitempty" form:"endTime" binding:""`     // 结束时间
 }
 
 // ListRoleMenusReply only for api docs

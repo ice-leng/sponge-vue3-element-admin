@@ -27,3 +27,36 @@ type Menu struct {
 func (m *Menu) TableName() string {
 	return "t_menu"
 }
+
+type MenuMeta struct {
+	Title      string  `json:"title"`      // 标题
+	Icon       string  `json:"icon"`       // 图标
+	Hidden     bool    `json:"hidden"`     // 隐藏
+	AlwaysShow bool    `json:"alwaysShow"` // 始终显示
+	Params     *string `json:"params"`     // 路由参数
+}
+
+type MenuItem struct {
+	Path      string     `json:"path"`      // 路由路径
+	Name      string     `json:"name"`      // 路由名称
+	Component string     `json:"component"` // 组件路径
+	Redirect  string     `json:"redirect"`  // 跳转路径
+	Meta      MenuMeta   `json:"meta"`      // meta
+	Children  []Children `json:"children"`  // 子级
+}
+
+type ChildrenMeta struct {
+	Title      string  `json:"title"`      // 标题
+	Icon       string  `json:"icon"`       // 图标
+	Hidden     bool    `json:"hidden"`     // 隐藏
+	AlwaysShow bool    `json:"alwaysShow"` // 始终显示
+	Params     *string `json:"params"`     // 路由参数
+	KeepAlive  bool    `json:"keepAlive"`  // 始终显示
+}
+
+type Children struct {
+	Path      string       `json:"path"`      // 路由路径
+	Name      string       `json:"name"`      // 路由名称
+	Component string       `json:"component"` // 组件路径
+	Meta      ChildrenMeta `json:"meta"`      // meta
+}

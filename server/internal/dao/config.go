@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"admin/internal/pkg/util"
 	"admin/internal/types"
 	"context"
 	"errors"
@@ -32,6 +33,8 @@ type ConfigDao interface {
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Config) (uint64, error)
 	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
 	UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.Config) error
+
+	MakePathByConfig(ctx context.Context, path, key string) string
 }
 
 type configDao struct {
@@ -52,9 +55,13 @@ func NewConfigDao(db *gorm.DB, xCache cache.ConfigCache) ConfigDao {
 	}
 }
 
-func (d *configDao) deleteCache(ctx context.Context, id uint64) error {
+func (d *configDao) deleteCache(ctx context.Context, table *model.Config) error {
 	if d.cache != nil {
-		return d.cache.Del(ctx, id)
+		err := d.cache.Del(ctx, table.ID)
+		if err != nil {
+			return err
+		}
+		return d.cache.DelByKey(ctx, table.Key)
 	}
 	return nil
 }
@@ -66,27 +73,43 @@ func (d *configDao) Create(ctx context.Context, table *model.Config) error {
 
 // DeleteByID delete a record by id
 func (d *configDao) DeleteByID(ctx context.Context, id uint64) error {
-	err := d.db.WithContext(ctx).Where("id = ?", id).Delete(&model.Config{}).Error
+	table, err := d.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	err = d.db.WithContext(ctx).Where("id = ?", id).Delete(&model.Config{}).Error
 	if err != nil {
 		return err
 	}
 
 	// delete cache
-	_ = d.deleteCache(ctx, id)
+	_ = d.deleteCache(ctx, table)
 
 	return nil
 }
 
 // DeleteByIDs delete records by batch id
 func (d *configDao) DeleteByIDs(ctx context.Context, ids []uint64) error {
+	params := &query.Params{
+		Columns: []query.Column{
+			{
+				Name:  "id",
+				Exp:   "in",
+				Value: ids,
+			},
+		},
+	}
+	tables, _, _ := d.GetByColumns(ctx, params)
+
 	err := d.db.WithContext(ctx).Where("id IN (?)", ids).Delete(&model.Config{}).Error
 	if err != nil {
 		return err
 	}
 
 	// delete cache
-	for _, id := range ids {
-		_ = d.deleteCache(ctx, id)
+	for _, table := range tables {
+		_ = d.deleteCache(ctx, table)
 	}
 
 	return nil
@@ -97,7 +120,7 @@ func (d *configDao) UpdateByID(ctx context.Context, table *model.Config) error {
 	err := d.updateDataByID(ctx, d.db, table)
 
 	// delete cache
-	_ = d.deleteCache(ctx, table.ID)
+	_ = d.deleteCache(ctx, table)
 
 	return err
 }
@@ -179,6 +202,60 @@ func (d *configDao) GetByID(ctx context.Context, id uint64) (*model.Config, erro
 	return nil, err
 }
 
+// GetByKey a record by key
+func (d *configDao) GetByKey(ctx context.Context, key string) (*model.Config, error) {
+	// no cache
+	if d.cache == nil {
+		record := &model.Config{}
+		err := d.db.WithContext(ctx).Where("`key` = ?", key).First(record).Error
+		return record, err
+	}
+
+	// get from cache or database
+	record, err := d.cache.GetByKey(ctx, key)
+	if err == nil {
+		return record, nil
+	}
+
+	if errors.Is(err, model.ErrCacheNotFound) {
+		// for the same id, prevent high concurrent simultaneous access to database
+		val, err, _ := d.sfg.Do(key, func() (interface{}, error) { //nolint
+			table := &model.Config{}
+			err = d.db.WithContext(ctx).Where("`key` = ?", key).First(table).Error
+			if err != nil {
+				// if data is empty, set not found cache to prevent cache penetration, default expiration time 10 minutes
+				if errors.Is(err, model.ErrRecordNotFound) {
+					err = d.cache.SetCacheByKeyWithNotFound(ctx, key)
+					if err != nil {
+						return nil, err
+					}
+					return nil, model.ErrRecordNotFound
+				}
+				return nil, err
+			}
+			// set cache
+			err = d.cache.SetByKey(ctx, key, table, cache.ConfigExpireTime)
+			if err != nil {
+				return nil, fmt.Errorf("cache.Set error: %v, key=%d", err, key)
+			}
+			return table, nil
+		})
+		if err != nil {
+			return nil, err
+		}
+		table, ok := val.(*model.Config)
+		if !ok {
+			return nil, model.ErrRecordNotFound
+		}
+		return table, nil
+	} else if errors.Is(err, cacheBase.ErrPlaceholder) {
+		return nil, model.ErrRecordNotFound
+	}
+
+	// fail fast, if cache error return, don't request to db
+	return nil, err
+}
+
 // GetByColumns get paging records by column information,
 // Note: query performance degrades when table rows are very large because of the use of offset.
 //
@@ -220,7 +297,7 @@ func (d *configDao) GetByColumns(ctx context.Context, params *query.Params) ([]*
 
 	var total int64
 	if params.Sort != "ignore count" { // determine if count is required
-		err = d.db.WithContext(ctx).Model(&model.Config{}).Select([]string{"id"}).Where(queryStr, args...).Count(&total).Error
+		err = d.db.WithContext(ctx).Model(&model.Config{}).Where(queryStr, args...).Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}
@@ -249,7 +326,7 @@ func (d *configDao) GetByParams(ctx context.Context, request *types.ListConfigsR
 
 	var total int64 = 0
 	if request.Sort != "ignore count" { // determine if count is required
-		err := db.Select([]string{"id"}).Count(&total).Error
+		err := db.Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}
@@ -278,13 +355,18 @@ func (d *configDao) CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Co
 
 // DeleteByTx delete a record by id in the database using the provided transaction
 func (d *configDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error {
-	err := tx.WithContext(ctx).Where("id = ?", id).Delete(&model.Config{}).Error
+	table, err := d.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	err = tx.WithContext(ctx).Where("id = ?", id).Delete(&model.Config{}).Error
 	if err != nil {
 		return err
 	}
 
 	// delete cache
-	_ = d.deleteCache(ctx, id)
+	_ = d.deleteCache(ctx, table)
 
 	return nil
 }
@@ -294,7 +376,16 @@ func (d *configDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.Co
 	err := d.updateDataByID(ctx, tx, table)
 
 	// delete cache
-	_ = d.deleteCache(ctx, table.ID)
+	_ = d.deleteCache(ctx, table)
 
 	return err
+}
+
+func (d *configDao) MakePathByConfig(ctx context.Context, path, key string) string {
+	host := ""
+	config, _ := d.GetByKey(ctx, key)
+	if config != nil {
+		host = config.Value
+	}
+	return util.ImageMakePath(path, host)
 }

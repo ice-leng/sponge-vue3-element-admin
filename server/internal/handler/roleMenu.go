@@ -199,7 +199,7 @@ func (h *roleMenuHandler) GetByID(c *gin.Context) {
 	}
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 
-	response.Success(c, gin.H{"roleMenu": data})
+	response.Success(c, data)
 }
 
 // List of records by query parameters
@@ -210,7 +210,7 @@ func (h *roleMenuHandler) GetByID(c *gin.Context) {
 // @Produce json
 // @Param request query types.ListRoleMenusRequest true "query parameters"
 // @Success 200 {object} types.ListRoleMenusReply{}
-// @Router /api/v1/roleMenu/list [get]
+// @Router /api/v1/roleMenu [get]
 // @Security BearerAuth
 func (h *roleMenuHandler) List(c *gin.Context) {
 	request := &types.ListRoleMenusRequest{}

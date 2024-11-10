@@ -20,7 +20,7 @@
             <el-col v-show="!item.hidden" v-bind="item.col">
               <el-form-item :label="item.label" :prop="item.prop">
                 <!-- Label -->
-                <template #label v-if="item.tips">
+                <template v-if="item.tips" #label>
                   <span>
                     {{ item.label }}
                     <el-tooltip
@@ -69,8 +69,8 @@
                 <!-- switch 开关 -->
                 <template v-else-if="item.type === 'switch'">
                   <el-switch
-                    inline-prompt
                     v-model="formData[item.prop]"
+                    inline-prompt
                     v-bind="item.attrs"
                   />
                 </template>
@@ -122,7 +122,7 @@
                     :prop="item.prop"
                     :formData="formData"
                     :attrs="item.attrs"
-                  ></slot>
+                  />
                 </template>
               </el-form-item>
             </el-col>
@@ -133,7 +133,7 @@
       <template #footer>
         <div>
           <el-button type="primary" @click="handleSubmit">确 定</el-button>
-          <el-button @click="handleCloseModal">取 消</el-button>
+          <el-button @click="handleClose">取 消</el-button>
         </div>
       </template>
     </el-drawer>
@@ -165,7 +165,7 @@
               <el-col v-show="!item.hidden" v-bind="item.col">
                 <el-form-item :label="item.label" :prop="item.prop">
                   <!-- Label -->
-                  <template #label v-if="item.tips">
+                  <template v-if="item.tips" #label>
                     <span>
                       {{ item.label }}
                       <el-tooltip
@@ -220,8 +220,8 @@
                   <!-- switch 开关 -->
                   <template v-else-if="item.type === 'switch'">
                     <el-switch
-                      inline-prompt
                       v-model="formData[item.prop]"
+                      inline-prompt
                       v-bind="item.attrs"
                     />
                   </template>
@@ -273,7 +273,7 @@
                       :prop="item.prop"
                       :formData="formData"
                       :attrs="item.attrs"
-                    ></slot>
+                    />
                   </template>
                 </el-form-item>
               </el-col>
@@ -285,7 +285,7 @@
       <template #footer>
         <div style="padding-right: var(--el-dialog-padding-primary)">
           <el-button type="primary" @click="handleSubmit">确 定</el-button>
-          <el-button @click="handleCloseModal">取 消</el-button>
+          <el-button @click="handleClose">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -399,15 +399,19 @@ const handleSubmit = useThrottleFn(() => {
         }
         ElMessage.success(msg);
         emit("submitClick");
-        handleCloseModal();
+        handleClose();
       });
     }
   });
 }, 3000);
 
+// 隐藏弹窗
+function handleClose() {
+  modalVisible.value = false;
+}
+
 // 关闭弹窗
 function handleCloseModal() {
-  modalVisible.value = false;
   formRef.value?.resetFields();
   nextTick(() => {
     formRef.value?.clearValidate();

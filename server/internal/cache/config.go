@@ -29,6 +29,11 @@ type ConfigCache interface {
 	MultiSet(ctx context.Context, data []*model.Config, duration time.Duration) error
 	Del(ctx context.Context, id uint64) error
 	SetCacheWithNotFound(ctx context.Context, id uint64) error
+
+	SetByKey(ctx context.Context, key string, data *model.Config, duration time.Duration) error
+	GetByKey(ctx context.Context, key string) (*model.Config, error)
+	DelByKey(ctx context.Context, key string) error
+	SetCacheByKeyWithNotFound(ctx context.Context, key string) error
 }
 
 // configCache define a cache struct
@@ -61,6 +66,10 @@ func NewConfigCache(cacheType *model.CacheType) ConfigCache {
 // GetConfigCacheKey cache key
 func (c *configCache) GetConfigCacheKey(id uint64) string {
 	return configCachePrefixKey + utils.Uint64ToStr(id)
+}
+
+func (c *configCache) GetConfigCacheKeyByKey(key string) string {
+	return configCachePrefixKey + key
 }
 
 // Set write to cache
@@ -141,6 +150,49 @@ func (c *configCache) Del(ctx context.Context, id uint64) error {
 // SetCacheWithNotFound set empty cache
 func (c *configCache) SetCacheWithNotFound(ctx context.Context, id uint64) error {
 	cacheKey := c.GetConfigCacheKey(id)
+	err := c.cache.SetCacheWithNotFound(ctx, cacheKey)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SetByKey write to cache
+func (c *configCache) SetByKey(ctx context.Context, key string, data *model.Config, duration time.Duration) error {
+	if data == nil || key == "" {
+		return nil
+	}
+	cacheKey := c.GetConfigCacheKeyByKey(key)
+	err := c.cache.Set(ctx, cacheKey, data, duration)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetByKey cache value
+func (c *configCache) GetByKey(ctx context.Context, key string) (*model.Config, error) {
+	var data *model.Config
+	cacheKey := c.GetConfigCacheKeyByKey(key)
+	err := c.cache.Get(ctx, cacheKey, &data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+// DelByKey delete cache
+func (c *configCache) DelByKey(ctx context.Context, key string) error {
+	cacheKey := c.GetConfigCacheKeyByKey(key)
+	err := c.cache.Del(ctx, cacheKey)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *configCache) SetCacheByKeyWithNotFound(ctx context.Context, key string) error {
+	cacheKey := c.GetConfigCacheKeyByKey(key)
 	err := c.cache.SetCacheWithNotFound(ctx, cacheKey)
 	if err != nil {
 		return err

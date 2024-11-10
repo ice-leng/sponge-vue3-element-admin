@@ -28,6 +28,7 @@ type RoleMenuDao interface {
 	GetByID(ctx context.Context, id uint64) (*model.RoleMenu, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.RoleMenu, int64, error)
 	GetByParams(ctx context.Context, params *types.ListRoleMenusRequest) ([]*model.RoleMenu, int64, error)
+	UpdateByRoleIds(ctx context.Context, roleId uint64, menuIds []uint64) error
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.RoleMenu) (uint64, error)
 	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
@@ -214,7 +215,7 @@ func (d *roleMenuDao) GetByColumns(ctx context.Context, params *query.Params) ([
 
 	var total int64
 	if params.Sort != "ignore count" { // determine if count is required
-		err = d.db.WithContext(ctx).Model(&model.RoleMenu{}).Select([]string{"id"}).Where(queryStr, args...).Count(&total).Error
+		err = d.db.WithContext(ctx).Model(&model.RoleMenu{}).Where(queryStr, args...).Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}
@@ -241,9 +242,13 @@ func (d *roleMenuDao) GetByParams(ctx context.Context, request *types.ListRoleMe
 		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime)
 	}
 
+	if request.RoleId != nil {
+		db = db.Where("role_id = ?", request.RoleId)
+	}
+
 	var total int64 = 0
 	if request.Sort != "ignore count" { // determine if count is required
-		err := db.Select([]string{"id"}).Count(&total).Error
+		err := db.Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}
@@ -272,7 +277,7 @@ func (d *roleMenuDao) CreateByTx(ctx context.Context, tx *gorm.DB, table *model.
 
 // DeleteByTx delete a record by id in the database using the provided transaction
 func (d *roleMenuDao) DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error {
-	err := tx.WithContext(ctx).Where("id = ?", id).Delete(&model.RoleMenu{}).Error
+	err := tx.WithContext(ctx).Where("id = ?", id).Unscoped().Delete(&model.RoleMenu{}).Error
 	if err != nil {
 		return err
 	}
@@ -291,4 +296,27 @@ func (d *roleMenuDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.
 	_ = d.deleteCache(ctx, table.ID)
 
 	return err
+}
+
+func (d *roleMenuDao) UpdateByRoleIds(ctx context.Context, roleId uint64, menuIds []uint64) error {
+	tx := d.db.Begin()
+
+	if err := d.DeleteByTx(ctx, tx, roleId); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	var items []model.RoleMenu
+	for _, menuId := range menuIds {
+		items = append(items, model.RoleMenu{
+			RoleID: roleId,
+			MenuID: menuId,
+		})
+	}
+	if err := tx.WithContext(ctx).Create(items).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
 }

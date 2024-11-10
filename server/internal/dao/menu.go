@@ -28,6 +28,8 @@ type MenuDao interface {
 	GetByID(ctx context.Context, id uint64) (*model.Menu, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Menu, int64, error)
 	GetByParams(ctx context.Context, params *types.ListMenusRequest) ([]*model.Menu, int64, error)
+	Routes(ctx context.Context, roleIds []uint64) ([]model.MenuItem, error)
+	Options(ctx context.Context, request *types.OptionMenusRequest) ([]types.Options, error)
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Menu) (uint64, error)
 	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
@@ -247,7 +249,7 @@ func (d *menuDao) GetByColumns(ctx context.Context, params *query.Params) ([]*mo
 
 	var total int64
 	if params.Sort != "ignore count" { // determine if count is required
-		err = d.db.WithContext(ctx).Model(&model.Menu{}).Select([]string{"id"}).Where(queryStr, args...).Count(&total).Error
+		err = d.db.WithContext(ctx).Model(&model.Menu{}).Where(queryStr, args...).Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}
@@ -274,9 +276,17 @@ func (d *menuDao) GetByParams(ctx context.Context, request *types.ListMenusReque
 		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime)
 	}
 
+	if request.ParentID != nil {
+		db = db.Where("parent_id = ?", *request.ParentID)
+	}
+
+	if request.Keywords != "" {
+		db = db.Where("name LIKE ?", "%"+request.Keywords+"%")
+	}
+
 	var total int64 = 0
 	if request.Sort != "ignore count" { // determine if count is required
-		err := db.Select([]string{"id"}).Count(&total).Error
+		err := db.Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}
@@ -324,4 +334,115 @@ func (d *menuDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.Menu
 	_ = d.deleteCache(ctx, table.ID)
 
 	return err
+}
+
+func (d *menuDao) getListByPid(ctx context.Context, pid uint64, roleIds []uint64, onlyParent bool) ([]*model.Menu, error) {
+	db := d.db.WithContext(ctx).
+		Model(&model.Menu{}).
+		Where("t_menu.parent_id = ?", pid).
+		Order("t_menu.sort asc")
+	if roleIds != nil && len(roleIds) > 0 {
+		db = db.Joins("join t_role_menu on t_role_menu.menu_id = t_menu.id").
+			Where("t_role_menu.role_id in ?", roleIds).
+			Group("t_menu.id")
+	}
+	if onlyParent {
+		db = db.Where("t_menu.type in ?", []string{"CATALOG", "MENU"})
+	}
+	var records []*model.Menu
+	err := db.Find(&records).Error
+	return records, err
+}
+
+func (d *menuDao) getChildren(ctx context.Context, pid uint64, roleIds []uint64) ([]model.Children, error) {
+	var items []model.Children
+	menus, err := d.getListByPid(ctx, pid, roleIds, false)
+	if err != nil {
+		return make([]model.Children, 0), err
+	}
+	for _, menu := range menus {
+		params := menu.Params
+		meta := model.ChildrenMeta{
+			Title:      menu.Name,
+			Icon:       menu.Icon,
+			Hidden:     menu.Visible != 1,
+			KeepAlive:  menu.KeepAlive == 1,
+			AlwaysShow: menu.AlwaysShow == 1,
+			Params:     &params,
+		}
+		item := model.Children{
+			Path:      menu.Path,
+			Name:      menu.Path,
+			Component: menu.Component,
+			Meta:      meta,
+		}
+		items = append(items, item)
+	}
+	return items, nil
+}
+
+func (d *menuDao) Routes(ctx context.Context, roleIds []uint64) ([]model.MenuItem, error) {
+	tops, err := d.getListByPid(ctx, 0, roleIds, false)
+	if err != nil {
+		return nil, err
+	}
+	var items []model.MenuItem
+	for _, top := range tops {
+		params := top.Params
+		meta := model.MenuMeta{
+			Title:      top.Name,
+			Icon:       top.Icon,
+			Hidden:     top.Visible != 1,
+			AlwaysShow: top.AlwaysShow == 1,
+			Params:     &params,
+		}
+		children, _ := d.getChildren(ctx, top.ID, roleIds)
+		item := model.MenuItem{
+			Path:      top.Path,
+			Name:      top.Path,
+			Component: top.Component,
+			Redirect:  top.Redirect,
+			Meta:      meta,
+			Children:  children,
+		}
+		items = append(items, item)
+	}
+	return items, nil
+}
+
+func (d *menuDao) childrenOption(ctx context.Context, pid uint64, request *types.OptionMenusRequest) ([]types.Options, error) {
+	items := make([]types.Options, 0)
+	menus, err := d.getListByPid(ctx, pid, nil, request.OnlyParent)
+	if err != nil {
+		return items, err
+	}
+	for _, menu := range menus {
+		children, _ := d.childrenOption(ctx, menu.ID, request)
+		item := types.Options{
+			Label:    menu.Name,
+			Value:    menu.ID,
+			Children: children,
+		}
+		items = append(items, item)
+	}
+	return items, nil
+}
+
+func (d *menuDao) Options(ctx context.Context, request *types.OptionMenusRequest) ([]types.Options, error) {
+	tops, err := d.getListByPid(ctx, 0, nil, request.OnlyParent)
+	if err != nil {
+		return make([]types.Options, 0), err
+	}
+
+	var items []types.Options
+	for _, top := range tops {
+		children, _ := d.childrenOption(ctx, top.ID, request)
+		item := types.Options{
+			Label:    top.Name,
+			Value:    top.ID,
+			Children: children,
+		}
+		items = append(items, item)
+	}
+	return items, nil
 }

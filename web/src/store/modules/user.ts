@@ -1,15 +1,13 @@
-import AuthAPI, { LoginData } from "@/api/auth";
-import PlatformAPI, { PlatformInfo } from "@/api/platform";
-import { resetRouter } from "@/router";
 import { store } from "@/store";
+import { usePermissionStoreHook } from "@/store/modules/permission";
 
-import { TOKEN_KEY } from "@/enums/CacheEnum";
+import AuthAPI, { type LoginData } from "@/api/auth";
+import PlatformAPI, { type PlatformInfo } from "@/api/system/platform";
+
+import { setToken, clearToken } from "@/utils/auth";
 
 export const useUserStore = defineStore("user", () => {
-  const user = ref<PlatformInfo>({
-    roles: [],
-    perms: [],
-  });
+  const userInfo = useStorage<PlatformInfo>("userInfo", {} as PlatformInfo);
 
   /**
    * 登录
@@ -22,7 +20,7 @@ export const useUserStore = defineStore("user", () => {
       AuthAPI.login(loginData)
         .then((data) => {
           const { tokenType, accessToken } = data;
-          localStorage.setItem(TOKEN_KEY, tokenType + " " + accessToken); // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
+          setToken(tokenType + " " + accessToken); // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
           resolve();
         })
         .catch((error) => {
@@ -31,7 +29,11 @@ export const useUserStore = defineStore("user", () => {
     });
   }
 
-  // 获取信息(用户昵称、头像、角色集合、权限集合)
+  /**
+   * 获取用户信息
+   *
+   * @returns {UserInfo} 用户信息
+   */
   function getUserInfo() {
     return new Promise<PlatformInfo>((resolve, reject) => {
       PlatformAPI.getInfo()
@@ -40,11 +42,7 @@ export const useUserStore = defineStore("user", () => {
             reject("Verification failed, please Login again.");
             return;
           }
-          if (!data.roles || data.roles.length <= 0) {
-            reject("getUserInfo: roles must be a non-null array!");
-            return;
-          }
-          Object.assign(user.value, { ...data });
+          Object.assign(userInfo.value, { ...data });
           resolve(data);
         })
         .catch((error) => {
@@ -53,13 +51,14 @@ export const useUserStore = defineStore("user", () => {
     });
   }
 
-  // user logout
+  /**
+   * 登出
+   */
   function logout() {
     return new Promise<void>((resolve, reject) => {
       AuthAPI.logout()
         .then(() => {
-          localStorage.setItem(TOKEN_KEY, "");
-          location.reload(); // 清空路由
+          clearUserSession();
           resolve();
         })
         .catch((error) => {
@@ -68,22 +67,25 @@ export const useUserStore = defineStore("user", () => {
     });
   }
 
-  // remove token
-  function resetToken() {
-    console.log("resetToken");
+  /**
+   *  清理用户会话
+   *
+   * @returns
+   */
+  function clearUserSession() {
     return new Promise<void>((resolve) => {
-      localStorage.setItem(TOKEN_KEY, "");
-      resetRouter();
+      clearToken();
+      usePermissionStoreHook().resetRouter();
       resolve();
     });
   }
 
   return {
-    user,
-    login,
+    userInfo,
     getUserInfo,
+    login,
     logout,
-    resetToken,
+    clearUserSession,
   };
 });
 

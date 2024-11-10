@@ -1,23 +1,29 @@
+
 <div align="center">
-    <img src="https://img.shields.io/badge/Vue-3.4.35-brightgreen.svg"/>
-    <img src="https://img.shields.io/badge/Vite-5.3.5-green.svg"/>
-    <img src="https://img.shields.io/badge/Element Plus-2.7.8-blue.svg"/>
-    <img src="https://img.shields.io/badge/license-MIT-green.svg"/>
-    <a href="https://gitee.com/youlaiorg" target="_blank">
-        <img src="https://img.shields.io/badge/Author-有来开源组织-orange.svg"/>
-    </a>
-    <div align="center"> 中文 | <a href="./README.en-US.md">English</div>
+  <img alt="vue3-element-admin" width="80" height="80" src="./src/assets/logo.png">
+  <h1>vue3-element-admin</h1>
+
+  <img src="https://img.shields.io/badge/Vue-3.5.11-brightgreen.svg"/>
+  <img src="https://img.shields.io/badge/Vite-5.4.8-green.svg"/>
+  <img src="https://img.shields.io/badge/Element Plus-2.8.5-blue.svg"/>
+  <img src="https://img.shields.io/badge/license-MIT-green.svg"/>
+  <a href="https://gitee.com/youlaiorg" target="_blank">
+      <img src="https://img.shields.io/badge/Author-有来开源组织-orange.svg"/>
+  </a>
 </div>
 
 ![](https://foruda.gitee.com/images/1708618984641188532/a7cca095_716974.png "rainbow.png")
 
+
 <div align="center">
-  <a target="_blank" href="http://vue3.youlai.tech">👀 在线预览</a> |  <a target="_blank" href="https://juejin.cn/post/7228990409909108793">📖 阅读文档</a>  
+  <a target="_blank" href="http://vue3.youlai.tech">🔍 在线预览</a> |  <a target="_blank" href="https://juejin.cn/post/7228990409909108793">📖 阅读文档</a> | <a href="./README.en-US.md">🌐English
 </div>
+
+
 
 ## 项目简介
 
-[vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) 是基于 Vue3 + Vite5+ TypeScript5 + Element-Plus + Pinia 等主流技术栈构建的免费开源的中后台管理的前端模板（配套[Java 后端源码](https://gitee.com/youlaiorg/youlai-boot)）。
+[vue3-element-admin](https://gitcode.com/youlai/vue3-element-admin) 是基于 Vue3 + Vite5+ TypeScript5 + Element-Plus + Pinia 等主流技术栈构建的免费开源的中后台管理的前端模板（配套[Java 后端源码](https://gitee.com/youlaiorg/youlai-boot)）。
 
 
 ## 项目特色
@@ -42,13 +48,13 @@
 
 ![接口文档](https://foruda.gitee.com/images/1687755822857820115/96054330_716974.png)
 
-## 项目地址
+## 项目源码
 
-| 项目 | Gitee                                                        | Github                                                       | 
-| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ | 
-| 前端 | [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) | [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin) | [vue3-element-admin](https://gitcode.net/youlai/vue3-element-admin) |
-| 精简版 | [vue3-element-admin-thin](https://gitee.com/cshaptx4869/vue3-element-admin-thin) | [vue3-element-admin-thin](https://github.com/youlaitech/vue3-element-admin-thin) |
-| 后端 | [youlai-boot](https://gitee.com/youlaiorg/youlai-boot)       | [youlai-boot](https://github.com/haoxianrui/youlai-boot.git) |
+| 项目 | Gitee   | Github    | GitCode|
+| ---- | ----| ---- | ---- | 
+| 前端 | [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) | [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin) | [vue3-element-admin](https://gitcode.com/youlai/vue3-element-admin) |
+| 精简版 | [vue3-element-admin-thin](https://gitee.com/cshaptx4869/vue3-element-admin-thin) | [vue3-element-admin-thin](https://github.com/youlaitech/vue3-element-admin-thin) |-|
+| 后端 | [youlai-boot](https://gitee.com/youlaiorg/youlai-boot)       | [youlai-boot](https://github.com/haoxianrui/youlai-boot.git) |[youlai-boot](https://gitcode.com/youlai/youlai-boot.git)|
 
 ## 环境准备
 
@@ -101,8 +107,8 @@ server {
 	}
 	# 反向代理配置
 	location /prod-api/ {
-            # vapi.youlai.tech 替换后端API地址，注意保留后面的斜杠 /
-            proxy_pass http://vapi.youlai.tech/; 
+      # api.youlai.tech 替换后端API地址，注意保留后面的斜杠 /
+      proxy_pass http://api.youlai.tech/; 
 	}
 }
 ```
@@ -117,7 +123,7 @@ server {
 
 1. 获取基于 `Java` 和 `SpringBoot` 开发的后端 [youlai-boot](https://gitee.com/youlaiorg/youlai-boot.git) 源码。
 2. 根据后端工程的说明文档 [README.md](https://gitee.com/youlaiorg/youlai-boot#%E9%A1%B9%E7%9B%AE%E8%BF%90%E8%A1%8C) 完成本地启动。
-3. 修改 `.env.development` 文件中的 `VITE_APP_API_URL` 的值，将其从 http://vapi.youlai.tech 更改为 http://localhost:8989。
+3. 修改 `.env.development` 文件中的 `VITE_APP_API_URL` 的值，将其从 https://api.youlai.tech 更改为 http://localhost:8989 即可。
 
 
 ## 注意事项
@@ -170,6 +176,9 @@ Thanks to all the contributors!
 
 [![contributors](https://contrib.rocks/image?repo=youlaitech/vue3-element-admin)](https://github.com/youlaitech/vue3-element-admin/graphs/contributors)
 
+## G-Star
+
+![](https://foruda.gitee.com/images/1728577513089814203/95f2a70d_716974.jpeg)
 
 ## 交流群🚀
 

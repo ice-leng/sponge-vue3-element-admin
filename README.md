@@ -7,7 +7,7 @@ sponge admin
 
 ## 初始化 数据库
 ```mysql
-    source server/deployments/sql/data.sql
+    source server/init/admin.sql
 ```
 ## 前端 使用, 如有问题请移驾到 [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin)
 ```npm
@@ -16,7 +16,7 @@ sponge admin
     npm dev
 ```
 ## [sponge 安装](https://github.com/ice-leng/sponge)
-目前只实现 通过web sql 生成代码。
+目前只实现 通过web sql 生成代码。   没实现 没实现 没实现 说三遍
 ```git
     git clone https://github.com/ice-leng/sponge.git 
     git checkout vue3-element-admin

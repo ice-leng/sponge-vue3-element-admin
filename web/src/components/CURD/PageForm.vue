@@ -11,7 +11,7 @@
         <el-col v-show="!item.hidden" v-bind="item.col">
           <el-form-item :label="item.label" :prop="item.prop">
             <!-- Label -->
-            <template #label v-if="item.tips">
+            <template v-if="item.tips" #label>
               <span>
                 {{ item.label }}
                 <el-tooltip
@@ -89,7 +89,7 @@
                 :prop="item.prop"
                 :formData="formData"
                 :attrs="item.attrs"
-              ></slot>
+              />
             </template>
           </el-form-item>
         </el-col>
@@ -149,7 +149,7 @@ prepareFuncs.forEach((func) => func());
 
 // 获取表单数据
 function getFormData(key?: string) {
-  return key === undefined ? formData : formData[key] ?? undefined;
+  return key === undefined ? formData : (formData[key] ?? undefined);
 }
 
 // 设置表单值

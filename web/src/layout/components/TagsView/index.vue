@@ -6,8 +6,8 @@
       @wheel.prevent="handleScroll"
     >
       <router-link
-        ref="tagRef"
         v-for="tag in visitedViews"
+        ref="tagRef"
         :key="tag.fullPath"
         :class="'tags-item ' + (tagsViewStore.isActive(tag) ? 'active' : '')"
         :to="{ path: tag.path, query: tag.query }"
@@ -15,12 +15,13 @@
         @contextmenu.prevent="openContentMenu(tag, $event)"
       >
         {{ translateRouteTitle(tag.title) }}
-        <i-ep-close
-          class="close-icon"
-          size="12px"
+        <el-icon
           v-if="!isAffix(tag)"
+          class="tag-close-icon"
           @click.prevent.stop="closeSelectedTag(tag)"
-        />
+        >
+          <Close />
+        </el-icon>
       </router-link>
     </el-scrollbar>
 
@@ -382,7 +383,9 @@ onMounted(() => {
       margin-right: 15px;
     }
 
-    .close-icon {
+    .tag-close-icon {
+      vertical-align: -0.15em;
+      cursor: pointer;
       border-radius: 50%;
 
       &:hover {
@@ -405,7 +408,7 @@ onMounted(() => {
         border-radius: 50%;
       }
 
-      .close-icon:hover {
+      .tag-close-icon:hover {
         color: var(--el-color-primary);
         background-color: var(--el-fill-color-light);
       }

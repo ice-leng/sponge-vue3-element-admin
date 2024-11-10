@@ -26,8 +26,10 @@ type RoleDao interface {
 	DeleteByIDs(ctx context.Context, ids []uint64) error
 	UpdateByID(ctx context.Context, table *model.Role) error
 	GetByID(ctx context.Context, id uint64) (*model.Role, error)
+	GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.Role, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Role, int64, error)
 	GetByParams(ctx context.Context, params *types.ListRolesRequest) ([]*model.Role, int64, error)
+	GetPermissionsByIds(ctx context.Context, ids []uint64) ([]string, error)
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Role) (uint64, error)
 	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
@@ -179,6 +181,88 @@ func (d *roleDao) GetByID(ctx context.Context, id uint64) (*model.Role, error) {
 	return nil, err
 }
 
+// GetByIDs get records by batch id
+func (d *roleDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.Role, error) {
+	// no cache
+	if d.cache == nil {
+		var records []*model.Role
+		err := d.db.WithContext(ctx).Where("id IN (?)", ids).Find(&records).Error
+		if err != nil {
+			return nil, err
+		}
+		itemMap := make(map[uint64]*model.Role)
+		for _, record := range records {
+			itemMap[record.ID] = record
+		}
+		return itemMap, nil
+	}
+
+	// get form cache or database
+	itemMap, err := d.cache.MultiGet(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	var missedIDs []uint64
+	for _, id := range ids {
+		_, ok := itemMap[id]
+		if !ok {
+			missedIDs = append(missedIDs, id)
+			continue
+		}
+	}
+
+	// get missed data
+	if len(missedIDs) > 0 {
+		// find the id of an active placeholder, i.e. an id that does not exist in database
+		var realMissedIDs []uint64
+		for _, id := range missedIDs {
+			_, err = d.cache.Get(ctx, id)
+			if errors.Is(err, cacheBase.ErrPlaceholder) {
+				continue
+			}
+			realMissedIDs = append(realMissedIDs, id)
+		}
+
+		if len(realMissedIDs) > 0 {
+			var missedData []*model.Role
+			err = d.db.WithContext(ctx).Where("id IN (?)", realMissedIDs).Find(&missedData).Error
+			if err != nil {
+				return nil, err
+			}
+
+			if len(missedData) > 0 {
+				for _, data := range missedData {
+					itemMap[data.ID] = data
+				}
+				err = d.cache.MultiSet(ctx, missedData, cache.RoleExpireTime)
+				if err != nil {
+					return nil, err
+				}
+			} else {
+				for _, id := range realMissedIDs {
+					_ = d.cache.SetCacheWithNotFound(ctx, id)
+				}
+			}
+		}
+	}
+
+	return itemMap, nil
+}
+
+func (d *roleDao) GetPermissionsByIds(ctx context.Context, ids []uint64) ([]string, error) {
+	var perms []string
+	err := d.db.WithContext(ctx).
+		Model(&model.Role{}).
+		Joins("LEFT JOIN t_role_menu as role_menu ON role_menu.role_id = t_role.id").
+		Joins("LEFT JOIN t_menu as menu ON menu.id = role_menu.menu_id").
+		Where("menu.perm != ?", "").
+		Where("t_role.id IN (?)", ids).
+		Pluck("menu.perm", &perms).
+		Error
+	return perms, err
+}
+
 // GetByColumns get paging records by column information,
 // Note: query performance degrades when table rows are very large because of the use of offset.
 //
@@ -220,7 +304,7 @@ func (d *roleDao) GetByColumns(ctx context.Context, params *query.Params) ([]*mo
 
 	var total int64
 	if params.Sort != "ignore count" { // determine if count is required
-		err = d.db.WithContext(ctx).Model(&model.Role{}).Select([]string{"id"}).Where(queryStr, args...).Count(&total).Error
+		err = d.db.WithContext(ctx).Model(&model.Role{}).Where(queryStr, args...).Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}
@@ -243,13 +327,13 @@ func (d *roleDao) GetByParams(ctx context.Context, request *types.ListRolesReque
 	page := query.NewPage(request.Page-1, request.PageSize, request.Sort)
 
 	db := d.db.WithContext(ctx).Model(&model.Role{}).Order(page.Sort())
-	if request.StartTime != "" && request.EndTime != "" {
-		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime)
+	if request.Status != nil {
+		db = db.Where("status = ?", request.Status)
 	}
 
 	var total int64 = 0
 	if request.Sort != "ignore count" { // determine if count is required
-		err := db.Select([]string{"id"}).Count(&total).Error
+		err := db.Count(&total).Error
 		if err != nil {
 			return nil, 0, err
 		}

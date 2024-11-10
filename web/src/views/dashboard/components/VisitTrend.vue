@@ -6,10 +6,13 @@
         <div class="flex-y-center">
           访问趋势
           <el-tooltip effect="dark" content="点击试试下载" placement="bottom">
-            <i-ep-download
-              class="cursor-pointer hover:color-#409eff ml-1"
+            <el-icon
+              class="cursor-pointer hover:color-#4080FF ml-1"
+              name="el-icon-download"
               @click="handleDownloadChart"
-            />
+            >
+              <Download />
+            </el-icon>
           </el-tooltip>
         </div>
 
@@ -24,13 +27,13 @@
       </div>
     </template>
 
-    <div :id="id" :class="className" :style="{ height, width }"></div>
+    <div :id="id" :class="className" :style="{ height, width }" />
   </el-card>
 </template>
 
 <script setup lang="ts">
 import * as echarts from "echarts";
-// import StatsAPI, { VisitTrendVO, VisitTrendQuery } from "@/api/log";
+import DashboardAPI, { EchartsVO, EchartsQuery } from "@/api/system/dashboard";
 
 const dataRange = ref(1);
 const chart: Ref<echarts.ECharts | null> = ref(null);
@@ -56,75 +59,75 @@ const props = defineProps({
   },
 });
 
-// /** 设置图表  */
-// const setChartOptions = (data: VisitTrendVO) => {
-//   if (!chart.value) {
-//     return;
-//   }
-//
-//   const options = {
-//     tooltip: {
-//       trigger: "axis",
-//     },
-//     legend: {
-//       data: ["浏览量(PV)", "IP"],
-//       bottom: 0,
-//     },
-//     grid: {
-//       left: "1%",
-//       right: "5%",
-//       bottom: "10%",
-//       containLabel: true,
-//     },
-//     xAxis: {
-//       type: "category",
-//       data: data.dates,
-//     },
-//     yAxis: {
-//       type: "value",
-//       splitLine: {
-//         show: true,
-//         lineStyle: {
-//           type: "dashed",
-//         },
-//       },
-//     },
-//     series: [
-//       {
-//         name: "浏览量(PV)",
-//         type: "line",
-//         data: data.pvList,
-//         areaStyle: {
-//           color: "rgba(64, 158, 255, 0.1)",
-//         },
-//         smooth: true,
-//         itemStyle: {
-//           color: "#409EFF",
-//         },
-//         lineStyle: {
-//           color: "#409EFF",
-//         },
-//       },
-//       {
-//         name: "IP",
-//         type: "line",
-//         data: data.ipList,
-//         areaStyle: {
-//           color: "rgba(103, 194, 58, 0.1)",
-//         },
-//         smooth: true,
-//         itemStyle: {
-//           color: "#67C23A",
-//         },
-//         lineStyle: {
-//           color: "#67C23A",
-//         },
-//       },
-//     ],
-//   };
-//
-//   chart.value.setOption(options);
-// };
+/** 设置图表  */
+const setChartOptions = (data: EchartsVO) => {
+  if (!chart.value) {
+    return;
+  }
+
+  const options = {
+    tooltip: {
+      trigger: "axis",
+    },
+    legend: {
+      data: ["浏览量(PV)", "IP"],
+      bottom: 0,
+    },
+    grid: {
+      left: "1%",
+      right: "5%",
+      bottom: "10%",
+      containLabel: true,
+    },
+    xAxis: {
+      type: "category",
+      data: data.dates,
+    },
+    yAxis: {
+      type: "value",
+      splitLine: {
+        show: true,
+        lineStyle: {
+          type: "dashed",
+        },
+      },
+    },
+    series: [
+      {
+        name: "浏览量(PV)",
+        type: "line",
+        data: data.pvList,
+        areaStyle: {
+          color: "rgba(64, 158, 255, 0.1)",
+        },
+        smooth: true,
+        itemStyle: {
+          color: "#4080FF",
+        },
+        lineStyle: {
+          color: "#4080FF",
+        },
+      },
+      {
+        name: "IP",
+        type: "line",
+        data: data.ipList,
+        areaStyle: {
+          color: "rgba(103, 194, 58, 0.1)",
+        },
+        smooth: true,
+        itemStyle: {
+          color: "#67C23A",
+        },
+        lineStyle: {
+          color: "#67C23A",
+        },
+      },
+    ],
+  };
+
+  chart.value.setOption(options);
+};
 
 /** 计算起止时间范围 */
 const calculateDateRange = () => {
@@ -150,19 +153,19 @@ const calculateDateRange = () => {
   return { startDate: formattedStartDate, endDate: formattedEndDate };
 };
 
-// /** 加载数据 */
-// const loadData = () => {
-//   const { startDate, endDate } = calculateDateRange();
-//   StatsAPI.getVisitTrend({
-//     startDate,
-//     endDate,
-//   } as VisitTrendQuery).then((data) => {
-//     setChartOptions(data);
-//   });
-// };
+/** 加载数据 */
+const loadData = () => {
+  const { startDate, endDate } = calculateDateRange();
+  DashboardAPI.getEcharts({
+    startDate,
+    endDate,
+  } as EchartsQuery).then((data) => {
+    setChartOptions(data);
+  });
+};
 
 const handleDateRangeChange = () => {
-  // loadData();
+  loadData();
 };
 
 /** 下载图表 */
@@ -187,7 +190,7 @@ const handleDownloadChart = () => {
     if (ctx) {
       ctx.drawImage(img, 0, 0, img.width, img.height);
       const link = document.createElement("a");
-      link.download = `访问趋势.png`;
+      link.download = "访问趋势.png";
       link.href = canvas.toDataURL("image/png", 0.9);
       document.body.appendChild(link);
       link.click();
@@ -209,7 +212,7 @@ onMounted(() => {
   chart.value = markRaw(
     echarts.init(document.getElementById(props.id) as HTMLDivElement)
   );
-  // loadData();
+  loadData();
 
   window.addEventListener("resize", handleResize);
 });

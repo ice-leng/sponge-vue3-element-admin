@@ -55,9 +55,9 @@ func NewRouter() *gin.Engine {
 
 	// init jwt middleware, you can replace it with your own jwt middleware
 	jwt.Init(
-	//jwt.WithExpire(time.Hour*24),
-	//jwt.WithSigningKey("123456"),
-	//jwt.WithSigningMethod(jwt.HS384),
+		jwt.WithExpire(time.Hour*2),
+		jwt.WithSigningKey("UxeY8GUv4CH8fH7hCQM9CA"),
+		jwt.WithSigningMethod(jwt.HS384),
 	)
 
 	// metrics middleware
@@ -95,6 +95,9 @@ func NewRouter() *gin.Engine {
 	r.GET("/ping", handlerfunc.Ping)
 	r.GET("/codes", handlerfunc.ListCodes)
 	r.GET("/config", gin.WrapF(errcode.ShowConfig([]byte(config.Show()))))
+
+	// static upload router
+	r.Static("/uploads", "./uploads")
 
 	if config.Get().App.Env != "prod" {
 		// register swagger routes, generate code via swag init

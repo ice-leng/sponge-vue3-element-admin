@@ -59,11 +59,9 @@ type UpdateRoleByIDReply struct {
 
 // GetRoleByIDReply only for api docs
 type GetRoleByIDReply struct {
-	Code int    `json:"code"` // return code
-	Msg  string `json:"msg"`  // return information description
-	Data struct {
-		Role RoleObjDetail `json:"role"`
-	} `json:"data"` // return data
+	Code int           `json:"code"` // return code
+	Msg  string        `json:"msg"`  // return information description
+	Data RoleObjDetail `json:"data"` // return data
 }
 
 // ListRolesRequest request params
@@ -71,6 +69,7 @@ type ListRolesRequest struct {
 	Page     int    `json:"page,omitempty" form:"page" binding:""`         // 分页
 	PageSize int    `json:"pageSize,omitempty" form:"pageSize" binding:""` // 分页大小
 	Sort     string `json:"sort,omitempty" form:"sort" binding:""`         // 排序
+	Status   *int   `json:"status" form:"status" binding:""`               // 状态
 
 	StartTime string `json:"startTime,omitempty" form:"startTime" binding:""` // 开始时间
 	EndTime   string `json:"endTime,omitempty" form:"endTime" binding:""`     // 结束时间
@@ -81,6 +80,7 @@ type ListRolesReply struct {
 	Code int    `json:"code"` // return code
 	Msg  string `json:"msg"`  // return information description
 	Data struct {
-		Roles []RoleObjDetail `json:"roles"`
+		List  []RoleObjDetail `json:"roles"`
+		Total int             `json:"total"`
 	} `json:"data"` // return data
 }

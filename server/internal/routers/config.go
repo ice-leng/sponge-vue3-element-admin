@@ -1,7 +1,9 @@
 package routers
 
 import (
+	"admin/internal/middlewares"
 	"github.com/gin-gonic/gin"
+	"github.com/zhufuyi/sponge/pkg/gin/middleware"
 
 	"admin/internal/handler"
 )
@@ -13,7 +15,7 @@ func init() {
 }
 
 func configRouter(group *gin.RouterGroup, h handler.ConfigHandler) {
-	g := group.Group("/config")
+	g := group.Group("/config", middleware.Auth(middleware.WithVerify(middlewares.VerifyToken), middleware.WithSwitchHTTPCode()))
 
 	// All the following routes use jwt authentication, you also can use middleware.Auth(middleware.WithVerify(fn))
 	//g.Use(middleware.Auth())
@@ -25,5 +27,5 @@ func configRouter(group *gin.RouterGroup, h handler.ConfigHandler) {
 	g.DELETE("/:id", h.DeleteByID) // [delete] /api/v1/config/:id
 	g.PUT("/:id", h.UpdateByID)    // [put] /api/v1/config/:id
 	g.GET("/:id", h.GetByID)       // [get] /api/v1/config/:id
-	g.GET("/list", h.List)         // [get] /api/v1/config/list
+	g.GET("", h.List)              // [get] /api/v1/config
 }

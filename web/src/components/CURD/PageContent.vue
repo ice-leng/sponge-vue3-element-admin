@@ -98,30 +98,30 @@
             <!-- 导出 -->
             <template v-else-if="item === 'exports'">
               <el-button
+                v-hasPerm="[`${contentConfig.pageName}:export`]"
                 icon="download"
                 circle
                 title="导出"
-                v-hasPerm="[`${contentConfig.pageName}:export`]"
                 @click="handleToolbar(item)"
               />
             </template>
             <!-- 导入 -->
             <template v-else-if="item === 'imports'">
               <el-button
+                v-hasPerm="[`${contentConfig.pageName}:import`]"
                 icon="upload"
                 circle
                 title="导入"
-                v-hasPerm="[`${contentConfig.pageName}:import`]"
                 @click="handleToolbar(item)"
               />
             </template>
             <!-- 搜索 -->
             <template v-else-if="item === 'search'">
               <el-button
+                v-hasPerm="[`${contentConfig.pageName}:query`]"
                 icon="search"
                 circle
                 title="搜索"
-                v-hasPerm="[`${contentConfig.pageName}:query`]"
                 @click="handleToolbar(item)"
               />
             </template>
@@ -130,10 +130,10 @@
           <template v-else-if="typeof item === 'object'">
             <template v-if="item.auth">
               <el-button
+                v-hasPerm="[`${contentConfig.pageName}:${item.auth}`]"
                 :icon="item.icon"
                 circle
                 :title="item.title"
-                v-hasPerm="[`${contentConfig.pageName}:${item.auth}`]"
                 @click="handleToolbar(item.name)"
               />
             </template>
@@ -151,6 +151,7 @@
     </div>
     <!-- 列表 -->
     <el-table
+      ref="tableRef"
       v-loading="loading"
       v-bind="contentConfig.table"
       :data="pageData"
@@ -245,7 +246,7 @@
             </template>
             <!-- 格式化为百分比 -->
             <template v-else-if="col.templet === 'percent'">
-              <template v-if="col.prop"> {{ scope.row[col.prop] }}% </template>
+              <template v-if="col.prop">{{ scope.row[col.prop] }}%</template>
             </template>
             <!-- 显示图标 -->
             <template v-else-if="col.templet === 'icon'">
@@ -332,7 +333,7 @@
                 :name="col.slotName ?? col.prop"
                 :prop="col.prop"
                 v-bind="scope"
-              ></slot>
+              />
             </template>
           </template>
         </el-table-column>
@@ -437,9 +438,9 @@
         >
           <el-form-item label="文件名" prop="files">
             <el-upload
-              class="w-full"
               ref="uploadRef"
               v-model:file-list="importFormData.files"
+              class="w-full"
               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               :drag="true"
               :limit="1"
@@ -448,7 +449,8 @@
             >
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
-                将文件拖到此处，或<em>点击上传</em>
+                <span>将文件拖到此处，或</span>
+                <em>点击上传</em>
               </div>
               <template #tip>
                 <div class="el-upload__tip">
@@ -496,6 +498,7 @@ import {
   type UploadInstance,
   type UploadRawFile,
   type UploadUserFile,
+  type TableInstance,
 } from "element-plus";
 import ExcelJS from "exceljs";
 import { reactive, ref } from "vue";
@@ -576,6 +579,8 @@ const request = props.contentConfig.request ?? {
   limitName: "pageSize",
 };
 
+const tableRef = ref<TableInstance>();
+
 // 行选中
 const selectionData = ref<IObject[]>([]);
 // 删除ID集合 用于批量删除
@@ -606,6 +611,9 @@ function handleDelete(id?: number | string) {
     if (props.contentConfig.deleteAction) {
       props.contentConfig.deleteAction(ids).then(() => {
         ElMessage.success("删除成功");
+        removeIds.value = [];
+        //清空选中项
+        tableRef.value?.clearSelection();
         handleRefresh(true);
       });
     } else {
@@ -939,7 +947,7 @@ function handleFilterChange(newFilters: any) {
   emit("filterChange", filterParams);
 }
 
-// 获取涮选条件
+// 获取筛选条件
 function getFilterParams() {
   return filterParams;
 }

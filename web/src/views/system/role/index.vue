@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
-    <div class="search-container">
+    <div class="search-bar">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-form-item prop="keywords" label="角色名称">
+        <el-form-item prop="keywords" label="关键字">
           <el-input
-            v-model="queryParams.name"
+            v-model="queryParams.keywords"
             placeholder="角色名称"
             clearable
             @keyup.enter="handleQuery"
@@ -13,35 +13,32 @@
 
         <el-form-item>
           <el-button type="primary" @click="handleQuery">
-            <i-ep-search />
+            <template #icon><Search /></template>
             搜索
           </el-button>
           <el-button @click="handleResetQuery">
-            <i-ep-refresh />
+            <template #icon><Refresh /></template>
             重置
           </el-button>
         </el-form-item>
       </el-form>
     </div>
 
-    <el-card shadow="never" class="table-container">
-      <template #header>
+    <el-card shadow="never">
+      <div class="mb-10px">
+        <el-button type="success" @click="handleOpenDialog()">
+          <template #icon><Plus /></template>
+          新增
+        </el-button>
         <el-button
-          v-hasPerm="['sys:role:add']"
-          type="success"
-          @click="handleOpenDialog()"
-          ><i-ep-plus />新增</el-button
-        >
-        <el-button
-          v-hasPerm="['sys:role:delete']"
           type="danger"
           :disabled="ids.length === 0"
           @click="handleDelete()"
         >
-          <i-ep-delete />
+          <template #icon><Delete /></template>
           删除
         </el-button>
-      </template>
+      </div>
 
       <el-table
         ref="dataTableRef"
@@ -67,33 +64,30 @@
         <el-table-column fixed="right" label="操作" width="220">
           <template #default="scope">
             <el-button
-              v-hasPerm="['sys:role:permission']"
               type="primary"
               size="small"
               link
+              icon="position"
               @click="handleOpenAssignPermDialog(scope.row)"
             >
-              <i-ep-position />
               分配权限
             </el-button>
             <el-button
-              v-hasPerm="['sys:role:edit']"
               type="primary"
               size="small"
               link
+              icon="edit"
               @click="handleOpenDialog(scope.row.id)"
             >
-              <i-ep-edit />
               编辑
             </el-button>
             <el-button
-              v-hasPerm="['sys:role:delete']"
               type="danger"
               size="small"
               link
+              icon="delete"
               @click="handleDelete(scope.row.id)"
             >
-              <i-ep-delete />
               删除
             </el-button>
           </template>
@@ -165,23 +159,25 @@
         <el-input
           v-model="permKeywords"
           clearable
-          class="w-[200px]"
+          class="w-[150px]"
           placeholder="菜单权限名称"
         >
           <template #prefix>
-            <i-ep-search />
+            <Search />
           </template>
         </el-input>
 
-        <div class="flex-center">
+        <div class="flex-center ml-5">
           <el-button type="primary" size="small" plain @click="togglePermTree">
-            <i-ep-switch />
+            <template #icon>
+              <Switch />
+            </template>
             {{ isExpanded ? "收缩" : "展开" }}
           </el-button>
           <el-checkbox
             v-model="parentChildLinked"
-            @change="handleparentChildLinkedChange"
             class="ml-5"
+            @change="handleparentChildLinkedChange"
           >
             父子联动
           </el-checkbox>
@@ -190,9 +186,11 @@
             <template #content>
               如果只需勾选菜单权限，不需要勾选子菜单或者按钮权限，请关闭父子联动
             </template>
-            <i-ep-QuestionFilled
+            <el-icon
               class="ml-1 color-[--el-color-primary] inline-block cursor-pointer"
-            />
+            >
+              <QuestionFilled />
+            </el-icon>
           </el-tooltip>
         </div>
       </div>
@@ -211,7 +209,6 @@
           {{ data.label }}
         </template>
       </el-tree>
-
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="handleAssignPermSubmit">
@@ -230,8 +227,12 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import RoleAPI, { RolePageVO, RoleForm, RolePageQuery } from "@/api/role";
-import MenuAPI from "@/api/menu";
+import RoleAPI, {
+  RolePageVO,
+  RoleForm,
+  RolePageQuery,
+} from "@/api/system/role";
+import MenuAPI from "@/api/system/menu";
 
 const queryFormRef = ref(ElForm);
 const roleFormRef = ref(ElForm);
@@ -260,14 +261,11 @@ const dialog = reactive({
 const formData = reactive<RoleForm>({
   sort: 1,
   status: 1,
-  code: "",
-  name: "",
 });
 
 const rules = reactive({
   name: [{ required: true, message: "请输入角色名称", trigger: "blur" }],
   code: [{ required: true, message: "请输入角色编码", trigger: "blur" }],
-  dataScope: [{ required: true, message: "请选择数据权限", trigger: "blur" }],
   status: [{ required: true, message: "请选择状态", trigger: "blur" }],
 });
 
@@ -284,7 +282,7 @@ const isExpanded = ref(true);
 
 const parentChildLinked = ref(true);
 
-/** 查询 */
+// 查询
 function handleQuery() {
   loading.value = true;
   RoleAPI.getPage(queryParams)
@@ -297,20 +295,19 @@ function handleQuery() {
     });
 }
 
-/** 重置查询 */
+// 重置查询
 function handleResetQuery() {
   queryFormRef.value.resetFields();
   queryParams.page = 1;
-  queryParams.name = undefined;
   handleQuery();
 }
 
-/** 行复选框选中记录选中ID集合 */
+// 行复选框选中
 function handleSelectionChange(selection: any) {
   ids.value = selection.map((item: any) => item.id);
 }
 
-/** 打开角色弹窗 */
+// 打开角色弹窗
 function handleOpenDialog(roleId?: number) {
   dialog.visible = true;
   if (roleId) {
@@ -323,7 +320,7 @@ function handleOpenDialog(roleId?: number) {
   }
 }
 
-/** 提交角色表单 */
+// 提交角色表单
 function handleSubmit() {
   roleFormRef.value.validate((valid: any) => {
     if (valid) {
@@ -350,7 +347,7 @@ function handleSubmit() {
   });
 }
 
-/** 关闭角色弹窗 */
+// 关闭弹窗
 function handleCloseDialog() {
   dialog.visible = false;
 
@@ -362,7 +359,7 @@ function handleCloseDialog() {
   formData.status = 1;
 }
 
-/** 删除角色 */
+// 删除角色
 function handleDelete(roleId?: number) {
   const roleIds = [roleId || ids.value].join(",");
   if (!roleIds) {
@@ -390,7 +387,7 @@ function handleDelete(roleId?: number) {
   );
 }
 
-/** 打开分配菜单权限弹窗 */
+// 打开分配菜单权限弹窗
 async function handleOpenAssignPermDialog(row: RolePageVO) {
   const roleId = row.id;
   if (roleId) {
@@ -417,7 +414,7 @@ async function handleOpenAssignPermDialog(row: RolePageVO) {
   }
 }
 
-/** 分配菜单权限提交 */
+// 分配菜单权限提交
 function handleAssignPermSubmit() {
   const roleId = checkedRole.value.id;
   if (roleId) {
@@ -438,7 +435,7 @@ function handleAssignPermSubmit() {
   }
 }
 
-/** 展开/收缩 菜单权限树  */
+// 展开/收缩 菜单权限树
 function togglePermTree() {
   isExpanded.value = !isExpanded.value;
   if (permTreeRef.value) {
@@ -452,7 +449,7 @@ function togglePermTree() {
   }
 }
 
-/** 权限筛选 */
+// 权限筛选
 watch(permKeywords, (val) => {
   permTreeRef.value!.filter(val);
 });
@@ -467,7 +464,7 @@ function handlePermFilter(
   return data.label.includes(value);
 }
 
-/** 父子菜单节点是否联动 change*/
+// 父子菜单节点是否联动
 function handleparentChildLinkedChange(val: any) {
   parentChildLinked.value = val;
 }

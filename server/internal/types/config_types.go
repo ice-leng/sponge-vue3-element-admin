@@ -59,11 +59,9 @@ type UpdateConfigByIDReply struct {
 
 // GetConfigByIDReply only for api docs
 type GetConfigByIDReply struct {
-	Code int    `json:"code"` // return code
-	Msg  string `json:"msg"`  // return information description
-	Data struct {
-		Config ConfigObjDetail `json:"config"`
-	} `json:"data"` // return data
+	Code int             `json:"code"` // return code
+	Msg  string          `json:"msg"`  // return information description
+	Data ConfigObjDetail `json:"data"` // return data
 }
 
 // ListConfigsRequest request params

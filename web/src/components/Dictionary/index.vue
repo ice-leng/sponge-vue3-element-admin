@@ -3,7 +3,6 @@
     v-model="selectedValue"
     :placeholder="placeholder"
     :disabled="disabled"
-    filterable
     clearable
     @change="handleChange"
   >
@@ -55,7 +54,7 @@ watch(
     } else if (typeof props.options[0].value === "string") {
       selectedValue.value = String(newModelValue);
     } else {
-      selectedValue.value = newModelValue;
+      selectedValue.value = String(newModelValue);
     }
   }
 );

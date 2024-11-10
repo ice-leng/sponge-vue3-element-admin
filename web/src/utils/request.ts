@@ -1,15 +1,17 @@
-import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
+import axios, {
+  type InternalAxiosRequestConfig,
+  type AxiosResponse,
+} from "axios";
+import qs from "qs";
 import { useUserStoreHook } from "@/store/modules/user";
 import { ResultEnum } from "@/enums/ResultEnum";
-import { TOKEN_KEY } from "@/enums/CacheEnum";
-import qs from "qs";
+import { getToken } from "@/utils/auth";
 
 // 创建 axios 实例
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 50000,
   headers: { "Content-Type": "application/json;charset=utf-8" },
-
   paramsSerializer: (params) => {
     return qs.stringify(params);
   },
@@ -18,7 +20,7 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const accessToken = localStorage.getItem(TOKEN_KEY);
+    const accessToken = getToken();
     if (accessToken) {
       config.headers.Authorization = accessToken;
     }
@@ -49,7 +51,7 @@ service.interceptors.response.use(
     return Promise.reject(new Error(msg || "Error"));
   },
   (error: any) => {
-    // 异常处理
+    // 异常处理 非 2xx 状态码 会进入这里
     if (error.response.data) {
       const { code, msg } = error.response.data;
       if (code === ResultEnum.TOKEN_INVALID) {
@@ -59,7 +61,7 @@ service.interceptors.response.use(
           type: "info",
         });
         useUserStoreHook()
-          .resetToken()
+          .clearUserSession()
           .then(() => {
             location.reload();
           });
@@ -71,5 +73,4 @@ service.interceptors.response.use(
   }
 );
 
-// 导出 axios 实例
 export default service;

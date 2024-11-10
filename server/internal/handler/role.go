@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"strings"
 
@@ -28,10 +29,14 @@ type RoleHandler interface {
 	UpdateByID(c *gin.Context)
 	GetByID(c *gin.Context)
 	List(c *gin.Context)
+	Options(c *gin.Context)
+	MenuIds(c *gin.Context)
+	Menus(c *gin.Context)
 }
 
 type roleHandler struct {
-	iDao dao.RoleDao
+	iDao         dao.RoleDao
+	iRoleMenuDao dao.RoleMenuDao
 }
 
 // NewRoleHandler creating the handler interface
@@ -40,6 +45,10 @@ func NewRoleHandler() RoleHandler {
 		iDao: dao.NewRoleDao(
 			model.GetDB(),
 			cache.NewRoleCache(model.GetCacheType()),
+		),
+		iRoleMenuDao: dao.NewRoleMenuDao(
+			model.GetDB(),
+			cache.NewRoleMenuCache(model.GetCacheType()),
 		),
 	}
 }
@@ -199,7 +208,7 @@ func (h *roleHandler) GetByID(c *gin.Context) {
 	}
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 
-	response.Success(c, gin.H{"role": data})
+	response.Success(c, data)
 }
 
 // List of records by query parameters
@@ -210,7 +219,7 @@ func (h *roleHandler) GetByID(c *gin.Context) {
 // @Produce json
 // @Param request query types.ListRolesRequest true "query parameters"
 // @Success 200 {object} types.ListRolesReply{}
-// @Router /api/v1/role/list [get]
+// @Router /api/v1/role [get]
 // @Security BearerAuth
 func (h *roleHandler) List(c *gin.Context) {
 	request := &types.ListRolesRequest{}
@@ -274,4 +283,100 @@ func convertRoles(fromValues []*model.Role) ([]*types.RoleObjDetail, error) {
 	}
 
 	return toValues, nil
+}
+
+// Options get role options
+// @Summary get role options
+// @Description get role options
+// @Tags role
+// @Accept json
+// @Produce json
+// @Success 200 {object} types.OptionsReply{}
+// @Router /api/v1/role/options [get]
+// @Security BearerAuth
+func (h *roleHandler) Options(c *gin.Context) {
+	ctx := middleware.WrapCtx(c)
+	status := 1
+	params := types.ListRolesRequest{
+		Sort:   "sort",
+		Status: &status,
+	}
+	roles, _, _ := h.iDao.GetByParams(ctx, &params)
+	var options []types.Options
+	for _, role := range roles {
+		options = append(options, types.Options{
+			Value: role.ID,
+			Label: role.Name,
+		})
+	}
+	response.Success(c, options)
+}
+
+// MenuIds get role menuIds
+// @Summary get role menuIds
+// @Description get role menuIds
+// @Tags role
+// @Accept json
+// @Produce json
+// @Success 200 {object} types.Result{}
+// @Router /api/v1/roles/{id}/menuIds [get]
+// @Security BearerAuth
+func (h *roleHandler) MenuIds(c *gin.Context) {
+	_, id, isAbort := getRoleIDFromPath(c)
+	if isAbort {
+		response.Error(c, ecode.InvalidParams)
+		return
+	}
+	var menuIds []uint64
+	params := types.ListRoleMenusRequest{
+		RoleId: &id,
+	}
+	ctx := middleware.WrapCtx(c)
+	roleMenus, _, _ := h.iRoleMenuDao.GetByParams(ctx, &params)
+
+	for _, roleMenu := range roleMenus {
+		menuIds = append(menuIds, roleMenu.MenuID)
+	}
+
+	response.Success(c, menuIds)
+}
+
+// Menus update permission
+// @Summary update permission
+// @Description update permission
+// @Tags role
+// @accept json
+// @Produce json
+// @Param id path string true "id"
+// @Success 200 {object} types.UpdateRoleByIDReply{}
+// @Router /api/v1/role/{id}/menus [put]
+// @Security BearerAuth
+func (h *roleHandler) Menus(c *gin.Context) {
+	_, id, isAbort := getRoleIDFromPath(c)
+	if isAbort {
+		response.Error(c, ecode.InvalidParams)
+		return
+	}
+
+	rawData, err := c.GetRawData()
+	if err != nil {
+		response.Error(c, ecode.InvalidParams)
+		return
+	}
+	var menuIds []uint64
+	err = json.Unmarshal(rawData, &menuIds)
+	if err != nil {
+		response.Error(c, ecode.InvalidParams)
+		return
+	}
+
+	ctx := middleware.WrapCtx(c)
+	err = h.iRoleMenuDao.UpdateByRoleIds(ctx, id, menuIds)
+	if err != nil {
+		logger.Error("UpdateByRoleId error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		return
+	}
+
+	response.Success(c)
 }

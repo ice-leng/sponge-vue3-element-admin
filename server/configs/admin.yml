@@ -14,7 +14,7 @@ app:
   enableTrace: false             # whether to turn on trace, true:enable, false:disable, if true jaeger configuration must be set
   tracingSamplingRate: 1.0       # tracing sampling rate, between 0 and 1, 0 means no sampling, 1 means sampling all links
   registryDiscoveryType: ""      # registry and discovery types: consul, etcd, nacos, if empty, registration and discovery are not used
-  cacheType: ""                  # cache type, if empty, the cache is not used, support for "memory" and "redis", if set to redis, must set redis configuration
+  cacheType: "redis"                  # cache type, if empty, the cache is not used, support for "memory" and "redis", if set to redis, must set redis configuration
 
 
 # http server settings
@@ -58,7 +58,7 @@ database:
 # redis settings
 redis:
   # dsn format, [user]:<pass>@127.0.0.1:6379/[db], the default user is default, redis version 6.0 and above only supports user.
-  dsn: "default:123456@192.168.3.37:6379/0"
+  dsn: "127.0.0.1:6379/0"
   dialTimeout: 10           # connection timeout, unit(second)
   readTimeout: 2            # read timeout, unit(second)
   writeTimeout: 2           # write timeout, unit(second)
