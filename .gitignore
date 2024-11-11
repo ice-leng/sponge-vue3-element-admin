@@ -24,3 +24,7 @@ server/*.iws
 
 server/cmd/admin/admin
 
+.vscode
+
+server/uploads/
+
