@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"admin/internal/pkg/util"
 	"encoding/json"
 	"errors"
+	"github.com/huandu/xstrings"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -201,7 +201,7 @@ func (h *menuHandler) GetByID(c *gin.Context) {
 		response.Error(c, ecode.ErrGetByIDMenu)
 		return
 	}
-	data.RouteName = util.UcFirst(data.Path)
+	data.RouteName = xstrings.FirstRuneToUpper(data.Path)
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 
 	response.Success(c, data)
