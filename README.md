@@ -12,14 +12,29 @@ sponge admin
 ## 前端 使用, 如有问题请移驾到 [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin)
 ```npm
     cd web
+    npm install pnpm -g
     pnpm install 
-    npm dev
+    pnpm dev 
 ```
-## [sponge 安装](https://github.com/ice-leng/sponge)
-目前只实现 通过web sql 生成代码。   没实现 没实现 没实现 说三遍
+## 服务端使用
+```shell
+    cd server
+    go mod tidy
+    make docs
+    make run
+```
+
+## [代码生成器](https://github.com/ice-leng/sponge)
 ```git
     git clone https://github.com/ice-leng/sponge.git 
     git checkout vue3-element-admin
     cd sponge/cmd/sponge
-    go run ./main.go init
+    go run ./main.go upgrade
+```
+
+## 代码生成器使用
+```shell
+   git clone https://github.com/ice-leng/sponge-vue3-element-admin.git
+   cd sponge-vue3-element-admin
+   sponge run
 ```
