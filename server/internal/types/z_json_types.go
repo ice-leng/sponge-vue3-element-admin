@@ -29,6 +29,9 @@ func (s *LocalStringArray) Scan(src interface{}) error {
 	if bytes, ok := src.([]byte); ok {
 		return json.Unmarshal(bytes, s)
 	}
+	if str, ok := src.(string); ok {
+		return json.Unmarshal([]byte(str), s)
+	}
 	return fmt.Errorf("cannot convert %v to StringArray", src)
 }
 
@@ -55,6 +58,9 @@ func (a *LocalIntArray) Scan(src interface{}) error {
 	if bytes, ok := src.([]byte); ok {
 		return json.Unmarshal(bytes, a)
 	}
+	if str, ok := src.(string); ok {
+		return json.Unmarshal([]byte(str), a)
+	}
 	return fmt.Errorf("cannot convert %v to IntArray", src)
 }
 
@@ -80,6 +86,9 @@ func (m LocalJSONMap) Value() (driver.Value, error) {
 func (m *LocalJSONMap) Scan(src interface{}) error {
 	if bytes, ok := src.([]byte); ok {
 		return json.Unmarshal(bytes, m)
+	}
+	if str, ok := src.(string); ok {
+		return json.Unmarshal([]byte(str), m)
 	}
 	return fmt.Errorf("cannot convert %v to JSONMap", src)
 }
