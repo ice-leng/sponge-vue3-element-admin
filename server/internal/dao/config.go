@@ -10,9 +10,9 @@ import (
 	"golang.org/x/sync/singleflight"
 	"gorm.io/gorm"
 
-	cacheBase "github.com/zhufuyi/sponge/pkg/cache"
-	"github.com/zhufuyi/sponge/pkg/ggorm/query"
-	"github.com/zhufuyi/sponge/pkg/utils"
+	cacheBase "github.com/go-dev-frame/sponge/pkg/cache"
+	"github.com/go-dev-frame/sponge/pkg/ggorm/query"
+	"github.com/go-dev-frame/sponge/pkg/utils"
 
 	"admin/internal/cache"
 	"admin/internal/model"

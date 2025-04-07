@@ -9,11 +9,11 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	"github.com/zhufuyi/sponge/pkg/ggorm"
-	"github.com/zhufuyi/sponge/pkg/goredis"
-	"github.com/zhufuyi/sponge/pkg/logger"
-	"github.com/zhufuyi/sponge/pkg/tracer"
-	"github.com/zhufuyi/sponge/pkg/utils"
+	"github.com/go-dev-frame/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/goredis"
+	"github.com/go-dev-frame/sponge/pkg/logger"
+	"github.com/go-dev-frame/sponge/pkg/tracer"
+	"github.com/go-dev-frame/sponge/pkg/utils"
 
 	"admin/internal/config"
 )

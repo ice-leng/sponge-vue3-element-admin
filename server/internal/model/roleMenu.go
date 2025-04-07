@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/zhufuyi/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/ggorm"
 )
 
 // RoleMenu 角色菜单关联

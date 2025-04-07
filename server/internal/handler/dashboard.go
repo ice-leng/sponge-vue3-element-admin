@@ -3,7 +3,7 @@ package handler
 import (
 	"admin/internal/types"
 	"github.com/gin-gonic/gin"
-	"github.com/zhufuyi/sponge/pkg/gin/response"
+	"github.com/go-dev-frame/sponge/pkg/gin/response"
 )
 
 type DashboardHandler interface {

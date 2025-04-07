@@ -7,8 +7,8 @@ import (
 	"admin/internal/model"
 	"context"
 	"github.com/gin-gonic/gin"
-	"github.com/zhufuyi/sponge/pkg/jwt"
-	"github.com/zhufuyi/sponge/pkg/utils"
+	"github.com/go-dev-frame/sponge/pkg/jwt"
+	"github.com/go-dev-frame/sponge/pkg/utils"
 	"time"
 )
 

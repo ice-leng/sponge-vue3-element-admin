@@ -4,7 +4,7 @@ import (
 	"admin/internal/handler"
 	"admin/internal/middlewares"
 	"github.com/gin-gonic/gin"
-	"github.com/zhufuyi/sponge/pkg/gin/middleware"
+	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
 )
 
 func init() {
@@ -14,7 +14,7 @@ func init() {
 }
 
 func uploadRouter(group *gin.RouterGroup, h handler.UploadHandler) {
-	g := group.Group("/upload", middleware.Auth(middleware.WithVerify(middlewares.VerifyToken), middleware.WithSwitchHTTPCode()))
+	g := group.Group("/upload", middleware.Auth(middleware.WithDefaultVerify(middlewares.VerifyToken), middleware.WithSwitchHTTPCode()))
 
 	// All the following routes use jwt authentication, you also can use middleware.Auth(middleware.WithVerify(fn))
 	//g.Use(middleware.Auth())

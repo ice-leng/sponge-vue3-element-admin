@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/zhufuyi/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/ggorm"
 )
 
 // Config 系统配置

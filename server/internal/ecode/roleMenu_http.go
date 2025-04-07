@@ -1,7 +1,7 @@
 package ecode
 
 import (
-	"github.com/zhufuyi/sponge/pkg/errcode"
+	"github.com/go-dev-frame/sponge/pkg/errcode"
 )
 
 // roleMenu business-level http error codes.

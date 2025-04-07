@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/zhufuyi/sponge/pkg/app"
-	"github.com/zhufuyi/sponge/pkg/logger"
-	"github.com/zhufuyi/sponge/pkg/tracer"
+	"github.com/go-dev-frame/sponge/pkg/app"
+	"github.com/go-dev-frame/sponge/pkg/logger"
+	"github.com/go-dev-frame/sponge/pkg/tracer"
 
 	"admin/internal/config"
-	"admin/internal/model"
+	"admin/internal/database"
 )
 
 // Close releasing resources after service exit
@@ -23,13 +23,13 @@ func Close(servers []app.IServer) []app.Close {
 
 	// close database
 	closes = append(closes, func() error {
-		return model.CloseDB()
+		return database.CloseDB()
 	})
 
 	// close redis
 	if config.Get().App.CacheType == "redis" {
 		closes = append(closes, func() error {
-			return model.CloseRedis()
+			return database.CloseRedis()
 		})
 	}
 

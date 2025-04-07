@@ -1,23 +1,15 @@
 package server
 
-import (
-	"github.com/zhufuyi/sponge/pkg/servicerd/registry"
-)
-
 // HTTPOption setting up http
 type HTTPOption func(*httpOptions)
 
 type httpOptions struct {
-	isProd    bool
-	instance  *registry.ServiceInstance
-	iRegistry registry.Registry
+	isProd bool
 }
 
 func defaultHTTPOptions() *httpOptions {
 	return &httpOptions{
-		isProd:    false,
-		instance:  nil,
-		iRegistry: nil,
+		isProd: false,
 	}
 }
 
@@ -31,13 +23,5 @@ func (o *httpOptions) apply(opts ...HTTPOption) {
 func WithHTTPIsProd(isProd bool) HTTPOption {
 	return func(o *httpOptions) {
 		o.isProd = isProd
-	}
-}
-
-// WithHTTPRegistry registration services
-func WithHTTPRegistry(iRegistry registry.Registry, instance *registry.ServiceInstance) HTTPOption {
-	return func(o *httpOptions) {
-		o.iRegistry = iRegistry
-		o.instance = instance
 	}
 }

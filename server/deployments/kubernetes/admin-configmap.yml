@@ -5,7 +5,7 @@ metadata:
   namespace: sponge-vue3-element-admin
 data:
   admin.yml: |-
-    # Generate the go struct command: sponge config --server-dir=./serverDir
+    # If you need to convert YAML to a Go struct, please execute the command: make update-config
     
     # app settings
     app:
@@ -20,7 +20,7 @@ data:
       enableCircuitBreaker: false    # whether to turn on circuit breaker(adaptive), true:on, false:off
       enableTrace: false             # whether to turn on trace, true:enable, false:disable, if true jaeger configuration must be set
       tracingSamplingRate: 1.0       # tracing sampling rate, between 0 and 1, 0 means no sampling, 1 means sampling all links
-      registryDiscoveryType: ""      # registry and discovery types: consul, etcd, nacos, if empty, registration and discovery are not used
+      #registryDiscoveryType: ""      # registry and discovery types: consul, etcd, nacos, if empty, registration and discovery are not used
       cacheType: ""                  # cache type, if empty, the cache is not used, support for "memory" and "redis", if set to redis, must set redis configuration
     
     
@@ -77,18 +77,5 @@ data:
       agentPort: 6831
     
     
-    # consul settings
-    consul:
-      addr: "192.168.3.37:8500"
     
     
-    # etcd settings
-    etcd:
-      addrs: ["192.168.3.37:2379"]
-    
-    
-    # nacos settings, used in service registration discovery
-    nacosRd:
-      ipAddr: "192.168.3.37"
-      port: 8848
-      namespaceID: "3454d2b5-2455-4d0e-bf6d-e033b086bb4c"   # namespace id

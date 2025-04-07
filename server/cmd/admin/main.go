@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/zhufuyi/sponge/pkg/app"
+	"github.com/go-dev-frame/sponge/pkg/app"
 
 	"admin/cmd/admin/initial"
 )

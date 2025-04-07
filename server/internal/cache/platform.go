@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zhufuyi/sponge/pkg/cache"
-	"github.com/zhufuyi/sponge/pkg/encoding"
-	"github.com/zhufuyi/sponge/pkg/utils"
+	"github.com/go-dev-frame/sponge/pkg/cache"
+	"github.com/go-dev-frame/sponge/pkg/encoding"
+	"github.com/go-dev-frame/sponge/pkg/utils"
 
 	"admin/internal/model"
 )

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/zhufuyi/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/ggorm"
 )
 
 // Role 角色管理
