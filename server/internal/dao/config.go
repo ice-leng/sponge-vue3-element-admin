@@ -324,6 +324,11 @@ func (d *configDao) GetByParams(ctx context.Context, request *types.ListConfigsR
 		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime)
 	}
 
+	if request.Name != "" {
+		db = db.Where("name LIKE ?", "%"+request.Name+"%").
+			Or("`key` LIKE ?", "%"+request.Name+"%")
+	}
+
 	var total int64 = 0
 	if request.Sort != "ignore count" { // determine if count is required
 		err := db.Count(&total).Error

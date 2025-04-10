@@ -243,37 +243,6 @@ definitions:
         description: 状态
         type: integer
     type: object
-  types.CreateSystemConfigReply:
-    properties:
-      code:
-        description: return code
-        type: integer
-      data:
-        description: return data
-        properties:
-          id:
-            description: id
-            type: integer
-        type: object
-      msg:
-        description: return information description
-        type: string
-    type: object
-  types.CreateSystemConfigRequest:
-    properties:
-      description:
-        description: 描述
-        type: string
-      key:
-        description: 配置键
-        type: string
-      name:
-        description: 配置名称
-        type: string
-      value:
-        description: 配置值
-        type: string
-    type: object
   types.DashboardEchartsReply:
     properties:
       code:
@@ -392,17 +361,6 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.DeleteSystemConfigByIDReply:
-    properties:
-      code:
-        description: return code
-        type: integer
-      data:
-        description: return data
-      msg:
-        description: return information description
-        type: string
-    type: object
   types.GetConfigByIDReply:
     properties:
       code:
@@ -464,21 +422,6 @@ definitions:
         allOf:
         - $ref: '#/definitions/types.RoleMenuObjDetail'
         description: return data
-      msg:
-        description: return information description
-        type: string
-    type: object
-  types.GetSystemConfigByIDReply:
-    properties:
-      code:
-        description: return code
-        type: integer
-      data:
-        description: return data
-        properties:
-          systemConfig:
-            $ref: '#/definitions/types.SystemConfigObjDetail'
-        type: object
       msg:
         description: return information description
         type: string
@@ -569,23 +512,6 @@ definitions:
             type: array
           total:
             type: integer
-        type: object
-      msg:
-        description: return information description
-        type: string
-    type: object
-  types.ListSystemConfigsReply:
-    properties:
-      code:
-        description: return code
-        type: integer
-      data:
-        description: return data
-        properties:
-          systemConfigs:
-            items:
-              $ref: '#/definitions/types.SystemConfigObjDetail'
-            type: array
         type: object
       msg:
         description: return information description
@@ -912,30 +838,6 @@ definitions:
         description: 更新时间
         type: string
     type: object
-  types.SystemConfigObjDetail:
-    properties:
-      createdAt:
-        description: 创建时间
-        type: string
-      description:
-        description: 描述
-        type: string
-      id:
-        description: convert to uint64 id
-        type: integer
-      key:
-        description: 配置键
-        type: string
-      name:
-        description: 配置名称
-        type: string
-      updatedAt:
-        description: 更新时间
-        type: string
-      value:
-        description: 配置值
-        type: string
-    type: object
   types.UpdateConfigByIDReply:
     properties:
       code:
@@ -1107,35 +1009,6 @@ definitions:
         description: 角色ID
         type: integer
     type: object
-  types.UpdateSystemConfigByIDReply:
-    properties:
-      code:
-        description: return code
-        type: integer
-      data:
-        description: return data
-      msg:
-        description: return information description
-        type: string
-    type: object
-  types.UpdateSystemConfigByIDRequest:
-    properties:
-      description:
-        description: 描述
-        type: string
-      id:
-        description: uint64 id
-        type: integer
-      key:
-        description: 配置键
-        type: string
-      name:
-        description: 配置名称
-        type: string
-      value:
-        description: 配置值
-        type: string
-    type: object
   types.UploadItem:
     properties:
       name:
@@ -1248,6 +1121,10 @@ paths:
       - description: 结束时间
         in: query
         name: endTime
+        type: string
+      - description: 关键字
+        in: query
+        name: name
         type: string
       - description: 分页
         in: query
@@ -1727,7 +1604,7 @@ paths:
       summary: update platform
       tags:
       - platform
-  /api/v1/platform/list:
+  /api/v1/platform/me:
     get:
       consumes:
       - application/json
@@ -2165,140 +2042,6 @@ paths:
       summary: get role menuIds
       tags:
       - role
-  /api/v1/systemConfig:
-    get:
-      consumes:
-      - application/json
-      description: list of systemConfigs by paging and conditions
-      parameters:
-      - description: 结束时间
-        in: query
-        name: endTime
-        type: string
-      - description: 分页
-        in: query
-        name: page
-        type: integer
-      - description: 分页大小
-        in: query
-        name: pageSize
-        type: integer
-      - description: 排序
-        in: query
-        name: sort
-        type: string
-      - description: 开始时间
-        in: query
-        name: startTime
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.ListSystemConfigsReply'
-      security:
-      - BearerAuth: []
-      summary: list of systemConfigs by query parameters
-      tags:
-      - systemConfig
-    post:
-      consumes:
-      - application/json
-      description: submit information to create systemConfig
-      parameters:
-      - description: systemConfig information
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/types.CreateSystemConfigRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.CreateSystemConfigReply'
-      security:
-      - BearerAuth: []
-      summary: create systemConfig
-      tags:
-      - systemConfig
-  /api/v1/systemConfig/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: delete systemConfig by id
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.DeleteSystemConfigByIDReply'
-      security:
-      - BearerAuth: []
-      summary: delete systemConfig
-      tags:
-      - systemConfig
-    get:
-      consumes:
-      - application/json
-      description: get systemConfig detail by id
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.GetSystemConfigByIDReply'
-      security:
-      - BearerAuth: []
-      summary: get systemConfig detail
-      tags:
-      - systemConfig
-    put:
-      consumes:
-      - application/json
-      description: update systemConfig information by id
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: systemConfig information
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/types.UpdateSystemConfigByIDRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.UpdateSystemConfigByIDReply'
-      security:
-      - BearerAuth: []
-      summary: update systemConfig
-      tags:
-      - systemConfig
   /api/v1/upload/local:
     post:
       consumes:

@@ -263,7 +263,7 @@ func (h *platformHandler) List(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Success 200 {object} types.MeReply{}
-// @Router /api/v1/platform/list [get]
+// @Router /api/v1/platform/me [get]
 // @Security BearerAuth
 func (h *platformHandler) Me(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
@@ -346,7 +346,7 @@ func (h *platformHandler) convertPlatforms(c *gin.Context, fromValues []*model.P
 	roles, _ := h.iRoleDao.GetByIDs(c, roleIds)
 	if roles != nil {
 		for _, role := range roles {
-			roleCodes[role.ID] = role.Code
+			roleCodes[role.ID] = role.Name
 		}
 	}
 
@@ -403,7 +403,7 @@ func (h *platformHandler) GetProfile(c *gin.Context) {
 	roles, _ := h.iRoleDao.GetByIDs(c, platform.RoleID)
 	if roles != nil {
 		for _, role := range roles {
-			roleCodes = append(roleCodes, role.Code)
+			roleCodes = append(roleCodes, role.Name)
 		}
 	}
 	reply.Roles = strings.Join(roleCodes, ",")

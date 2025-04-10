@@ -155,6 +155,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "分页",
                         "name": "page",
@@ -793,7 +799,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/platform/list": {
+        "/api/v1/platform/me": {
             "get": {
                 "security": [
                     {
@@ -1611,219 +1617,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/systemConfig": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "list of systemConfigs by paging and conditions",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "systemConfig"
-                ],
-                "summary": "list of systemConfigs by query parameters",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "结束时间",
-                        "name": "endTime",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "分页",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "分页大小",
-                        "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "开始时间",
-                        "name": "startTime",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.ListSystemConfigsReply"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "submit information to create systemConfig",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "systemConfig"
-                ],
-                "summary": "create systemConfig",
-                "parameters": [
-                    {
-                        "description": "systemConfig information",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.CreateSystemConfigRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.CreateSystemConfigReply"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/systemConfig/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "get systemConfig detail by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "systemConfig"
-                ],
-                "summary": "get systemConfig detail",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.GetSystemConfigByIDReply"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "update systemConfig information by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "systemConfig"
-                ],
-                "summary": "update systemConfig",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "systemConfig information",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.UpdateSystemConfigByIDRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.UpdateSystemConfigByIDReply"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "delete systemConfig by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "systemConfig"
-                ],
-                "summary": "delete systemConfig",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.DeleteSystemConfigByIDReply"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/upload/local": {
             "post": {
                 "security": [
@@ -2209,50 +2002,6 @@ const docTemplate = `{
                 }
             }
         },
-        "types.CreateSystemConfigReply": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "return code",
-                    "type": "integer"
-                },
-                "data": {
-                    "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "description": "id",
-                            "type": "integer"
-                        }
-                    }
-                },
-                "msg": {
-                    "description": "return information description",
-                    "type": "string"
-                }
-            }
-        },
-        "types.CreateSystemConfigRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "description": "描述",
-                    "type": "string"
-                },
-                "key": {
-                    "description": "配置键",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "配置名称",
-                    "type": "string"
-                },
-                "value": {
-                    "description": "配置值",
-                    "type": "string"
-                }
-            }
-        },
         "types.DashboardEchartsReply": {
             "type": "object",
             "properties": {
@@ -2422,22 +2171,6 @@ const docTemplate = `{
                 }
             }
         },
-        "types.DeleteSystemConfigByIDReply": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "return code",
-                    "type": "integer"
-                },
-                "data": {
-                    "description": "return data"
-                },
-                "msg": {
-                    "description": "return information description",
-                    "type": "string"
-                }
-            }
-        },
         "types.GetConfigByIDReply": {
             "type": "object",
             "properties": {
@@ -2536,28 +2269,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/types.RoleMenuObjDetail"
                         }
                     ]
-                },
-                "msg": {
-                    "description": "return information description",
-                    "type": "string"
-                }
-            }
-        },
-        "types.GetSystemConfigByIDReply": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "return code",
-                    "type": "integer"
-                },
-                "data": {
-                    "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "systemConfig": {
-                            "$ref": "#/definitions/types.SystemConfigObjDetail"
-                        }
-                    }
                 },
                 "msg": {
                     "description": "return information description",
@@ -2690,31 +2401,6 @@ const docTemplate = `{
                         },
                         "total": {
                             "type": "integer"
-                        }
-                    }
-                },
-                "msg": {
-                    "description": "return information description",
-                    "type": "string"
-                }
-            }
-        },
-        "types.ListSystemConfigsReply": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "return code",
-                    "type": "integer"
-                },
-                "data": {
-                    "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "systemConfigs": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/types.SystemConfigObjDetail"
-                            }
                         }
                     }
                 },
@@ -3180,39 +2866,6 @@ const docTemplate = `{
                 }
             }
         },
-        "types.SystemConfigObjDetail": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "描述",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "convert to uint64 id",
-                    "type": "integer"
-                },
-                "key": {
-                    "description": "配置键",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "配置名称",
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "description": "更新时间",
-                    "type": "string"
-                },
-                "value": {
-                    "description": "配置值",
-                    "type": "string"
-                }
-            }
-        },
         "types.UpdateConfigByIDReply": {
             "type": "object",
             "properties": {
@@ -3450,47 +3103,6 @@ const docTemplate = `{
                 "roleID": {
                     "description": "角色ID",
                     "type": "integer"
-                }
-            }
-        },
-        "types.UpdateSystemConfigByIDReply": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "return code",
-                    "type": "integer"
-                },
-                "data": {
-                    "description": "return data"
-                },
-                "msg": {
-                    "description": "return information description",
-                    "type": "string"
-                }
-            }
-        },
-        "types.UpdateSystemConfigByIDRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "description": "描述",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "uint64 id",
-                    "type": "integer"
-                },
-                "key": {
-                    "description": "配置键",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "配置名称",
-                    "type": "string"
-                },
-                "value": {
-                    "description": "配置值",
-                    "type": "string"
                 }
             }
         },
