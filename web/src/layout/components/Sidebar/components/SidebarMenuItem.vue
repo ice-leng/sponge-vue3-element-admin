@@ -3,11 +3,11 @@
     <!--【叶子节点】显示叶子节点或唯一子节点且父节点未配置始终显示 -->
     <template
       v-if="
-        // 判断条件：仅有一个子节点，且父节点未配置始终显示
-        (hasOneShowingChild(item.children, item) &&
-          (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
-          !item.meta?.alwaysShow) ||
-        // 父节点即使配置了始终显示，但无子节点，也显示未叶子节点
+        // 未配置始终显示，使用唯一子节点替换父节点显示为叶子节点
+        (!item.meta?.alwaysShow &&
+          hasOneShowingChild(item.children, item) &&
+          (!onlyOneChild.children || onlyOneChild.noShowingChildren)) ||
+        // 即使配置了始终显示，但无子节点，也显示为叶子节点
         (item.meta?.alwaysShow && !item.children)
       "
     >
@@ -33,11 +33,7 @@
     <!--【非叶子节点】显示含多个子节点的父菜单，或始终显示的单子节点 -->
     <el-sub-menu v-else :index="resolvePath(item.path)" teleported>
       <template #title>
-        <SidebarMenuItemTitle
-          v-if="item.meta"
-          :icon="item.meta.icon"
-          :title="item.meta.title"
-        />
+        <SidebarMenuItemTitle v-if="item.meta" :icon="item.meta.icon" :title="item.meta.title" />
       </template>
 
       <SidebarMenuItem
@@ -98,10 +94,7 @@ const onlyOneChild = ref();
  * @param parent 父级路由
  * @returns 是否仅有一个可见子节点
  */
-function hasOneShowingChild(
-  children: RouteRecordRaw[] = [],
-  parent: RouteRecordRaw
-) {
+function hasOneShowingChild(children: RouteRecordRaw[] = [], parent: RouteRecordRaw) {
   // 过滤出可见子节点
   const showingChildren = children.filter((route: RouteRecordRaw) => {
     if (!route.meta?.hidden) {
@@ -111,13 +104,14 @@ function hasOneShowingChild(
     return false;
   });
 
-  // 仅有一个或无子节点
+  // 仅有一个节点
   if (showingChildren.length === 1) {
     return true;
   }
 
-  // 无子节点时，设置父节点为唯一显示节点
+  // 无子节点时
   if (showingChildren.length === 0) {
+    // 父节点设置为唯一显示节点，并标记为无子节点
     onlyOneChild.value = { ...parent, path: "", noShowingChildren: true };
     return true;
   }
@@ -155,10 +149,10 @@ function resolvePath(routePath: string) {
 
     & > span {
       display: inline-block;
+      visibility: hidden;
       width: 0;
       height: 0;
       overflow: hidden;
-      visibility: hidden;
     }
   }
 
@@ -184,16 +178,24 @@ function resolvePath(routePath: string) {
     .el-sub-menu {
       & > .el-sub-menu__title > span {
         display: inline-block;
+        visibility: hidden;
         width: 0;
         height: 0;
         overflow: hidden;
-        visibility: hidden;
       }
     }
   }
 }
 
-.el-menu-item:hover {
-  background-color: $menu-hover;
+html.dark {
+  .el-menu-item:hover {
+    background-color: $menu-hover;
+  }
+}
+
+html.sidebar-color-blue {
+  .el-menu-item:hover {
+    background-color: $menu-hover;
+  }
 }
 </style>

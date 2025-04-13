@@ -58,18 +58,16 @@ declare global {
     version: string;
     /** 是否显示设置 */
     showSettings: boolean;
-    /** 是否固定头部 */
-    fixedHeader: boolean;
     /** 是否显示多标签导航 */
     tagsView: boolean;
     /** 是否显示侧边栏Logo */
     sidebarLogo: boolean;
     /** 导航栏布局(left|top|mix) */
-    layout: string;
+    layout: "left" | "top" | "mix";
     /** 主题颜色 */
     themeColor: string;
     /** 主题模式(dark|light) */
-    theme: string;
+    theme: import("@/enums/settings/theme.enum").ThemeMode;
     /** 布局大小(default |large |small) */
     size: string;
     /** 语言( zh-cn| en) */
@@ -78,6 +76,8 @@ declare global {
     watermarkEnabled: boolean;
     /** 水印内容 */
     watermarkContent: string;
+    /** 侧边栏配色方案 */
+    sidebarColorScheme: "classic-blue" | "minimal-white";
   }
 
   /**
@@ -90,6 +90,20 @@ declare global {
     label: string;
     /** 子列表  */
     children?: OptionType[];
+  }
+
+  /**
+   * 导入结果
+   */
+  interface ExcelResult {
+    /** 状态码 */
+    code: string;
+    /** 无效数据条数 */
+    invalidCount: number;
+    /** 有效数据条数 */
+    validCount: number;
+    /** 错误信息 */
+    messageList: Array<string>;
   }
 }
 export {};

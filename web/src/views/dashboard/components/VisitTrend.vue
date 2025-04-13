@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import * as echarts from "echarts";
-import DashboardAPI, { EchartsVO, EchartsQuery } from "@/api/system/dashboard";
+import DashboardAPI, { EchartsVO, EchartsQuery } from "@/api/system/dashboard.api";
 
 const dataRange = ref(1);
 const chart: Ref<echarts.ECharts | null> = ref(null);

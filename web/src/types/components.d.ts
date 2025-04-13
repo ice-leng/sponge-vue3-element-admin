@@ -13,6 +13,7 @@ declare module "vue" {
     CURD: (typeof import("./../components/CURD/index.vue"))["default"];
     Dict: (typeof import("./../components/Dict/index.vue"))["default"];
     DictLabel: (typeof import("./../components/Dict/DictLabel.vue"))["default"];
+    ECharts: (typeof import("./../components/ECharts/index.vue"))["default"];
     ElBacktop: (typeof import("element-plus/es"))["ElBacktop"];
     ElBreadcrumb: (typeof import("element-plus/es"))["ElBreadcrumb"];
     ElBreadcrumbItem: (typeof import("element-plus/es"))["ElBreadcrumbItem"];
@@ -35,6 +36,7 @@ declare module "vue" {
     ElIcon: (typeof import("element-plus/es"))["ElIcon"];
     ElImage: (typeof import("element-plus/es"))["ElImage"];
     ElInput: (typeof import("element-plus/es"))["ElInput"];
+    ElInputTag: (typeof import("element-plus/es"))["ElInputTag"];
     ElInputNumber: (typeof import("element-plus/es"))["ElInputNumber"];
     ElLink: (typeof import("element-plus/es"))["ElLink"];
     ElMenu: (typeof import("element-plus/es"))["ElMenu"];
@@ -69,6 +71,7 @@ declare module "vue" {
     LangSelect: (typeof import("./../components/LangSelect/index.vue"))["default"];
     MenuSearch: (typeof import("./../components/MenuSearch/index.vue"))["default"];
     MultiImageUpload: (typeof import("./../components/Upload/MultiImageUpload.vue"))["default"];
+    NoticeDropdown: (typeof import("./../components/Notice/NoticeDropdown.vue"))["default"];
     LayoutSelect: (typeof import("./../layout/components/Settings/components/LayoutSelect.vue"))["default"];
     PageContent: (typeof import("./../components/CURD/PageContent.vue"))["default"];
     PageForm: (typeof import("./../components/CURD/PageForm.vue"))["default"];
@@ -84,12 +87,10 @@ declare module "vue" {
     SidebarMenuItem: (typeof import("./../layout/components/Sidebar/components/SidebarMenuItem.vue"))["default"];
     SidebarMenuItemTitle: (typeof import("./../layout/components/Sidebar/components/SidebarMenuItemTitle.vue"))["default"];
     SidebarMixTopMenu: (typeof import("./../layout/components/Sidebar/components/SidebarMixTopMenu.vue"))["default"];
+    SingleImageUpload: (typeof import("./../components/Upload/SingleImageUpload.vue"))["default"];
     SizeSelect: (typeof import("./../components/SizeSelect/index.vue"))["default"];
-    SvgIcon: (typeof import("./../components/SvgIcon/index.vue"))["default"];
     TableSelect: (typeof import("./../components/TableSelect/index.vue"))["default"];
     TagsView: (typeof import("./../layout/components/TagsView/index.vue"))["default"];
-    ThemeColorPicker: (typeof import("./../layout/components/Settings/components/ThemeColorPicker.vue"))["default"];
-    SingleImageUpload: (typeof import("./../components/Upload/SingleImageUpload.vue"))["default"];
     WangEditor: (typeof import("./../components/WangEditor/index.vue"))["default"];
   }
   export interface ComponentCustomProperties {

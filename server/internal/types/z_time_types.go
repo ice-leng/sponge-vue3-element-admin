@@ -40,6 +40,10 @@ func (dt *LocalDateTime) Value() (driver.Value, error) {
 
 // Scan 从数据库读取数据并解码为 LocalDateTime
 func (dt *LocalDateTime) Scan(src interface{}) error {
+	if t, ok := src.(time.Time); ok {
+		*dt = LocalDateTime(t)
+		return nil
+	}
 	if bytes, ok := src.([]byte); ok {
 		return dt.UnmarshalJSON(bytes)
 	}
@@ -82,6 +86,10 @@ func (dt *LocalDate) Value() (driver.Value, error) {
 
 // Scan 从数据库读取数据并解码为 LocalDate
 func (dt *LocalDate) Scan(src interface{}) error {
+	if t, ok := src.(time.Time); ok {
+		*dt = LocalDate(t)
+		return nil
+	}
 	if bytes, ok := src.([]byte); ok {
 		return dt.UnmarshalJSON(bytes)
 	}

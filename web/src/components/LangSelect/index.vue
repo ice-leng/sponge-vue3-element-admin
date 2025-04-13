@@ -1,8 +1,6 @@
 <template>
   <el-dropdown trigger="click" @command="handleLanguageChange">
-    <div>
-      <svg-icon icon-class="language" :size="size" />
-    </div>
+    <div class="i-svg:language" :class="size" />
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item
@@ -19,9 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { useAppStore } from "@/store/modules/app";
-import { LanguageEnum } from "@/enums/LanguageEnum";
+import { useAppStore } from "@/store/modules/app.store";
+import { LanguageEnum } from "@/enums/settings/locale.enum";
 
 defineProps({
   size: {
@@ -38,6 +35,11 @@ const langOptions = [
 const appStore = useAppStore();
 const { locale, t } = useI18n();
 
+/**
+ * 处理语言切换
+ *
+ * @param lang  语言（zh-cn、en）
+ */
 function handleLanguageChange(lang: string) {
   locale.value = lang;
   appStore.changeLanguage(lang);

@@ -63,7 +63,7 @@ func (h *uploadHandler) Local(c *gin.Context) {
 			return
 		}
 	}
-	filePath := path + newFileName
+	filePath := path + "/" + newFileName
 	f, openError := file.Open() // 读取文件
 	if openError != nil {
 		response.Error(c, errcode.NewError(10001, openError.Error()))

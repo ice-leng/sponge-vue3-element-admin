@@ -1,13 +1,9 @@
 <template>
   <!-- 布局大小 -->
-  <el-tooltip
-    :content="$t('sizeSelect.tooltip')"
-    effect="dark"
-    placement="bottom"
-  >
+  <el-tooltip :content="$t('sizeSelect.tooltip')" effect="dark" placement="bottom">
     <el-dropdown trigger="click" @command="handleSizeChange">
       <div>
-        <svg-icon icon-class="size" />
+        <div class="i-svg:size" />
       </div>
       <template #dropdown>
         <el-dropdown-menu>
@@ -26,15 +22,15 @@
 </template>
 
 <script setup lang="ts">
-import { SizeEnum } from "@/enums/SizeEnum";
-import { useAppStore } from "@/store/modules/app";
+import { ComponentSize } from "@/enums/settings/layout.enum";
+import { useAppStore } from "@/store/modules/app.store";
 
 const { t } = useI18n();
 const sizeOptions = computed(() => {
   return [
-    { label: t("sizeSelect.default"), value: SizeEnum.DEFAULT },
-    { label: t("sizeSelect.large"), value: SizeEnum.LARGE },
-    { label: t("sizeSelect.small"), value: SizeEnum.SMALL },
+    { label: t("sizeSelect.default"), value: ComponentSize.DEFAULT },
+    { label: t("sizeSelect.large"), value: ComponentSize.LARGE },
+    { label: t("sizeSelect.small"), value: ComponentSize.SMALL },
   ];
 });
 

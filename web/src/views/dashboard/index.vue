@@ -1,7 +1,5 @@
 <template>
   <div class="dashboard-container">
-    <github-corner class="github-corner" />
-
     <el-card shadow="never">
       <el-row justify="space-between">
         <el-col :span="18" :xs="24">
@@ -135,8 +133,8 @@ defineOptions({
 });
 
 import VisitTrend from "./components/VisitTrend.vue";
-import { useUserStore } from "@/store/modules/user";
-import DashboardAPI, { StatisticsVO } from "@/api/system/dashboard";
+import { useUserStore } from "@/store";
+import DashboardAPI, { StatisticsVO } from "@/api/system/dashboard.api";
 
 const userStore = useUserStore();
 const date: Date = new Date();

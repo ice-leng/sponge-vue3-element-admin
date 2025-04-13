@@ -4,9 +4,22 @@
     ref="menuRef"
     :default-active="currentRoute.path"
     :collapse="!appStore.sidebar.opened"
-    :background-color="variables['menu-background']"
-    :text-color="variables['menu-text']"
-    :active-text-color="variables['menu-active-text']"
+    :background-color="
+      theme === 'dark' || sidebarColorScheme === SidebarColor.CLASSIC_BLUE
+        ? variables['menu-background']
+        : undefined
+    "
+    :text-color="
+      theme === 'dark' || sidebarColorScheme === SidebarColor.CLASSIC_BLUE
+        ? variables['menu-text']
+        : undefined
+    "
+    :active-text-color="
+      theme === 'dark' || sidebarColorScheme === SidebarColor.CLASSIC_BLUE
+        ? variables['menu-active-text']
+        : undefined
+    "
+    :popper-effect="theme"
     :unique-opened="false"
     :collapse-transition="false"
     :mode="menuMode"
@@ -15,7 +28,7 @@
   >
     <!-- 菜单项 -->
     <SidebarMenuItem
-      v-for="route in menuList"
+      v-for="route in data"
       :key="route.path"
       :item="route"
       :base-path="resolveFullPath(route.path)"
@@ -26,17 +39,18 @@
 <script lang="ts" setup>
 import path from "path-browserify";
 import type { MenuInstance } from "element-plus";
+import type { RouteRecordRaw } from "vue-router";
 
-import { LayoutEnum } from "@/enums/LayoutEnum";
+import { LayoutMode } from "@/enums/settings/layout.enum";
+import { SidebarColor } from "@/enums/settings/theme.enum";
 import { useSettingsStore, useAppStore } from "@/store";
 import { isExternal } from "@/utils/index";
 
 import variables from "@/styles/variables.module.scss";
 
 const props = defineProps({
-  menuList: {
-    type: Array<any>,
-    required: true,
+  data: {
+    type: Array<RouteRecordRaw>,
     default: () => [],
   },
   basePath: {
@@ -56,8 +70,14 @@ const expandedMenuIndexes = ref<string[]>([]);
 
 // 根据布局模式设置菜单的显示方式：顶部布局使用水平模式，其他使用垂直模式
 const menuMode = computed(() => {
-  return settingsStore.layout === LayoutEnum.TOP ? "horizontal" : "vertical";
+  return settingsStore.layout === LayoutMode.TOP ? "horizontal" : "vertical";
 });
+
+// 获取主题
+const theme = computed(() => settingsStore.theme);
+
+// 获取浅色主题下的侧边栏配色方案
+const sidebarColorScheme = computed(() => settingsStore.sidebarColorScheme);
 
 /**
  * 获取完整路径
@@ -92,9 +112,7 @@ const onMenuOpen = (index: string) => {
  * @param index 当前收起的菜单项索引
  */
 const onMenuClose = (index: string) => {
-  expandedMenuIndexes.value = expandedMenuIndexes.value.filter(
-    (item) => item !== index
-  );
+  expandedMenuIndexes.value = expandedMenuIndexes.value.filter((item) => item !== index);
 };
 
 /**

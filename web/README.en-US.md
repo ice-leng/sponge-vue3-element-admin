@@ -1,21 +1,31 @@
-
 <div align="center">
   <img alt="vue3-element-admin" width="80" height="80" src="./src/assets/logo.png">
   <h1>vue3-element-admin</h1>
 
-  <img src="https://img.shields.io/badge/Vue-3.5.1-brightgreen.svg"/>
-  <img src="https://img.shields.io/badge/Vite-5.4.3-green.svg"/>
-  <img src="https://img.shields.io/badge/Element Plus-2.8.1-blue.svg"/>
+  <img src="https://img.shields.io/badge/Vue-3.5.13-brightgreen.svg"/>
+  <img src="https://img.shields.io/badge/Vite-6.0.5-green.svg"/>
+  <img src="https://img.shields.io/badge/Element Plus-2.9.1-blue.svg"/>
   <img src="https://img.shields.io/badge/license-MIT-green.svg"/>
   <a href="https://gitee.com/youlaiorg" target="_blank">
       <img src="https://img.shields.io/badge/Author-有来开源组织-orange.svg"/>
   </a>
+
+  <a href="https://gitee.com/youlaiorg/vue3-element-admin" target="_blank">
+     <img alt="有来技术" src="https://gitee.com/youlaiorg/vue3-element-admin/badge/star.svg"/>
+   </a>
+  <a href="https://github.com/youlaitech/vue3-element-admin" target="_blank">
+    <img alt="有来技术" src="https://img.shields.io/github/stars/youlaitech/vue3-element-admin.svg?style=social&label=Stars"/>
+  </a>
+  <a href="https://gitcode.com/youlai/vue3-element-admin" target="_blank">
+    <img alt="有来技术" src="https://gitcode.com/youlai/vue3-element-admin/star/badge.svg"/>
+  </a>
 </div>
+
 
 ![](https://foruda.gitee.com/images/1708618984641188532/a7cca095_716974.png "rainbow.png")
 
 <div align="center">
- <a target="_blank" href="http://vue3.youlai.tech">👀 Live Preview</a> |  <a target="_blank" href="https://juejin.cn/post/7228990409909108793">📖 Read Documentation</a>  | 🌐 <a href="./README.md">中文
+ <a target="_blank" href="http://vue3.youlai.tech">👀 Live Preview</a> |  <a target="_blank" href="https://juejin.cn/post/7228990409909108793">📖 Read Documentation</a> |  <a target="_blank" href="https://www.youlai.tech/vue3-element-admin">🌐 Official Website</a> | 🌐 <a href="./README.md">中文
 </div>
 
 
@@ -50,10 +60,11 @@
 
 ## Project Links
 
-| Project | Gitee                                                        | Github                                                       | GitCode                                                      |
-| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Project  | Gitee                                                        | Github                                                       | GitCode                                                      |
+|----------| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Frontend | [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) | [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin) | [vue3-element-admin](https://gitcode.net/youlai/vue3-element-admin) |
-| Backend | [youlai-boot](https://gitee.com/youlaiorg/youlai-boot)       | [youlai-boot](https://github.com/haoxianrui/youlai-boot.git) | [youlai-boot](https://gitcode.net/youlai/youlai-boot)        |
+| Lite     | [vue3-element-template](https://gitee.com/youlaiorg/vue3-element-template) | [vue3-element-template](https://github.com/youlaitech/vue3-element-template) |-|
+| Backend  | [youlai-boot](https://gitee.com/youlaiorg/youlai-boot)       | [youlai-boot](https://github.com/haoxianrui/youlai-boot.git) | [youlai-boot](https://gitcode.net/youlai/youlai-boot)        |
 
 ## Environment Setup
 

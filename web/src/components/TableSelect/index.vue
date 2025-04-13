@@ -63,17 +63,11 @@
               </template>
               <!-- TreeSelect 树形选择 -->
               <template v-else-if="item.type === 'tree-select'">
-                <el-tree-select
-                  v-model="queryParams[item.prop]"
-                  v-bind="item.attrs"
-                />
+                <el-tree-select v-model="queryParams[item.prop]" v-bind="item.attrs" />
               </template>
               <!-- DatePicker 日期选择器 -->
               <template v-else-if="item.type === 'date-picker'">
-                <el-date-picker
-                  v-model="queryParams[item.prop]"
-                  v-bind="item.attrs"
-                />
+                <el-date-picker v-model="queryParams[item.prop]" v-bind="item.attrs" />
               </template>
               <!-- Input 输入框 -->
               <template v-else>
@@ -95,9 +89,7 @@
             </el-form-item>
           </template>
           <el-form-item>
-            <el-button type="primary" icon="search" @click="handleQuery">
-              搜索
-            </el-button>
+            <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
             <el-button icon="refresh" @click="handleReset">重置</el-button>
           </el-form-item>
         </el-form>
@@ -119,11 +111,7 @@
             <template v-if="col.templet === 'custom'">
               <el-table-column v-bind="col">
                 <template #default="scope">
-                  <slot
-                    :name="col.slotName ?? col.prop"
-                    :prop="col.prop"
-                    v-bind="scope"
-                  />
+                  <slot :name="col.slotName ?? col.prop" :prop="col.prop" v-bind="scope" />
                 </template>
               </el-table-column>
             </template>
@@ -155,7 +143,7 @@
 
 <script lang="ts" setup>
 import { ref, reactive, computed } from "vue";
-import { onClickOutside, useResizeObserver } from "@vueuse/core";
+import { useResizeObserver } from "@vueuse/core";
 import type { FormInstance, PopoverProps, TableInstance } from "element-plus";
 
 // 对象类型
@@ -169,7 +157,7 @@ export interface ISelectConfig<T = any> {
   // popover组件属性
   popover?: Partial<Omit<PopoverProps, "visible" | "v-model:visible">>;
   // 列表的网络请求函数(需返回promise)
-  indexAction: (queryParams: T) => Promise<any>;
+  indexAction: (_queryParams: T) => Promise<any>;
   // 主键名(跨页选择必填,默认为id)
   pk?: string;
   // 多选
@@ -294,11 +282,9 @@ for (const item of props.selectConfig.tableColumns) {
 // 选择
 const selectedItems = ref<IObject[]>([]);
 const confirmText = computed(() => {
-  return selectedItems.value.length > 0
-    ? `已选(${selectedItems.value.length})`
-    : "确 定";
+  return selectedItems.value.length > 0 ? `已选(${selectedItems.value.length})` : "确 定";
 });
-function handleSelect(selection: any[], row: any) {
+function handleSelect(selection: any[], _row: any) {
   if (isMultiple || selection.length === 0) {
     // 多选
     selectedItems.value = selection;

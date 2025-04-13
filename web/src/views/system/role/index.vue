@@ -12,30 +12,16 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">
-            <template #icon><Search /></template>
-            搜索
-          </el-button>
-          <el-button @click="handleResetQuery">
-            <template #icon><Refresh /></template>
-            重置
-          </el-button>
+          <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
+          <el-button icon="refresh" @click="handleResetQuery">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <el-card shadow="never">
       <div class="mb-10px">
-        <el-button type="success" @click="handleOpenDialog()">
-          <template #icon><Plus /></template>
-          新增
-        </el-button>
-        <el-button
-          type="danger"
-          :disabled="ids.length === 0"
-          @click="handleDelete()"
-        >
-          <template #icon><Delete /></template>
+        <el-button type="success" icon="plus" @click="handleOpenDialog()">新增</el-button>
+        <el-button type="danger" :disabled="ids.length === 0" icon="delete" @click="handleDelete()">
           删除
         </el-button>
       </div>
@@ -110,12 +96,7 @@
       width="500px"
       @close="handleCloseDialog"
     >
-      <el-form
-        ref="roleFormRef"
-        :model="formData"
-        :rules="rules"
-        label-width="100px"
-      >
+      <el-form ref="roleFormRef" :model="formData" :rules="rules" label-width="100px">
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="formData.name" placeholder="请输入角色名称" />
         </el-form-item>
@@ -126,8 +107,8 @@
 
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="formData.status">
-            <el-radio :label="1">正常</el-radio>
-            <el-radio :label="0">停用</el-radio>
+            <el-radio :value="1">正常</el-radio>
+            <el-radio :value="0">停用</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -153,15 +134,10 @@
     <el-drawer
       v-model="assignPermDialogVisible"
       :title="'【' + checkedRole.name + '】权限分配'"
-      size="500"
+      :size="drawerSize"
     >
       <div class="flex-x-between">
-        <el-input
-          v-model="permKeywords"
-          clearable
-          class="w-[150px]"
-          placeholder="菜单权限名称"
-        >
+        <el-input v-model="permKeywords" clearable class="w-[150px]" placeholder="菜单权限名称">
           <template #prefix>
             <Search />
           </template>
@@ -186,9 +162,7 @@
             <template #content>
               如果只需勾选菜单权限，不需要勾选子菜单或者按钮权限，请关闭父子联动
             </template>
-            <el-icon
-              class="ml-1 color-[--el-color-primary] inline-block cursor-pointer"
-            >
+            <el-icon class="ml-1 color-[--el-color-primary] inline-block cursor-pointer">
               <QuestionFilled />
             </el-icon>
           </el-tooltip>
@@ -211,9 +185,7 @@
       </el-tree>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="handleAssignPermSubmit">
-            确 定
-          </el-button>
+          <el-button type="primary" @click="handleAssignPermSubmit">确 定</el-button>
           <el-button @click="assignPermDialogVisible = false">取 消</el-button>
         </div>
       </template>
@@ -222,21 +194,22 @@
 </template>
 
 <script setup lang="ts">
+import { useAppStore } from "@/store/modules/app.store";
+import { DeviceEnum } from "@/enums/settings/device.enum";
+
+import RoleAPI, { RolePageVO, RoleForm, RolePageQuery } from "@/api/system/role.api";
+import MenuAPI from "@/api/system/menu.api";
+
 defineOptions({
   name: "Role",
   inheritAttrs: false,
 });
 
-import RoleAPI, {
-  RolePageVO,
-  RoleForm,
-  RolePageQuery,
-} from "@/api/system/role";
-import MenuAPI from "@/api/system/menu";
+const appStore = useAppStore();
 
-const queryFormRef = ref(ElForm);
-const roleFormRef = ref(ElForm);
-const permTreeRef = ref<InstanceType<typeof ElTree>>();
+const queryFormRef = ref();
+const roleFormRef = ref();
+const permTreeRef = ref();
 
 const loading = ref(false);
 const ids = ref<number[]>([]);
@@ -257,6 +230,9 @@ const dialog = reactive({
   title: "",
   visible: false,
 });
+
+const drawerSize = computed(() => (appStore.device === DeviceEnum.DESKTOP ? "600px" : "90%"));
+
 // 角色表单
 const formData = reactive<RoleForm>({
   sort: 1,
@@ -271,7 +247,7 @@ const rules = reactive({
 
 // 选中的角色
 interface CheckedRole {
-  id?: number;
+  id?: string;
   name?: string;
 }
 const checkedRole = ref<CheckedRole>({});
@@ -308,7 +284,7 @@ function handleSelectionChange(selection: any) {
 }
 
 // 打开角色弹窗
-function handleOpenDialog(roleId?: number) {
+function handleOpenDialog(roleId?: string) {
   dialog.visible = true;
   if (roleId) {
     dialog.title = "修改角色";
@@ -335,7 +311,7 @@ function handleSubmit() {
           })
           .finally(() => (loading.value = false));
       } else {
-        RoleAPI.add(formData)
+        RoleAPI.create(formData)
           .then(() => {
             ElMessage.success("新增成功");
             handleCloseDialog();
@@ -404,9 +380,7 @@ async function handleOpenAssignPermDialog(row: RolePageVO) {
     RoleAPI.getRoleMenuIds(roleId)
       .then((data) => {
         const checkedMenuIds = data;
-        checkedMenuIds.forEach((menuId) =>
-          permTreeRef.value!.setChecked(menuId, true, false)
-        );
+        checkedMenuIds.forEach((menuId) => permTreeRef.value!.setChecked(menuId, true, false));
       })
       .finally(() => {
         loading.value = false;

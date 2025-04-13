@@ -8,8 +8,7 @@ export function hasClass(ele: HTMLElement, cls: string) {
   return !!ele.className.match(new RegExp("(\\s|^)" + cls + "(\\s|$)"));
 }
 
-/**
- * Add class to element
+/** * Add class to element
  * @param {HTMLElement} ele
  * @param {string} cls
  */
@@ -32,8 +31,7 @@ export function removeClass(ele: HTMLElement, cls: string) {
 /**
  * 判断是否是外部链接
  *
- * @param {string} path
- * @returns {Boolean}
+ * @param {string} path * @returns {Boolean}
  */
 export function isExternal(path: string) {
   const isExternal = /^(https?:|http?:|mailto:|tel:)/.test(path);
@@ -41,10 +39,23 @@ export function isExternal(path: string) {
 }
 
 /**
- * 字典文字展示方法
- * @param dict
- * @param code
+ * 格式化增长率，保留两位小数 ，并且去掉末尾的0  取绝对值
+ *
+ * @param growthRate
+ * @returns
  */
+export function formatGrowthRate(growthRate: number) {
+  if (growthRate === 0) {
+    return "-";
+  }
+
+  const formattedRate = Math.abs(growthRate * 100)
+    .toFixed(2)
+    .replace(/\.?0+$/, "");
+  return formattedRate + "%";
+}
+
+//  字典文字展示方法
 export const showDictLabel = (dict: OptionType[], code: string | number) => {
   return code ? dict.find((item) => item.value == code)?.label : "";
 };

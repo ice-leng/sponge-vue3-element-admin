@@ -99,11 +99,11 @@ export default defineMock([
               },
             },
             {
-              path: "dict-data",
-              component: "system/dict/data",
-              name: "DictData",
+              path: "dict-item",
+              component: "system/dict/dict-item",
+              name: "DictItem",
               meta: {
-                title: "字典数据",
+                title: "字典项",
                 icon: "",
                 hidden: true,
                 keepAlive: true,
@@ -388,6 +388,32 @@ export default defineMock([
                 params: null,
               },
             },
+            {
+              path: "drag",
+              component: "demo/drag",
+              name: "Drag",
+              meta: {
+                title: "拖拽组件",
+                icon: "",
+                hidden: false,
+                keepAlive: true,
+                alwaysShow: false,
+                params: null,
+              },
+            },
+            {
+              path: "text-scroll",
+              component: "demo/text-scroll",
+              name: "TextScroll",
+              meta: {
+                title: "滚动文本",
+                icon: "",
+                hidden: false,
+                keepAlive: true,
+                alwaysShow: false,
+                params: null,
+              },
+            },
           ],
         },
         {
@@ -491,7 +517,7 @@ export default defineMock([
     },
   },
 
-  // 获取菜单树形列表
+  // 获取菜单树形表格列表
   {
     url: "menus",
     method: ["GET"],
@@ -880,11 +906,11 @@ export default defineMock([
             {
               id: 135,
               parentId: 1,
-              name: "字典数据",
+              name: "字典项",
               type: "MENU",
               routeName: "DictData",
-              routePath: "dict-data",
-              component: "system/dict/data",
+              routePath: "dict-item",
+              component: "system/dict/dict-item",
               sort: 6,
               visible: 0,
               icon: "",
@@ -894,7 +920,7 @@ export default defineMock([
                 {
                   id: 136,
                   parentId: 135,
-                  name: "字典数据新增",
+                  name: "字典项新增",
                   type: "BUTTON",
                   routeName: null,
                   routePath: "",
@@ -903,13 +929,13 @@ export default defineMock([
                   visible: 1,
                   icon: "",
                   redirect: null,
-                  perm: "sys:dict-data:add",
+                  perm: "sys:dict-item:add",
                   children: [],
                 },
                 {
                   id: 137,
                   parentId: 135,
-                  name: "字典数据编辑",
+                  name: "字典项编辑",
                   type: "BUTTON",
                   routeName: null,
                   routePath: "",
@@ -918,13 +944,13 @@ export default defineMock([
                   visible: 1,
                   icon: "",
                   redirect: null,
-                  perm: "sys:dict-data:edit",
+                  perm: "sys:dict-item:edit",
                   children: [],
                 },
                 {
                   id: 138,
                   parentId: 135,
-                  name: "字典数据删除",
+                  name: "字典项删除",
                   type: "BUTTON",
                   routeName: null,
                   routePath: "",
@@ -933,7 +959,7 @@ export default defineMock([
                   visible: 1,
                   icon: "",
                   redirect: null,
-                  perm: "sys:dict-data:delete",
+                  perm: "sys:dict-item:delete",
                   children: [],
                 },
               ],
@@ -1552,6 +1578,351 @@ export default defineMock([
           ],
         },
       ],
+      msg: "一切ok",
+    },
+  },
+
+  // 获取菜单树形下拉列表
+  {
+    url: "menus/options",
+    method: ["GET"],
+    body: {
+      code: "00000",
+      data: [
+        {
+          value: "1",
+          label: "系统管理",
+          children: [
+            {
+              value: "2",
+              label: "用户管理",
+              children: [
+                {
+                  value: "105",
+                  label: "用户查询",
+                },
+                {
+                  value: "31",
+                  label: "用户新增",
+                },
+                {
+                  value: "32",
+                  label: "用户编辑",
+                },
+                {
+                  value: "33",
+                  label: "用户删除",
+                },
+                {
+                  value: "88",
+                  label: "重置密码",
+                },
+                {
+                  value: "106",
+                  label: "用户导入",
+                },
+                {
+                  value: "107",
+                  label: "用户导出",
+                },
+              ],
+            },
+            {
+              value: "3",
+              label: "角色管理",
+              children: [
+                {
+                  value: "139",
+                  label: "角色查询",
+                },
+                {
+                  value: "70",
+                  label: "角色新增",
+                },
+                {
+                  value: "71",
+                  label: "角色编辑",
+                },
+                {
+                  value: "72",
+                  label: "角色删除",
+                },
+              ],
+            },
+            {
+              value: "4",
+              label: "菜单管理",
+              children: [
+                {
+                  value: "73",
+                  label: "菜单新增",
+                },
+                {
+                  value: "140",
+                  label: "菜单查询",
+                },
+                {
+                  value: "75",
+                  label: "菜单删除",
+                },
+                {
+                  value: "74",
+                  label: "菜单编辑",
+                },
+              ],
+            },
+            {
+              value: "5",
+              label: "部门管理",
+              children: [
+                {
+                  value: "76",
+                  label: "部门新增",
+                },
+                {
+                  value: "141",
+                  label: "部门查询",
+                },
+                {
+                  value: "77",
+                  label: "部门编辑",
+                },
+                {
+                  value: "78",
+                  label: "部门删除",
+                },
+              ],
+            },
+            {
+              value: "6",
+              label: "字典管理",
+              children: [
+                {
+                  value: "79",
+                  label: "字典新增",
+                },
+                {
+                  value: "142",
+                  label: "字典查询",
+                },
+                {
+                  value: "81",
+                  label: "字典编辑",
+                },
+                {
+                  value: "84",
+                  label: "字典删除",
+                },
+              ],
+            },
+            {
+              value: "117",
+              label: "系统日志",
+            },
+            {
+              value: "135",
+              label: "字典项",
+              children: [
+                {
+                  value: "143",
+                  label: "字典项查询",
+                },
+                {
+                  value: "136",
+                  label: "字典项新增",
+                },
+                {
+                  value: "137",
+                  label: "字典项编辑",
+                },
+                {
+                  value: "138",
+                  label: "字典项删除",
+                },
+              ],
+            },
+            {
+              value: "120",
+              label: "系统配置",
+              children: [
+                {
+                  value: "121",
+                  label: "系统配置查询",
+                },
+                {
+                  value: "122",
+                  label: "系统配置新增",
+                },
+                {
+                  value: "123",
+                  label: "系统配置修改",
+                },
+                {
+                  value: "124",
+                  label: "系统配置删除",
+                },
+                {
+                  value: "125",
+                  label: "系统配置刷新",
+                },
+              ],
+            },
+            {
+              value: "126",
+              label: "通知公告",
+              children: [
+                {
+                  value: "127",
+                  label: "通知查询",
+                },
+                {
+                  value: "128",
+                  label: "通知新增",
+                },
+                {
+                  value: "129",
+                  label: "通知编辑",
+                },
+                {
+                  value: "130",
+                  label: "通知删除",
+                },
+                {
+                  value: "133",
+                  label: "通知发布",
+                },
+                {
+                  value: "134",
+                  label: "通知撤回",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          value: "118",
+          label: "系统工具",
+          children: [
+            {
+              value: "119",
+              label: "代码生成",
+            },
+          ],
+        },
+        {
+          value: "40",
+          label: "接口文档",
+          children: [
+            {
+              value: "41",
+              label: "Apifox",
+            },
+          ],
+        },
+        {
+          value: "26",
+          label: "平台文档",
+          children: [
+            {
+              value: "102",
+              label: "document",
+            },
+            {
+              value: "30",
+              label: "平台文档(外链)",
+            },
+          ],
+        },
+        {
+          value: "20",
+          label: "多级菜单",
+          children: [
+            {
+              value: "21",
+              label: "菜单一级",
+              children: [
+                {
+                  value: "22",
+                  label: "菜单二级",
+                  children: [
+                    {
+                      value: "23",
+                      label: "菜单三级-1",
+                    },
+                    {
+                      value: "24",
+                      label: "菜单三级-2",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          value: "36",
+          label: "组件封装",
+          children: [
+            {
+              value: "108",
+              label: "增删改查",
+            },
+            {
+              value: "109",
+              label: "列表选择器",
+            },
+            {
+              value: "37",
+              label: "富文本编辑器",
+            },
+            {
+              value: "38",
+              label: "图片上传",
+            },
+            {
+              value: "39",
+              label: "图标选择器",
+            },
+            {
+              value: "95",
+              label: "字典组件",
+            },
+          ],
+        },
+        {
+          value: "110",
+          label: "路由参数",
+          children: [
+            {
+              value: "111",
+              label: "参数(type=1)",
+            },
+            {
+              value: "112",
+              label: "参数(type=2)",
+            },
+          ],
+        },
+        {
+          value: "89",
+          label: "功能演示",
+          children: [
+            {
+              value: "97",
+              label: "Icons",
+            },
+            {
+              value: "90",
+              label: "Websocket",
+            },
+            {
+              value: "91",
+              label: "敬请期待...",
+            },
+          ],
+        },
+      ],
+
       msg: "一切ok",
     },
   },

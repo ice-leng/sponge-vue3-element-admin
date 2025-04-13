@@ -4,25 +4,30 @@
     <el-menu
       mode="horizontal"
       :default-active="activePath"
-      :background-color="variables['menu-background']"
-      :text-color="variables['menu-text']"
-      :active-text-color="variables['menu-active-text']"
+      :background-color="
+        theme === 'dark' || sidebarColorScheme === SidebarColor.CLASSIC_BLUE
+          ? variables['menu-background']
+          : undefined
+      "
+      :text-color="
+        theme === 'dark' || sidebarColorScheme === SidebarColor.CLASSIC_BLUE
+          ? variables['menu-text']
+          : undefined
+      "
+      :active-text-color="
+        theme === 'dark' || sidebarColorScheme === SidebarColor.CLASSIC_BLUE
+          ? variables['menu-active-text']
+          : undefined
+      "
       @select="handleMenuSelect"
     >
-      <el-menu-item
-        v-for="route in topMenus"
-        :key="route.path"
-        :index="route.path"
-      >
+      <el-menu-item v-for="route in topMenus" :key="route.path" :index="route.path">
         <template #title>
           <template v-if="route.meta && route.meta.icon">
-            <el-icon
-              v-if="route.meta.icon.startsWith('el-icon')"
-              class="sub-el-icon"
-            >
+            <el-icon v-if="route.meta.icon.startsWith('el-icon')" class="sub-el-icon">
               <component :is="route.meta.icon.replace('el-icon-', '')" />
             </el-icon>
-            <svg-icon v-else :icon-class="route.meta.icon" />
+            <div v-else :class="`i-svg:${route.meta.icon}`" />
           </template>
           <span v-if="route.path === '/'">首页</span>
           <span v-else-if="route.meta && route.meta.title" class="ml-1">
@@ -35,23 +40,25 @@
 </template>
 
 <script lang="ts" setup>
-/**
- * 导入模块：先外部库，再内部模块，最后导入样式和工具类
- */
 import { LocationQueryRaw, RouteRecordRaw } from "vue-router";
-import { usePermissionStore, useAppStore } from "@/store";
+import { usePermissionStore, useAppStore, useSettingsStore } from "@/store";
 import { translateRouteTitle } from "@/utils/i18n";
 import variables from "@/styles/variables.module.scss";
+import { SidebarColor } from "@/enums/settings/theme.enum";
 
-/**
- * 定义状态：先定义 reactive、ref 或 computed 状态
- */
 const router = useRouter();
 const appStore = useAppStore();
 const permissionStore = usePermissionStore();
+const settingsStore = useSettingsStore();
 
 // 当前激活的顶部菜单路径
 const activePath = computed(() => appStore.activeTopMenuPath);
+
+// 获取主题
+const theme = computed(() => settingsStore.theme);
+
+// 获取浅色主题下的侧边栏配色方案
+const sidebarColorScheme = computed(() => settingsStore.sidebarColorScheme);
 
 // 顶部菜单列表
 const topMenus = ref<RouteRecordRaw[]>([]);
@@ -71,8 +78,8 @@ appStore.activeTopMenu(activeTopMenuPath);
  */
 const handleMenuSelect = (routePath: string) => {
   appStore.activeTopMenu(routePath); // 设置激活的顶部菜单
-  permissionStore.setMixLeftMenus(routePath); // 更新左侧菜单
-  navigateToFirstLeftMenu(permissionStore.mixLeftMenus); // 跳转到左侧第一个菜单
+  permissionStore.setMixedLayoutLeftRoutes(routePath); // 更新左侧菜单
+  navigateToFirstLeftMenu(permissionStore.mixedLayoutLeftRoutes); // 跳转到左侧第一个菜单
 };
 
 /**
@@ -99,8 +106,6 @@ const navigateToFirstLeftMenu = (menus: RouteRecordRaw[]) => {
 };
 
 onMounted(() => {
-  topMenus.value = permissionStore.routes.filter(
-    (item) => !item.meta || !item.meta.hidden
-  );
+  topMenus.value = permissionStore.routes.filter((item) => !item.meta || !item.meta.hidden);
 });
 </script>

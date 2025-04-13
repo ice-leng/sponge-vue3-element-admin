@@ -1,29 +1,28 @@
 <template>
   <div class="login-container">
-    <!-- 顶部工具栏 -->
-    <div class="top-bar">
-      <el-switch
-        v-model="isDark"
-        inline-prompt
-        active-icon="Moon"
-        inactive-icon="Sunny"
-        @change="toggleTheme"
-      />
-      <lang-select class="ml-2 cursor-pointer" />
+    <!-- 右侧切换主题、语言按钮 -->
+    <div class="flex flex-col gap-4px fixed top-40px right-40px text-lg">
+      <el-tooltip :content="t('login.theneToggle')" placement="left">
+        <CommonWrapper>
+          <DarkModeSwitch />
+        </CommonWrapper>
+      </el-tooltip>
+      <el-tooltip :content="t('login.languageToggle')" placement="left">
+        <CommonWrapper>
+          <LangSelect size="text-20px" />
+        </CommonWrapper>
+      </el-tooltip>
     </div>
+
     <!-- 登录表单 -->
     <el-card class="login-card">
       <div class="text-center relative">
+        <el-image :src="logo" style="width: 84px" />
         <h2>{{ defaultSettings.title }}</h2>
         <!--        <el-tag class="ml-2 absolute-rt">{{ defaultSettings.version }}</el-tag>-->
       </div>
 
-      <el-form
-        ref="loginFormRef"
-        :model="loginData"
-        :rules="loginRules"
-        class="login-form"
-      >
+      <el-form ref="loginFormRef" :model="loginData" :rules="loginRules" class="login-form">
         <!-- 用户名 -->
         <el-form-item prop="username">
           <div class="input-wrapper">
@@ -42,11 +41,7 @@
         </el-form-item>
 
         <!-- 密码 -->
-        <el-tooltip
-          :visible="isCapslock"
-          :content="$t('login.capsLock')"
-          placement="right"
-        >
+        <el-tooltip :visible="isCapslock" :content="$t('login.capsLock')" placement="right">
           <el-form-item prop="password">
             <div class="input-wrapper">
               <el-icon class="mx-2">
@@ -80,11 +75,7 @@
               @keyup.enter="handleLoginSubmit"
             />
 
-            <el-image
-              :src="captchaBase64"
-              class="captcha-image"
-              @click="getCaptcha"
-            />
+            <el-image :src="captchaBase64" class="captcha-image" @click="getCaptcha" />
           </div>
         </el-form-item>
 
@@ -102,40 +93,36 @@
     </el-card>
 
     <!-- ICP备案 -->
-    <div v-show="icpVisible" class="icp-info">
-      <p>
-        Copyright © 2021 - 2024 youlai.tech All Rights Reserved. 有来技术
-        版权所有
-      </p>
-      <p>皖ICP备20006496号-3</p>
-    </div>
+    <el-text size="small" class="py-2.5! fixed bottom-0 text-center">
+      Copyright © 2021 - 2025 youlai.tech All Rights Reserved.
+      <a href="http://beian.miit.gov.cn/" target="_blank">皖ICP备20006496号-2</a>
+    </el-text>
   </div>
 </template>
 
 <script setup lang="ts">
 // 外部库和依赖
-import { LocationQuery, useRoute } from "vue-router";
+import { LocationQuery, RouteLocationRaw, useRoute } from "vue-router";
+import logo from "@/assets/logo.png";
 
 // 内部依赖
-import { useSettingsStore, useUserStore } from "@/store";
-import AuthAPI, { LoginData } from "@/api/auth";
+import { useUserStore } from "@/store";
+import AuthAPI, { LoginFormData } from "@/api/auth.api";
 import router from "@/router";
 import defaultSettings from "@/settings";
-import { ThemeEnum } from "@/enums/ThemeEnum";
+import CommonWrapper from "@/components/CommonWrapper/index.vue";
+import DarkModeSwitch from "@/components/DarkModeSwitch/index.vue";
 
 // 类型定义
 import type { FormInstance } from "element-plus";
 // 使用导入的依赖和库
 const userStore = useUserStore();
-const settingsStore = useSettingsStore();
 const route = useRoute();
 // 窗口高度
 const { height } = useWindowSize();
 // 国际化 Internationalization
 const { t } = useI18n();
 
-// 是否暗黑模式
-const isDark = ref(settingsStore.theme === ThemeEnum.DARK);
 // 是否显示 ICP 备案信息
 const icpVisible = ref(true);
 // 按钮 loading 状态
@@ -147,12 +134,12 @@ const captchaBase64 = ref();
 // 登录表单ref
 const loginFormRef = ref<FormInstance>();
 
-const loginData = ref<LoginData>({
+const loginData = ref<LoginFormData>({
   username: "admin",
   password: "123456",
   captchaKey: "",
   captchaCode: "",
-} as LoginData);
+} as LoginFormData);
 
 const loginRules = computed(() => {
   return {
@@ -203,8 +190,8 @@ function handleLoginSubmit() {
         .then(async () => {
           await userStore.getUserInfo();
           // 跳转到登录前的页面
-          const { path, queryParams } = parseRedirect();
-          router.push({ path: path, query: queryParams });
+          const redirect = resolveRedirectTarget(route.query);
+          await router.push(redirect);
         })
         .catch(() => {
           getCaptcha();
@@ -217,34 +204,29 @@ function handleLoginSubmit() {
 }
 
 /**
- * 解析 redirect 字符串 为 path 和  queryParams
- *
- * @returns { path: string, queryParams: Record<string, string> } 解析后的 path 和 queryParams
+ * 解析重定向目标
+ * @param query 路由查询参数
+ * @returns 标准化后的路由地址对象
  */
-function parseRedirect(): {
-  path: string;
-  queryParams: Record<string, string>;
-} {
-  const query: LocationQuery = route.query;
-  const redirect = (query.redirect as string) ?? "/";
+function resolveRedirectTarget(query: LocationQuery): RouteLocationRaw {
+  // 默认跳转路径
+  const defaultPath = "/";
 
-  const url = new URL(redirect, window.location.origin);
-  const path = url.pathname;
-  const queryParams: Record<string, string> = {};
+  // 获取原始重定向路径
+  const rawRedirect = (query.redirect as string) || defaultPath;
 
-  url.searchParams.forEach((value, key) => {
-    queryParams[key] = value;
-  });
-
-  return { path, queryParams };
+  try {
+    // 6. 使用Vue Router解析路径
+    const resolved = router.resolve(rawRedirect);
+    return {
+      path: resolved.path,
+      query: resolved.query,
+    };
+  } catch {
+    // 7. 异常处理：返回安全路径
+    return { path: defaultPath };
+  }
 }
-
-// 主题切换
-const toggleTheme = () => {
-  const newTheme =
-    settingsStore.theme === ThemeEnum.DARK ? ThemeEnum.LIGHT : ThemeEnum.DARK;
-  settingsStore.changeTheme(newTheme);
-};
 
 /** 根据屏幕宽度切换设备模式 */
 watchEffect(() => {
@@ -276,8 +258,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  background: url("@/assets/images/login-background-light.jpg") no-repeat center
-    right;
+  background: url("@/assets/images/login-bg.svg") no-repeat center right;
 
   .top-bar {
     position: absolute;
@@ -347,7 +328,6 @@ onMounted(() => {
 }
 
 html.dark .login-container {
-  background: url("@/assets/images/login-background-dark.jpg") no-repeat center
-    right;
+  background: url("@/assets/images/login-bg.svg") no-repeat center right;
 }
 </style>

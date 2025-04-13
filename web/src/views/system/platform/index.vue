@@ -233,9 +233,9 @@ import PlatformAPI, {
   PlatformPageQuery,
   PlatformPageVO,
   PlatformForm,
-} from "@/api/system/platform";
+} from "@/api/system/platform.api";
 
-import RoleAPI from "@/api/system/role";
+import RoleAPI from "@/api/system/role.api";
 
 const queryFormRef = ref(ElForm);
 const platformFormRef = ref(ElForm);

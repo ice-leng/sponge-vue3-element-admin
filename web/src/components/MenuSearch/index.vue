@@ -1,6 +1,6 @@
 <template>
   <div @click="openSearchModal">
-    <svg-icon icon-class="search" />
+    <div class="i-svg:search" />
     <el-dialog
       v-model="isModalVisible"
       width="30%"
@@ -32,15 +32,20 @@
           <li
             v-for="(item, index) in displayResults"
             :key="item.path"
-            :class="{ active: index === activeIndex }"
+            :class="[
+              'search-result__item',
+              {
+                'search-result__item--active': index === activeIndex,
+              },
+            ]"
             @click="navigateToRoute(item)"
           >
             <el-icon v-if="item.icon && item.icon.startsWith('el-icon')">
               <component :is="item.icon.replace('el-icon-', '')" />
             </el-icon>
-            <svg-icon v-else-if="item.icon" :icon-class="item.icon" />
-            <svg-icon v-else icon-class="menu" />
-            {{ item.title }}
+            <div v-else-if="item.icon" :class="`i-svg:${item.icon}`" />
+            <div v-else class="i-svg:menu" />
+            <span class="ml-2">{{ item.title }}</span>
           </li>
         </ul>
         <el-empty v-else description="暂无数据" />
@@ -48,15 +53,22 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <svg-icon icon-class="enter" size="20px" />
-          <span>选择</span>
+          <div class="dialog-footer__shortcut">
+            <div class="i-svg:enter" />
+          </div>
+          <span class="dialog-footer__text mr-3">选择</span>
 
-          <svg-icon icon-class="down" size="20px" class="ml-5" />
-          <svg-icon icon-class="up" size="20px" class="ml-1" />
-          <span>切换</span>
-
-          <svg-icon icon-class="esc" size="20px" class="ml-5" />
-          <span>退出</span>
+          <div class="dialog-footer__shortcut">
+            <div class="i-svg:down" />
+          </div>
+          <div class="dialog-footer__shortcut ml-1">
+            <div class="i-svg:up" />
+          </div>
+          <span class="dialog-footer__text mr-3">切换</span>
+          <div class="dialog-footer__shortcut">
+            <div class="i-svg:esc" />
+          </div>
+          <span class="dialog-footer__text">退出</span>
         </div>
       </template>
     </el-dialog>
@@ -130,14 +142,10 @@ function navigateResults(direction: string) {
 
   if (direction === "up") {
     activeIndex.value =
-      activeIndex.value <= 0
-        ? displayResults.value.length - 1
-        : activeIndex.value - 1;
+      activeIndex.value <= 0 ? displayResults.value.length - 1 : activeIndex.value - 1;
   } else if (direction === "down") {
     activeIndex.value =
-      activeIndex.value >= displayResults.value.length - 1
-        ? 0
-        : activeIndex.value + 1;
+      activeIndex.value >= displayResults.value.length - 1 ? 0 : activeIndex.value + 1;
   }
 }
 
@@ -153,24 +161,19 @@ function navigateToRoute(item: SearchItem) {
 
 function loadRoutes(routes: RouteRecordRaw[], parentPath = "") {
   routes.forEach((route) => {
-    const path = route.path.startsWith("/")
-      ? route.path
-      : `${parentPath}/${route.path}`;
-    if (excludedRoutes.value.includes(route.path) || isExternal(route.path))
-      return;
+    const path = route.path.startsWith("/") ? route.path : `${parentPath}/${route.path}`;
+    if (excludedRoutes.value.includes(route.path) || isExternal(route.path)) return;
 
     if (route.children) {
       loadRoutes(route.children, path);
     } else if (route.meta?.title) {
-      const title =
-        route.meta.title === "dashboard" ? "首页" : route.meta.title;
+      const title = route.meta.title === "dashboard" ? "首页" : route.meta.title;
       menuItems.value.push({
         title,
         path,
         name: typeof route.name === "string" ? route.name : undefined,
         icon: route.meta.icon,
-        redirect:
-          typeof route.redirect === "string" ? route.redirect : undefined,
+        redirect: typeof route.redirect === "string" ? route.redirect : undefined,
       });
     }
   });
@@ -182,25 +185,29 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .search-result {
   max-height: 400px;
   overflow-y: auto;
-}
 
-.search-result ul li {
-  padding: 10px;
-  line-height: 40px;
-  text-align: left;
-  cursor: pointer;
-}
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
 
-.search-result ul li.active {
-  background-color: #e6f7ff;
-}
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    text-align: left;
+    cursor: pointer;
 
-.search-result ul li:hover {
-  background-color: #f5f5f5;
+    &--active {
+      color: var(--el-color-primary);
+      background-color: var(--el-menu-hover-bg-color);
+    }
+  }
 }
 
 .dialog-footer {
@@ -208,25 +215,32 @@ onMounted(() => {
   align-items: center;
   justify-content: start;
 
-  svg {
+  &__shortcut {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 2px;
-    margin-right: 0.4em;
-    color: #909399;
-    background: rgb(125 125 125 / 10%);
+    width: 20px;
+    height: 18px;
+    padding: 0 0 1px;
+    color: var(--el-text-color-secondary);
+    background: rgba(125, 125, 125, 0.1);
     border: 0;
     border-radius: 2px;
     box-shadow:
       inset 0 -2px 0 0 #cdcde6,
       inset 0 0 1px 1px #fff,
-      0 1px 2px 1px rgb(30 35 90 / 40%);
+      0 1px 2px 1px rgba(30, 35, 90, 0.4);
   }
 
-  span {
-    font-size: 12px;
-    color: #909399;
+  &__text {
+    margin-left: 5px;
+    font-size: 14px;
+    color: var(--el-text-color-secondary);
   }
+}
+
+.dialog-footer > [class^="i-svg:"] {
+  display: inline-block;
+  color: var(--el-text-color-secondary);
 }
 </style>

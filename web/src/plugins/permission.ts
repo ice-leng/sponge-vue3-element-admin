@@ -1,10 +1,6 @@
-import type {
-  NavigationGuardNext,
-  RouteLocationNormalized,
-  RouteRecordRaw,
-} from "vue-router";
+import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 import NProgress from "@/utils/nprogress";
-import { getToken } from "@/utils/auth";
+import { getAccessToken } from "@/utils/auth";
 import router from "@/router";
 import { usePermissionStore, useUserStore } from "@/store";
 
@@ -15,22 +11,21 @@ export function setupPermission() {
   router.beforeEach(async (to, from, next) => {
     NProgress.start();
 
-    const isLogin = !!getToken(); // 判断是否登录
+    const isLogin = !!getAccessToken(); // 判断是否登录
     if (isLogin) {
       if (to.path === "/login") {
         // 已登录，访问登录页，跳转到首页
         next({ path: "/" });
       } else {
         const permissionStore = usePermissionStore();
-        // 判断路由是否加载过
+        // 判断路由是否加载完成
         if (permissionStore.isRoutesLoaded) {
           if (to.matched.length === 0) {
             // 路由未匹配，跳转到404
             next("/404");
           } else {
             // 动态设置页面标题
-            const title =
-              (to.params.title as string) || (to.query.title as string);
+            const title = (to.params.title as string) || (to.query.title as string);
             if (title) {
               to.meta.title = title;
             }
@@ -40,14 +35,12 @@ export function setupPermission() {
           try {
             // 生成动态路由
             const dynamicRoutes = await permissionStore.generateRoutes();
-            dynamicRoutes.forEach((route: RouteRecordRaw) =>
-              router.addRoute(route)
-            );
-            next({ ...to, replace: true }); // 添加动态路由后重新导航
+            dynamicRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route));
+            next({ ...to, replace: true });
           } catch (error) {
             console.error(error);
             // 路由加载失败，重置 token 并重定向到登录页
-            await useUserStore().clearUserSession();
+            await useUserStore().clearSessionAndCache();
             redirectToLogin(to, next);
             NProgress.done();
           }
@@ -60,7 +53,7 @@ export function setupPermission() {
       } else {
         // 不在白名单，重定向到登录页
         redirectToLogin(to, next);
-        NProgress.done(); // 关闭进度条
+        NProgress.done();
       }
     }
   });
@@ -71,11 +64,8 @@ export function setupPermission() {
   });
 }
 
-/** 重定向到登录页 */
-function redirectToLogin(
-  to: RouteLocationNormalized,
-  next: NavigationGuardNext
-) {
+// 重定向到登录页
+function redirectToLogin(to: RouteLocationNormalized, next: NavigationGuardNext) {
   const params = new URLSearchParams(to.query as Record<string, string>);
   const queryString = params.toString();
   const redirect = queryString ? `${to.path}?${queryString}` : to.path;
@@ -83,10 +73,7 @@ function redirectToLogin(
 }
 
 /** 判断是否有权限 */
-export function hasAuth(
-  value: string | string[],
-  type: "button" | "role" = "button"
-) {
+export function hasAuth(value: string | string[], type: "button" | "role" = "button") {
   const { roles, perms } = useUserStore().userInfo;
 
   // 超级管理员 拥有所有权限
