@@ -14,9 +14,15 @@ import (
 
 var iPlatformDao dao.PlatformDao
 
-func VerifyToken(claims *jwt.Claims, tokenTail10 string, c *gin.Context) error {
-	if claims.ExpiresAt.Before(time.Now()) {
-		return ecode.ErrLogin.Err()
+const JwtSignKey = "UxeY8GUv4CH8fH7hCQM9CA2"
+
+func VerifyToken(claims *jwt.Claims, c *gin.Context) error {
+	if claims.ExpiresAt.Before(time.Now().Add(time.Minute * 10)) {
+		token, err := claims.NewToken(time.Hour*2, jwt.HS384, []byte(JwtSignKey))
+		if err != nil {
+			return err
+		}
+		c.Header("X-Renewed-Token", token)
 	}
 
 	if iPlatformDao == nil {
@@ -36,7 +42,6 @@ func VerifyToken(claims *jwt.Claims, tokenTail10 string, c *gin.Context) error {
 		return ecode.ErrLoginFrozen.Err()
 	}
 
-	c.Set("roleId", platform.RoleID)
 	c.Set("id", platform.ID)
 	return nil
 }

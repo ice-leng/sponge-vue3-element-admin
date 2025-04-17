@@ -4,12 +4,12 @@ import (
 	"admin/internal/cache"
 	"admin/internal/dao"
 	"admin/internal/ecode"
+	"admin/internal/middlewares"
 	"admin/internal/model"
 	"admin/internal/types"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-dev-frame/sponge/pkg/errcode"
 	"github.com/go-dev-frame/sponge/pkg/ggorm"
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
 	"github.com/go-dev-frame/sponge/pkg/gin/response"
@@ -27,7 +27,6 @@ type AuthHandler interface {
 	Login(c *gin.Context)
 	Captcha(c *gin.Context)
 	Logout(c *gin.Context)
-	RefreshToken(c *gin.Context)
 }
 
 type authHandler struct {
@@ -95,7 +94,12 @@ func (a authHandler) Login(c *gin.Context) {
 		LastTime: &lastTime,
 	})
 
-	token, tokenErr := jwt.GenerateToken(utils.Uint64ToStr(platform.ID), platform.Username)
+	_, token, tokenErr := jwt.GenerateToken(utils.Uint64ToStr(platform.ID),
+		jwt.WithGenerateTokenSignKey([]byte(middlewares.JwtSignKey)),
+		jwt.WithGenerateTokenSignMethod(jwt.HS384),
+		jwt.WithGenerateTokenClaims([]jwt.RegisteredClaimsOption{
+			jwt.WithExpires(time.Hour * 2),
+		}...))
 	if tokenErr != nil {
 		response.Error(c, ecode.ErrLogin)
 		return
@@ -112,26 +116,6 @@ func (a authHandler) loginReply(token string) types.LoginItem {
 	}
 }
 
-// RefreshToken of refresh token
-// @Summary refresh token
-// @Description refresh token
-// @Tags auth
-// @accept json
-// @Produce json
-// @Success 200 {object} types.LoginReply{}
-// @Router /api/v1/auth/refreshToken [post]
-// @Security BearerAuth
-func (a authHandler) RefreshToken(c *gin.Context) {
-	authorization := c.GetHeader(middleware.HeaderAuthorizationKey)
-	token := authorization[7:]
-	refresh, err := jwt.RefreshToken(token)
-	if err != nil {
-		response.Out(c, errcode.Unauthorized)
-		return
-	}
-	response.Success(c, a.loginReply(refresh))
-}
-
 // Logout of logout
 // @Summary logout
 // @Description logout
@@ -139,7 +123,7 @@ func (a authHandler) RefreshToken(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Success 200 {object} types.Result{}
-// @Router /api/v1/auth/logout [post]
+// @Router /api/v1/auth/logout [delete]
 // @Security BearerAuth
 func (a authHandler) Logout(c *gin.Context) {
 	response.Success(c)

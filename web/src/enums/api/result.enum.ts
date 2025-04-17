@@ -14,11 +14,5 @@ export const enum ResultEnum {
   /**
    * 访问令牌无效或过期
    */
-  ACCESS_TOKEN_INVALID = "A0230",
-
-  /**
-   * 刷新令牌无效或过期
-   */
-  REFRESH_TOKEN_INVALID = "A0231",
-  TOKEN_INVALID = 401,
+  ACCESS_TOKEN_INVALID = 401,
 }

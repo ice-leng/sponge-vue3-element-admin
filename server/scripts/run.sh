@@ -4,6 +4,8 @@ serverName="admin"
 
 binaryFile="cmd/${serverName}/${serverName}"
 
+configFile=$1
+
 osType=$(uname -s)
 if [ "${osType%%_*}"x = "MINGW64"x ];then
     binaryFile="${binaryFile}.exe"
@@ -26,4 +28,8 @@ go build -o ${binaryFile} cmd/${serverName}/main.go
 checkResult $?
 
 # running server
-./${binaryFile}
+if test -f "$configFile"; then
+    ./${binaryFile} -c $configFile
+else
+    ./${binaryFile}
+fi

@@ -64,8 +64,8 @@ linters-settings:
           #- pkg: "github.com/instana/testify"
           #  desc: It's a fork of github.com/stretchr/testify.
         files:
-        # logrus is allowed to use only in logutils package.
-        #- "!**/pkg/logutils/**.go"
+          # logrus is allowed to use only in logutils package.
+          #- "!**/pkg/logutils/**.go"
   dupl:
     # tokens count to trigger issue, 150 by default
     threshold: 100

@@ -1079,7 +1079,7 @@ paths:
       tags:
       - auth
   /api/v1/auth/logout:
-    post:
+    delete:
       consumes:
       - application/json
       description: logout
@@ -1093,23 +1093,6 @@ paths:
       security:
       - BearerAuth: []
       summary: logout
-      tags:
-      - auth
-  /api/v1/auth/refreshToken:
-    post:
-      consumes:
-      - application/json
-      description: refresh token
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.LoginReply'
-      security:
-      - BearerAuth: []
-      summary: refresh token
       tags:
       - auth
   /api/v1/config:

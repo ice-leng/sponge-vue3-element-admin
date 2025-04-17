@@ -5,7 +5,7 @@
 
 serverName="admin"
 cmdStr="cmd/${serverName}/${serverName}"
-
+configFile=$1
 
 function checkResult() {
     result=$1
@@ -37,7 +37,13 @@ startService() {
     go build -o ${cmdStr} cmd/${NAME}/main.go
     checkResult $?
 
-    nohup ${cmdStr} > ${NAME}.log 2>&1 &
+    # running server
+    if test -f "$configFile"; then
+        echo "Using config file: $configFile"
+        nohup ${cmdStr} -c $configFile > ${NAME}.log 2>&1 &
+    else
+        nohup ${cmdStr} > ${NAME}.log 2>&1 &
+    fi
     sleep 1
 
     ID=`ps -ef | grep "$NAME" | grep -v "$0" | grep -v "grep" | awk '{print $2}'`
@@ -47,9 +53,8 @@ startService() {
         echo "Failed to start ${NAME} service"
 		    return 1
     fi
-	return 0
+    return 0
 }
-
 
 stopService ${serverName}
 if [ "$1"x != "stop"x ] ;then

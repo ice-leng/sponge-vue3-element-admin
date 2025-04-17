@@ -15,7 +15,7 @@ func init() {
 }
 
 func roleRouter(group *gin.RouterGroup, h handler.RoleHandler) {
-	g := group.Group("/role", middleware.Auth(middleware.WithDefaultVerify(middlewares.VerifyToken), middleware.WithSwitchHTTPCode()))
+	g := group.Group("/role", middleware.Auth(middleware.WithExtraVerify(middlewares.VerifyToken), middleware.WithSignKey([]byte(middlewares.JwtSignKey))))
 
 	// All the following routes use jwt authentication, you also can use middleware.Auth(middleware.WithVerify(fn))
 	//g.Use(middleware.Auth())

@@ -15,7 +15,7 @@ func init() {
 }
 
 func configRouter(group *gin.RouterGroup, h handler.ConfigHandler) {
-	g := group.Group("/config", middleware.Auth(middleware.WithDefaultVerify(middlewares.VerifyToken), middleware.WithSwitchHTTPCode()))
+	g := group.Group("/config", middleware.Auth(middleware.WithExtraVerify(middlewares.VerifyToken), middleware.WithSignKey([]byte(middlewares.JwtSignKey))))
 
 	// All the following routes use jwt authentication, you also can use middleware.Auth(middleware.WithVerify(fn))
 	//g.Use(middleware.Auth())

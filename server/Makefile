@@ -49,15 +49,15 @@ build:
 
 
 .PHONY: run
-# Build and run service
+# Build and run service, you can specify the configuration file, e.g. make run Config=configs/dev.yml
 run:
-	@bash scripts/run.sh
+	@bash scripts/run.sh $(Config)
 
 
 .PHONY: run-nohup
-# Run service with nohup in local, if you want to stop the server, pass the parameter stop, e.g. make run-nohup CMD=stop
+# Run service with nohup in local, you can specify the configuration file, e.g. make run-nohup Config=configs/dev.yml, if you want to stop the server, pass the parameter stop, e.g. make run-nohup CMD=stop
 run-nohup:
-	@bash scripts/run-nohup.sh $(CMD)
+	@bash scripts/run-nohup.sh $(Config) $(CMD)
 
 
 .PHONY: run-docker
