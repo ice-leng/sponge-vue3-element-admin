@@ -43,5 +43,6 @@ func VerifyToken(claims *jwt.Claims, c *gin.Context) error {
 	}
 
 	c.Set("id", platform.ID)
+	c.Set("roleId", platform.RoleID)
 	return nil
 }

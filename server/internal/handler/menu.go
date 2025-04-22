@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/huandu/xstrings"
 	"strings"
@@ -259,10 +258,8 @@ func (h *menuHandler) List(c *gin.Context) {
 // @Security BearerAuth
 func (h *menuHandler) Routes(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
-	roleId := c.GetString("roleId")
-	var roleIds []uint64
-	_ = json.Unmarshal([]byte(roleId), &roleIds)
-	result, err := h.iDao.Routes(ctx, roleIds)
+	roleIds, _ := c.Get("roleId")
+	result, err := h.iDao.Routes(ctx, roleIds.(types.LocalIntArray))
 	if err != nil {
 		logger.Error("Routes error", logger.Err(err), logger.Any("roleIds", roleIds), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
