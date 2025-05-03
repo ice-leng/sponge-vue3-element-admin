@@ -1,4 +1,43 @@
 definitions:
+  types.AdObjDetail:
+    properties:
+      categoryID:
+        description: 分类id
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      customerName:
+        description: 客户名称
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      imageUrl:
+        description: 图片
+        type: string
+      name:
+        description: 名称
+        type: string
+      position:
+        description: 广告位
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      status:
+        description: 状态
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+      url:
+        description: 链接
+        type: string
+    type: object
   types.CaptchaItem:
     properties:
       captchaBase64:
@@ -38,6 +77,30 @@ definitions:
     - newPassword
     - oldPassword
     type: object
+  types.ChannelObjDetail:
+    properties:
+      channelCode:
+        description: 渠道key
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      percentage:
+        description: 计算百分比（比如扣量20%，就填80就好）
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      status:
+        description: 状态
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
   types.ConfigObjDetail:
     properties:
       createdAt:
@@ -61,6 +124,83 @@ definitions:
       value:
         description: 配置值
         type: string
+    type: object
+  types.CreateAdReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.CreateAdRequest:
+    properties:
+      categoryID:
+        description: 分类id
+        type: integer
+      customerName:
+        description: 客户名称
+        type: string
+      imageUrl:
+        description: 图片
+        type: string
+      name:
+        description: 名称
+        type: string
+      position:
+        description: 广告位
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      status:
+        description: 状态
+        type: integer
+      url:
+        description: 链接
+        type: string
+    type: object
+  types.CreateChannelReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.CreateChannelRequest:
+    properties:
+      channelCode:
+        description: 渠道key
+        type: string
+      percentage:
+        description: 计算百分比（比如扣量20%，就填80就好）
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      status:
+        description: 状态
+        type: integer
     type: object
   types.CreateConfigReply:
     properties:
@@ -172,6 +312,15 @@ definitions:
       avatar:
         description: 头像
         type: string
+      gender:
+        description: 性别
+        type: integer
+      mobile:
+        description: 手机号
+        type: string
+      nickname:
+        description: 昵称
+        type: string
       password:
         description: 密码
         type: string
@@ -243,6 +392,37 @@ definitions:
         description: 状态
         type: integer
     type: object
+  types.CreateSystemConfigReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          id:
+            description: id
+            type: integer
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.CreateSystemConfigRequest:
+    properties:
+      description:
+        description: 描述
+        type: string
+      key:
+        description: 配置键
+        type: string
+      name:
+        description: 配置名称
+        type: string
+      value:
+        description: 配置值
+        type: string
+    type: object
   types.DashboardEchartsReply:
     properties:
       code:
@@ -306,6 +486,28 @@ definitions:
         description: return information description
         type: string
     type: object
+  types.DeleteAdByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeleteChannelByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
   types.DeleteConfigByIDReply:
     properties:
       code:
@@ -357,6 +559,47 @@ definitions:
         type: integer
       data:
         description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.DeleteSystemConfigByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetAdByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          ad:
+            $ref: '#/definitions/types.AdObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetChannelByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          channel:
+            $ref: '#/definitions/types.ChannelObjDetail'
+        type: object
       msg:
         description: return information description
         type: string
@@ -422,6 +665,55 @@ definitions:
         allOf:
         - $ref: '#/definitions/types.RoleMenuObjDetail'
         description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.GetSystemConfigByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          systemConfig:
+            $ref: '#/definitions/types.SystemConfigObjDetail'
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListAdsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          ads:
+            items:
+              $ref: '#/definitions/types.AdObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.ListChannelsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          channels:
+            items:
+              $ref: '#/definitions/types.ChannelObjDetail'
+            type: array
+        type: object
       msg:
         description: return information description
         type: string
@@ -517,6 +809,23 @@ definitions:
         description: return information description
         type: string
     type: object
+  types.ListSystemConfigsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        properties:
+          systemConfigs:
+            items:
+              $ref: '#/definitions/types.SystemConfigObjDetail'
+            type: array
+        type: object
+      msg:
+        description: return information description
+        type: string
+    type: object
   types.LoginItem:
     properties:
       accessToken:
@@ -565,6 +874,9 @@ definitions:
       id:
         description: convert to uint64 id
         type: integer
+      nickname:
+        description: 昵称
+        type: string
       perms:
         description: 权限组
         items:
@@ -722,11 +1034,20 @@ definitions:
       createdAt:
         description: 创建时间
         type: string
+      gender:
+        description: 性别
+        type: integer
       id:
         description: convert to uint64 id
         type: integer
       lastTime:
         description: 上次登录时间
+        type: string
+      mobile:
+        description: 手机号
+        type: string
+      nickname:
+        description: 昵称
         type: string
       roleId:
         description: 角色
@@ -751,9 +1072,18 @@ definitions:
       createdAt:
         description: 创建时间
         type: string
+      gender:
+        description: 性别
+        type: integer
       id:
         description: convert to uint64 id
         type: integer
+      mobile:
+        description: 手机号
+        type: string
+      nickname:
+        description: 昵称
+        type: string
       roleNames:
         description: 角色组
         type: string
@@ -837,6 +1167,103 @@ definitions:
       updatedAt:
         description: 更新时间
         type: string
+    type: object
+  types.SystemConfigObjDetail:
+    properties:
+      createdAt:
+        description: 创建时间
+        type: string
+      description:
+        description: 描述
+        type: string
+      id:
+        description: convert to uint64 id
+        type: integer
+      key:
+        description: 配置键
+        type: string
+      name:
+        description: 配置名称
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      value:
+        description: 配置值
+        type: string
+    type: object
+  types.UpdateAdByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.UpdateAdByIDRequest:
+    properties:
+      categoryID:
+        description: 分类id
+        type: integer
+      customerName:
+        description: 客户名称
+        type: string
+      id:
+        description: uint64 id
+        type: integer
+      imageUrl:
+        description: 图片
+        type: string
+      name:
+        description: 名称
+        type: string
+      position:
+        description: 广告位
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      status:
+        description: 状态
+        type: integer
+      url:
+        description: 链接
+        type: string
+    type: object
+  types.UpdateChannelByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.UpdateChannelByIDRequest:
+    properties:
+      channelCode:
+        description: 渠道key
+        type: string
+      id:
+        description: uint64 id
+        type: integer
+      percentage:
+        description: 计算百分比（比如扣量20%，就填80就好）
+        type: integer
+      remark:
+        description: 备注
+        type: string
+      status:
+        description: 状态
+        type: integer
     type: object
   types.UpdateConfigByIDReply:
     properties:
@@ -939,9 +1366,18 @@ definitions:
       avatar:
         description: 头像
         type: string
+      gender:
+        description: 性别
+        type: integer
       id:
         description: uint64 id
         type: integer
+      mobile:
+        description: 手机号
+        type: string
+      nickname:
+        description: 昵称
+        type: string
       password:
         description: 密码
         type: string
@@ -1009,6 +1445,35 @@ definitions:
         description: 角色ID
         type: integer
     type: object
+  types.UpdateSystemConfigByIDReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
+  types.UpdateSystemConfigByIDRequest:
+    properties:
+      description:
+        description: 描述
+        type: string
+      id:
+        description: uint64 id
+        type: integer
+      key:
+        description: 配置键
+        type: string
+      name:
+        description: 配置名称
+        type: string
+      value:
+        description: 配置值
+        type: string
+    type: object
   types.UploadItem:
     properties:
       name:
@@ -1041,6 +1506,140 @@ info:
   title: admin api docs
   version: "2.0"
 paths:
+  /api/v1/ad:
+    get:
+      consumes:
+      - application/json
+      description: list of ads by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListAdsReply'
+      security:
+      - BearerAuth: []
+      summary: list of ads by query parameters
+      tags:
+      - ad
+    post:
+      consumes:
+      - application/json
+      description: submit information to create ad
+      parameters:
+      - description: ad information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateAdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreateAdReply'
+      security:
+      - BearerAuth: []
+      summary: create ad
+      tags:
+      - ad
+  /api/v1/ad/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete ad by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteAdByIDReply'
+      security:
+      - BearerAuth: []
+      summary: delete ad
+      tags:
+      - ad
+    get:
+      consumes:
+      - application/json
+      description: get ad detail by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetAdByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get ad detail
+      tags:
+      - ad
+    put:
+      consumes:
+      - application/json
+      description: update ad information by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ad information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateAdByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateAdByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update ad
+      tags:
+      - ad
   /api/v1/auth/captcha:
     get:
       consumes:
@@ -1095,6 +1694,140 @@ paths:
       summary: logout
       tags:
       - auth
+  /api/v1/channel:
+    get:
+      consumes:
+      - application/json
+      description: list of channels by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListChannelsReply'
+      security:
+      - BearerAuth: []
+      summary: list of channels by query parameters
+      tags:
+      - channel
+    post:
+      consumes:
+      - application/json
+      description: submit information to create channel
+      parameters:
+      - description: channel information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateChannelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreateChannelReply'
+      security:
+      - BearerAuth: []
+      summary: create channel
+      tags:
+      - channel
+  /api/v1/channel/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete channel by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteChannelByIDReply'
+      security:
+      - BearerAuth: []
+      summary: delete channel
+      tags:
+      - channel
+    get:
+      consumes:
+      - application/json
+      description: get channel detail by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetChannelByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get channel detail
+      tags:
+      - channel
+    put:
+      consumes:
+      - application/json
+      description: update channel information by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: channel information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateChannelByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateChannelByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update channel
+      tags:
+      - channel
   /api/v1/config:
     get:
       consumes:
@@ -1455,6 +2188,14 @@ paths:
         in: query
         name: endTime
         type: string
+      - description: 账号
+        in: query
+        name: keyword
+        type: string
+      - description: 手机号
+        in: query
+        name: mobile
+        type: string
       - description: 分页
         in: query
         name: page
@@ -1475,10 +2216,6 @@ paths:
         in: query
         name: status
         type: integer
-      - description: 账号
-        in: query
-        name: username
-        type: string
       produces:
       - application/json
       responses:
@@ -2025,6 +2762,140 @@ paths:
       summary: get role menuIds
       tags:
       - role
+  /api/v1/systemConfig:
+    get:
+      consumes:
+      - application/json
+      description: list of systemConfigs by paging and conditions
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 分页
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: pageSize
+        type: integer
+      - description: 排序
+        in: query
+        name: sort
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ListSystemConfigsReply'
+      security:
+      - BearerAuth: []
+      summary: list of systemConfigs by query parameters
+      tags:
+      - systemConfig
+    post:
+      consumes:
+      - application/json
+      description: submit information to create systemConfig
+      parameters:
+      - description: systemConfig information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateSystemConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreateSystemConfigReply'
+      security:
+      - BearerAuth: []
+      summary: create systemConfig
+      tags:
+      - systemConfig
+  /api/v1/systemConfig/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete systemConfig by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteSystemConfigByIDReply'
+      security:
+      - BearerAuth: []
+      summary: delete systemConfig
+      tags:
+      - systemConfig
+    get:
+      consumes:
+      - application/json
+      description: get systemConfig detail by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetSystemConfigByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get systemConfig detail
+      tags:
+      - systemConfig
+    put:
+      consumes:
+      - application/json
+      description: update systemConfig information by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: systemConfig information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateSystemConfigByIDRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateSystemConfigByIDReply'
+      security:
+      - BearerAuth: []
+      summary: update systemConfig
+      tags:
+      - systemConfig
   /api/v1/upload/local:
     post:
       consumes:

@@ -128,6 +128,12 @@ func (d *platformDao) updateDataByID(ctx context.Context, db *gorm.DB, table *mo
 	if table.LastTime != nil {
 		update["last_time"] = table.LastTime
 	}
+	if table.Nickname != "" {
+		update["nickname"] = table.Nickname
+	}
+	if table.Mobile != "" {
+		update["mobile"] = table.Mobile
+	}
 
 	return db.WithContext(ctx).Model(table).Updates(update).Error
 }
@@ -260,8 +266,11 @@ func (d *platformDao) GetByParams(ctx context.Context, request *types.ListPlatfo
 		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime+" 23:59:59")
 	}
 
-	if request.Username != "" {
-		db = db.Where("username like ?", "%"+request.Username+"%")
+	if request.Keyword != "" {
+		db = db.Where("username like ? or nickname like ?", "%"+request.Keyword+"%", "%"+request.Keyword+"%")
+	}
+	if request.Mobile != "" {
+		db = db.Where("mobile = ?", request.Mobile)
 	}
 	if request.Status != nil {
 		db = db.Where("status = ?", request.Status)

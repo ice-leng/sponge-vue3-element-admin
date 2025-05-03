@@ -12,9 +12,12 @@ var _ time.Time
 type CreatePlatformRequest struct {
 	Username string   `json:"username" binding:""` // 账号
 	Password string   `json:"password" binding:""` // 密码
+	Nickname string   `json:"nickname" binding:""` // 昵称
+	Mobile   string   `json:"mobile" binding:""`   // 手机号
 	Avatar   string   `json:"avatar" binding:""`   // 头像
 	RoleID   []uint64 `json:"roleId" binding:""`   // 角色
-	Status   int      `json:"status" binding:""`   // 状态
+	Status   *int     `json:"status" binding:""`   // 状态
+	Gender   *int     `json:"gender" binding:""`   // 性别
 }
 
 // UpdatePlatformByIDRequest request params
@@ -23,9 +26,12 @@ type UpdatePlatformByIDRequest struct {
 
 	Username string   `json:"username" binding:""` // 账号
 	Password string   `json:"password" binding:""` // 密码
+	Nickname string   `json:"nickname" binding:""` // 昵称
+	Mobile   string   `json:"mobile" binding:""`   // 手机号
 	Avatar   string   `json:"avatar" binding:""`   // 头像
 	RoleID   []uint64 `json:"roleId" binding:""`   // 角色
 	Status   *int     `json:"status" binding:""`   // 状态
+	Gender   *int     `json:"gender" binding:""`   // 性别
 }
 
 type LoginRequest struct {
@@ -55,10 +61,13 @@ type PlatformObjDetail struct {
 	CreatedAt LocalDateTime `json:"createdAt"` // 创建时间
 	UpdatedAt LocalDateTime `json:"updatedAt"` // 更新时间
 	Username  string        `json:"username"`  // 账号
+	Nickname  string        `json:"nickname"`  // 昵称
+	Mobile    string        `json:"mobile"`    // 手机号
 	Avatar    string        `json:"avatar"`    // 头像
 	RoleID    []uint64      `json:"roleId"`    // 角色
 	Status    int           `json:"status"`    // 状态
 	LastTime  LocalDateTime `json:"lastTime"`  // 上次登录时间
+	Gender    int           `json:"gender" `   // 性别
 }
 
 // PlatformListPage list
@@ -101,7 +110,8 @@ type ListPlatformsRequest struct {
 
 	StartTime string `json:"startTime,omitempty" form:"startTime" binding:""` // 开始时间
 	EndTime   string `json:"endTime,omitempty" form:"endTime" binding:""`     // 结束时间
-	Username  string `json:"username,omitempty" form:"username" binding:""`   // 账号
+	Keyword   string `json:"keyword,omitempty" form:"keyword" binding:""`     // 账号
+	Mobile    string `json:"mobile,omitempty" form:"mobile" binding:""`       // 手机号
 	Status    *int   `json:"status,omitempty" form:"status" binding:""`       // 状态
 }
 
@@ -147,6 +157,7 @@ type MeReply struct {
 type MeItem struct {
 	ID       uint64   `json:"id"`       // convert to uint64 id
 	Username string   `json:"username"` // 账号
+	Nickname string   `json:"nickname"` // 昵称
 	Avatar   string   `json:"avatar"`   // 头像
 	Roles    []string `json:"roles"`    // 角色组
 	Perms    []string `json:"perms"`    // 权限组
@@ -161,6 +172,9 @@ type ProfileReply struct {
 type ProfileItem struct {
 	ID        uint64        `json:"id"`        // convert to uint64 id
 	Username  string        `json:"username"`  // 账号
+	Nickname  string        `json:"nickname"`  // 昵称
+	Gender    int           `json:"gender" `   // 性别
+	Mobile    string        `json:"mobile"`    // 手机号
 	Avatar    string        `json:"avatar"`    // 头像
 	Roles     string        `json:"roleNames"` // 角色组
 	CreatedAt LocalDateTime `json:"createdAt"` // 创建时间

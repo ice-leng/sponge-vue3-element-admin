@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/base64"
 	"errors"
 	"github.com/go-dev-frame/sponge/pkg/gocrypto"
 	"strings"
@@ -85,6 +86,7 @@ func (h *platformHandler) Create(c *gin.Context) {
 		response.Error(c, ecode.ErrCreatePlatform)
 		return
 	}
+	platform.Mobile = encryptMobile(form.Mobile)
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 	platform.Password = convertPassword(form.Password)
 	ctx := middleware.WrapCtx(c)
@@ -165,7 +167,7 @@ func (h *platformHandler) UpdateByID(c *gin.Context) {
 		return
 	}
 	// Note: if copier.Copy cannot assign a value to a field, add it here
-
+	platform.Mobile = encryptMobile(form.Mobile)
 	platform.Password = convertPassword(form.Password)
 	ctx := middleware.WrapCtx(c)
 	err = h.iDao.UpdateByID(ctx, platform)
@@ -214,6 +216,7 @@ func (h *platformHandler) GetByID(c *gin.Context) {
 		response.Error(c, ecode.ErrGetByIDPlatform)
 		return
 	}
+	data.Mobile = decryptMobile(data.Mobile)
 	response.Success(c, data)
 }
 
@@ -237,6 +240,7 @@ func (h *platformHandler) List(c *gin.Context) {
 	}
 
 	ctx := middleware.WrapCtx(c)
+	request.Mobile = encryptMobile(request.Mobile)
 	platforms, total, err := h.iDao.GetByParams(ctx, request)
 	if err != nil {
 		logger.Error("GetByParams error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
@@ -330,6 +334,7 @@ func convertPlatform(platform *model.Platform, roleCodes map[uint64]string) (*ty
 	}
 	data.RoleNames = roleNames
 
+	data.Mobile = decryptMobile(data.Mobile)
 	return data, nil
 }
 
@@ -369,6 +374,23 @@ func convertPassword(password string) string {
 	return hash
 }
 
+func encryptMobile(mobile string) string {
+	if mobile == "" {
+		return ""
+	}
+	hash, _ := gocrypto.AesEncrypt([]byte(mobile))
+	return base64.StdEncoding.EncodeToString(hash)
+}
+
+func decryptMobile(mobile string) string {
+	if mobile == "" {
+		return ""
+	}
+	hash, _ := base64.StdEncoding.DecodeString(mobile)
+	str, _ := gocrypto.AesDecrypt(hash)
+	return string(str)
+}
+
 // GetProfile get me information
 // @Summary current information
 // @Description current information
@@ -396,7 +418,7 @@ func (h *platformHandler) GetProfile(c *gin.Context) {
 	reply := types.ProfileItem{}
 	_ = copier.Copy(&reply, platform)
 	reply.Avatar = h.iConfigDao.MakePathByConfig(c, platform.Avatar, "imageDomain")
-
+	reply.Mobile = decryptMobile(reply.Mobile)
 	var (
 		roleCodes []string
 	)
@@ -437,6 +459,7 @@ func (h *platformHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
+	platform.Mobile = encryptMobile(form.Mobile)
 	ctx := middleware.WrapCtx(c)
 	err = h.iDao.UpdateByID(ctx, platform)
 	if err != nil {

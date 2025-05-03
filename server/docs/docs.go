@@ -16,6 +16,219 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/ad": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "list of ads by paging and conditions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ad"
+                ],
+                "summary": "list of ads by query parameters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "startTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.ListAdsReply"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "submit information to create ad",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ad"
+                ],
+                "summary": "create ad",
+                "parameters": [
+                    {
+                        "description": "ad information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateAdRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateAdReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ad/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get ad detail by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ad"
+                ],
+                "summary": "get ad detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetAdByIDReply"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "update ad information by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ad"
+                ],
+                "summary": "update ad",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ad information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateAdByIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateAdByIDReply"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "delete ad by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ad"
+                ],
+                "summary": "delete ad",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.DeleteAdByIDReply"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/captcha": {
             "get": {
                 "description": "get a captcha",
@@ -96,6 +309,219 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/types.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/channel": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "list of channels by paging and conditions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "list of channels by query parameters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "startTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.ListChannelsReply"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "submit information to create channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "create channel",
+                "parameters": [
+                    {
+                        "description": "channel information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateChannelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateChannelReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/channel/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get channel detail by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "get channel detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetChannelByIDReply"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "update channel information by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "update channel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "channel information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateChannelByIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateChannelByIDReply"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "delete channel by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channel"
+                ],
+                "summary": "delete channel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.DeleteChannelByIDReply"
                         }
                     }
                 }
@@ -688,6 +1114,18 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "账号",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "mobile",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "分页",
                         "name": "page",
@@ -715,12 +1153,6 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "状态",
                         "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "账号",
-                        "name": "username",
                         "in": "query"
                     }
                 ],
@@ -1589,6 +2021,219 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/systemConfig": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "list of systemConfigs by paging and conditions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "systemConfig"
+                ],
+                "summary": "list of systemConfigs by query parameters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "startTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.ListSystemConfigsReply"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "submit information to create systemConfig",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "systemConfig"
+                ],
+                "summary": "create systemConfig",
+                "parameters": [
+                    {
+                        "description": "systemConfig information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateSystemConfigRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateSystemConfigReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/systemConfig/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get systemConfig detail by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "systemConfig"
+                ],
+                "summary": "get systemConfig detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetSystemConfigByIDReply"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "update systemConfig information by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "systemConfig"
+                ],
+                "summary": "update systemConfig",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "systemConfig information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateSystemConfigByIDRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateSystemConfigByIDReply"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "delete systemConfig by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "systemConfig"
+                ],
+                "summary": "delete systemConfig",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.DeleteSystemConfigByIDReply"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/upload/local": {
             "post": {
                 "security": [
@@ -1628,6 +2273,59 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "types.AdObjDetail": {
+            "type": "object",
+            "properties": {
+                "categoryID": {
+                    "description": "分类id",
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "customerName": {
+                    "description": "客户名称",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "convert to uint64 id",
+                    "type": "integer"
+                },
+                "imageUrl": {
+                    "description": "图片",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "position": {
+                    "description": "广告位",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "链接",
+                    "type": "string"
+                }
+            }
+        },
         "types.CaptchaItem": {
             "type": "object",
             "properties": {
@@ -1686,6 +2384,39 @@ const docTemplate = `{
                 }
             }
         },
+        "types.ChannelObjDetail": {
+            "type": "object",
+            "properties": {
+                "channelCode": {
+                    "description": "渠道key",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "convert to uint64 id",
+                    "type": "integer"
+                },
+                "percentage": {
+                    "description": "计算百分比（比如扣量20%，就填80就好）",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
         "types.ConfigObjDetail": {
             "type": "object",
             "properties": {
@@ -1716,6 +2447,114 @@ const docTemplate = `{
                 "value": {
                     "description": "配置值",
                     "type": "string"
+                }
+            }
+        },
+        "types.CreateAdReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "description": "id",
+                            "type": "integer"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.CreateAdRequest": {
+            "type": "object",
+            "properties": {
+                "categoryID": {
+                    "description": "分类id",
+                    "type": "integer"
+                },
+                "customerName": {
+                    "description": "客户名称",
+                    "type": "string"
+                },
+                "imageUrl": {
+                    "description": "图片",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "position": {
+                    "description": "广告位",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "url": {
+                    "description": "链接",
+                    "type": "string"
+                }
+            }
+        },
+        "types.CreateChannelReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "description": "id",
+                            "type": "integer"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.CreateChannelRequest": {
+            "type": "object",
+            "properties": {
+                "channelCode": {
+                    "description": "渠道key",
+                    "type": "string"
+                },
+                "percentage": {
+                    "description": "计算百分比（比如扣量20%，就填80就好）",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
                 }
             }
         },
@@ -1873,6 +2712,18 @@ const docTemplate = `{
                     "description": "头像",
                     "type": "string"
                 },
+                "gender": {
+                    "description": "性别",
+                    "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
+                },
                 "password": {
                     "description": "密码",
                     "type": "string"
@@ -1974,6 +2825,50 @@ const docTemplate = `{
                 }
             }
         },
+        "types.CreateSystemConfigReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "description": "id",
+                            "type": "integer"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.CreateSystemConfigRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "描述",
+                    "type": "string"
+                },
+                "key": {
+                    "description": "配置键",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "配置名称",
+                    "type": "string"
+                },
+                "value": {
+                    "description": "配置值",
+                    "type": "string"
+                }
+            }
+        },
         "types.DashboardEchartsReply": {
             "type": "object",
             "properties": {
@@ -2063,6 +2958,38 @@ const docTemplate = `{
                 }
             }
         },
+        "types.DeleteAdByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DeleteChannelByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
         "types.DeleteConfigByIDReply": {
             "type": "object",
             "properties": {
@@ -2136,6 +3063,66 @@ const docTemplate = `{
                 },
                 "data": {
                     "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DeleteSystemConfigByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetAdByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "ad": {
+                            "$ref": "#/definitions/types.AdObjDetail"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetChannelByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "channel": {
+                            "$ref": "#/definitions/types.ChannelObjDetail"
+                        }
+                    }
                 },
                 "msg": {
                     "description": "return information description",
@@ -2241,6 +3228,78 @@ const docTemplate = `{
                             "$ref": "#/definitions/types.RoleMenuObjDetail"
                         }
                     ]
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetSystemConfigByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "systemConfig": {
+                            "$ref": "#/definitions/types.SystemConfigObjDetail"
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListAdsReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "ads": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.AdObjDetail"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ListChannelsReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "channels": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.ChannelObjDetail"
+                            }
+                        }
+                    }
                 },
                 "msg": {
                     "description": "return information description",
@@ -2382,6 +3441,31 @@ const docTemplate = `{
                 }
             }
         },
+        "types.ListSystemConfigsReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "object",
+                    "properties": {
+                        "systemConfigs": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.SystemConfigObjDetail"
+                            }
+                        }
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
         "types.LoginItem": {
             "type": "object",
             "properties": {
@@ -2451,6 +3535,10 @@ const docTemplate = `{
                 "id": {
                     "description": "convert to uint64 id",
                     "type": "integer"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
                 },
                 "perms": {
                     "description": "权限组",
@@ -2673,12 +3761,24 @@ const docTemplate = `{
                     "description": "创建时间",
                     "type": "string"
                 },
+                "gender": {
+                    "description": "性别",
+                    "type": "integer"
+                },
                 "id": {
                     "description": "convert to uint64 id",
                     "type": "integer"
                 },
                 "lastTime": {
                     "description": "上次登录时间",
+                    "type": "string"
+                },
+                "mobile": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
                     "type": "string"
                 },
                 "roleId": {
@@ -2713,9 +3813,21 @@ const docTemplate = `{
                     "description": "创建时间",
                     "type": "string"
                 },
+                "gender": {
+                    "description": "性别",
+                    "type": "integer"
+                },
                 "id": {
                     "description": "convert to uint64 id",
                     "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
                 },
                 "roleNames": {
                     "description": "角色组",
@@ -2835,6 +3947,141 @@ const docTemplate = `{
                 "updatedAt": {
                     "description": "更新时间",
                     "type": "string"
+                }
+            }
+        },
+        "types.SystemConfigObjDetail": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "描述",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "convert to uint64 id",
+                    "type": "integer"
+                },
+                "key": {
+                    "description": "配置键",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "配置名称",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "value": {
+                    "description": "配置值",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateAdByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateAdByIDRequest": {
+            "type": "object",
+            "properties": {
+                "categoryID": {
+                    "description": "分类id",
+                    "type": "integer"
+                },
+                "customerName": {
+                    "description": "客户名称",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "uint64 id",
+                    "type": "integer"
+                },
+                "imageUrl": {
+                    "description": "图片",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "position": {
+                    "description": "广告位",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "url": {
+                    "description": "链接",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateChannelByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateChannelByIDRequest": {
+            "type": "object",
+            "properties": {
+                "channelCode": {
+                    "description": "渠道key",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "uint64 id",
+                    "type": "integer"
+                },
+                "percentage": {
+                    "description": "计算百分比（比如扣量20%，就填80就好）",
+                    "type": "integer"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
                 }
             }
         },
@@ -2979,9 +4226,21 @@ const docTemplate = `{
                     "description": "头像",
                     "type": "string"
                 },
+                "gender": {
+                    "description": "性别",
+                    "type": "integer"
+                },
                 "id": {
                     "description": "uint64 id",
                     "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
                 },
                 "password": {
                     "description": "密码",
@@ -3075,6 +4334,47 @@ const docTemplate = `{
                 "roleID": {
                     "description": "角色ID",
                     "type": "integer"
+                }
+            }
+        },
+        "types.UpdateSystemConfigByIDReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateSystemConfigByIDRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "描述",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "uint64 id",
+                    "type": "integer"
+                },
+                "key": {
+                    "description": "配置键",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "配置名称",
+                    "type": "string"
+                },
+                "value": {
+                    "description": "配置值",
+                    "type": "string"
                 }
             }
         },
