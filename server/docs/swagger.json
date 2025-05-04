@@ -626,6 +626,34 @@
                 }
             }
         },
+        "/api/v1/config/dict": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "get dict",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "config"
+                ],
+                "summary": "get dict",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetConfigByIDReply"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/config/{id}": {
             "get": {
                 "security": [

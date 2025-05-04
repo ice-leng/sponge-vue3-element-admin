@@ -27,4 +27,5 @@ func configRouter(group *gin.RouterGroup, h handler.ConfigHandler) {
 	g.PUT("/:id", h.UpdateByID)    // [put] /api/v1/config/:id
 	g.GET("/:id", h.GetByID)       // [get] /api/v1/config/:id
 	g.GET("", h.List)              // [get] /api/v1/config
+	g.GET("/dict", h.Dict)         // [get] /api/v1/config/dict
 }

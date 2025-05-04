@@ -1966,6 +1966,23 @@ paths:
       summary: update config
       tags:
       - config
+  /api/v1/config/dict:
+    get:
+      consumes:
+      - application/json
+      description: get dict
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetConfigByIDReply'
+      security:
+      - BearerAuth: []
+      summary: get dict
+      tags:
+      - config
   /api/v1/dashboard/echarts:
     get:
       consumes:

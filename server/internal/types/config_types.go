@@ -83,3 +83,12 @@ type ListConfigsReply struct {
 		Configs []ConfigObjDetail `json:"configs"`
 	} `json:"data"` // return data
 }
+
+// ListDictReply only for api docs
+type ListDictReply struct {
+	Code int    `json:"code"` // return code
+	Msg  string `json:"msg"`  // return information description
+	Data struct {
+		Dict map[string][]Options `json:"dict"`
+	} `json:"data"` // return data
+}

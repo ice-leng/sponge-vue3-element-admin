@@ -1,7 +1,11 @@
 package handler
 
 import (
+	"admin/internal/pkg/util"
 	"errors"
+	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -28,6 +32,7 @@ type ConfigHandler interface {
 	UpdateByID(c *gin.Context)
 	GetByID(c *gin.Context)
 	List(c *gin.Context)
+	Dict(c *gin.Context)
 }
 
 type configHandler struct {
@@ -239,6 +244,24 @@ func (h *configHandler) List(c *gin.Context) {
 		"list":  data,
 		"total": total,
 	})
+}
+
+// Dict 字典
+// @Summary get dict
+// @Description get dict
+// @Tags config
+// @Accept json
+// @Produce json
+// @Success 200 {object} types.GetConfigByIDReply{}
+// @Router /api/v1/config/dict [get]
+// @Security BearerAuth
+func (h *configHandler) Dict(c *gin.Context) {
+	// 获取当前文件的路径
+	_, filename, _, _ := runtime.Caller(0)
+	root := path.Dir(path.Dir(filename))
+	enumDir := filepath.Join(root, "constant", "enum")
+	result := util.EnumChangeDict(enumDir)
+	response.Success(c, result)
 }
 
 func getConfigIDFromPath(c *gin.Context) (string, uint64, bool) {
