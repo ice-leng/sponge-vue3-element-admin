@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"admin/internal/database"
 	"errors"
 	"strings"
 
@@ -38,8 +39,8 @@ type roleMenuHandler struct {
 func NewRoleMenuHandler() RoleMenuHandler {
 	return &roleMenuHandler{
 		iDao: dao.NewRoleMenuDao(
-			model.GetDB(),
-			cache.NewRoleMenuCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewRoleMenuCache(database.GetCacheType()),
 		),
 	}
 }

@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"admin/internal/database"
 	"testing"
 	"time"
 
@@ -23,7 +24,7 @@ func newRoleCache() *gotest.Cache {
 	}
 
 	c := gotest.NewCache(testData)
-	c.ICache = NewRoleCache(&model.CacheType{
+	c.ICache = NewRoleCache(&database.CacheType{
 		CType: "redis",
 		Rdb:   c.RedisClient,
 	})
@@ -122,22 +123,24 @@ func Test_roleCache_SetCacheWithNotFound(t *testing.T) {
 	defer c.Close()
 
 	record := c.TestDataSlice[0].(*model.Role)
-	err := c.ICache.(RoleCache).SetCacheWithNotFound(c.Ctx, record.ID)
+	err := c.ICache.(RoleCache).SetPlaceholder(c.Ctx, record.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
+	b := c.ICache.(RoleCache).IsPlaceholderErr(err)
+	t.Log(b)
 }
 
 func TestNewRoleCache(t *testing.T) {
-	c := NewRoleCache(&model.CacheType{
+	c := NewRoleCache(&database.CacheType{
 		CType: "",
 	})
 	assert.Nil(t, c)
-	c = NewRoleCache(&model.CacheType{
+	c = NewRoleCache(&database.CacheType{
 		CType: "memory",
 	})
 	assert.NotNil(t, c)
-	c = NewRoleCache(&model.CacheType{
+	c = NewRoleCache(&database.CacheType{
 		CType: "redis",
 	})
 	assert.NotNil(t, c)

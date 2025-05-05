@@ -3,8 +3,8 @@ package middlewares
 import (
 	"admin/internal/cache"
 	"admin/internal/dao"
+	"admin/internal/database"
 	"admin/internal/ecode"
-	"admin/internal/model"
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/go-dev-frame/sponge/pkg/jwt"
@@ -27,8 +27,8 @@ func VerifyToken(claims *jwt.Claims, c *gin.Context) error {
 
 	if iPlatformDao == nil {
 		iPlatformDao = dao.NewPlatformDao(
-			model.GetDB(),
-			cache.NewPlatformCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewPlatformCache(database.GetCacheType()),
 		)
 	}
 

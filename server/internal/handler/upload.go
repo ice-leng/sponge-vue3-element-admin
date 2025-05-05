@@ -3,8 +3,8 @@ package handler
 import (
 	"admin/internal/cache"
 	"admin/internal/dao"
+	"admin/internal/database"
 	"admin/internal/ecode"
-	"admin/internal/model"
 	"admin/internal/types"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -30,8 +30,8 @@ type uploadHandler struct {
 func NewUploadHandler() UploadHandler {
 	return &uploadHandler{
 		iConfigDao: dao.NewConfigDao(
-			model.GetDB(),
-			cache.NewConfigCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewConfigCache(database.GetCacheType()),
 		),
 	}
 }

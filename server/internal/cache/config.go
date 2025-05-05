@@ -1,7 +1,9 @@
 package cache
 
 import (
+	"admin/internal/database"
 	"context"
+	"errors"
 	"strings"
 	"time"
 
@@ -28,12 +30,13 @@ type ConfigCache interface {
 	MultiGet(ctx context.Context, ids []uint64) (map[uint64]*model.Config, error)
 	MultiSet(ctx context.Context, data []*model.Config, duration time.Duration) error
 	Del(ctx context.Context, id uint64) error
-	SetCacheWithNotFound(ctx context.Context, id uint64) error
+	SetPlaceholder(ctx context.Context, id uint64) error
+	IsPlaceholderErr(err error) bool
 
 	SetByKey(ctx context.Context, key string, data *model.Config, duration time.Duration) error
 	GetByKey(ctx context.Context, key string) (*model.Config, error)
 	DelByKey(ctx context.Context, key string) error
-	SetCacheByKeyWithNotFound(ctx context.Context, key string) error
+	SetPlaceholderKey(ctx context.Context, key string) error
 }
 
 // configCache define a cache struct
@@ -42,7 +45,7 @@ type configCache struct {
 }
 
 // NewConfigCache new a cache
-func NewConfigCache(cacheType *model.CacheType) ConfigCache {
+func NewConfigCache(cacheType *database.CacheType) ConfigCache {
 	jsonEncoding := encoding.JSONEncoding{}
 	cachePrefix := ""
 
@@ -191,11 +194,19 @@ func (c *configCache) DelByKey(ctx context.Context, key string) error {
 	return nil
 }
 
-func (c *configCache) SetCacheByKeyWithNotFound(ctx context.Context, key string) error {
+// SetPlaceholder set placeholder value to cache
+func (c *configCache) SetPlaceholder(ctx context.Context, id uint64) error {
+	cacheKey := c.GetConfigCacheKey(id)
+	return c.cache.SetCacheWithNotFound(ctx, cacheKey)
+}
+
+// IsPlaceholderErr check if cache is placeholder error
+func (c *configCache) IsPlaceholderErr(err error) bool {
+	return errors.Is(err, cache.ErrPlaceholder)
+}
+
+// SetPlaceholderKey set placeholder value to cache
+func (c *configCache) SetPlaceholderKey(ctx context.Context, key string) error {
 	cacheKey := c.GetConfigCacheKeyByKey(key)
-	err := c.cache.SetCacheWithNotFound(ctx, cacheKey)
-	if err != nil {
-		return err
-	}
-	return nil
+	return c.cache.SetCacheWithNotFound(ctx, cacheKey)
 }

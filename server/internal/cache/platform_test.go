@@ -9,6 +9,7 @@ import (
 	"github.com/go-dev-frame/sponge/pkg/gotest"
 	"github.com/go-dev-frame/sponge/pkg/utils"
 
+	"admin/internal/database"
 	"admin/internal/model"
 )
 
@@ -23,7 +24,7 @@ func newPlatformCache() *gotest.Cache {
 	}
 
 	c := gotest.NewCache(testData)
-	c.ICache = NewPlatformCache(&model.CacheType{
+	c.ICache = NewPlatformCache(&database.CacheType{
 		CType: "redis",
 		Rdb:   c.RedisClient,
 	})
@@ -122,22 +123,24 @@ func Test_platformCache_SetCacheWithNotFound(t *testing.T) {
 	defer c.Close()
 
 	record := c.TestDataSlice[0].(*model.Platform)
-	err := c.ICache.(PlatformCache).SetCacheWithNotFound(c.Ctx, record.ID)
+	err := c.ICache.(PlatformCache).SetPlaceholder(c.Ctx, record.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
+	b := c.ICache.(PlatformCache).IsPlaceholderErr(err)
+	t.Log(b)
 }
 
 func TestNewPlatformCache(t *testing.T) {
-	c := NewPlatformCache(&model.CacheType{
+	c := NewPlatformCache(&database.CacheType{
 		CType: "",
 	})
 	assert.Nil(t, c)
-	c = NewPlatformCache(&model.CacheType{
+	c = NewPlatformCache(&database.CacheType{
 		CType: "memory",
 	})
 	assert.NotNil(t, c)
-	c = NewPlatformCache(&model.CacheType{
+	c = NewPlatformCache(&database.CacheType{
 		CType: "redis",
 	})
 	assert.NotNil(t, c)

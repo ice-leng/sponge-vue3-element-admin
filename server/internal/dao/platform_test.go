@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"admin/internal/database"
 	"context"
 	"testing"
 
@@ -24,7 +25,7 @@ func newPlatformDao() *gotest.Dao {
 	// init mock cache
 	//c := gotest.NewCache(map[string]interface{}{"no cache": testData}) // to test mysql, disable caching
 	c := gotest.NewCache(map[string]interface{}{utils.Uint64ToStr(testData.ID): testData})
-	c.ICache = cache.NewPlatformCache(&model.CacheType{
+	c.ICache = cache.NewPlatformCache(&database.CacheType{
 		CType: "redis",
 		Rdb:   c.RedisClient,
 	})

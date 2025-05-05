@@ -1,15 +1,15 @@
 package dao
 
 import (
+	"admin/internal/database"
 	"admin/internal/types"
 	"context"
 	"errors"
-	"fmt"
+	"github.com/go-dev-frame/sponge/pkg/logger"
 
 	"golang.org/x/sync/singleflight"
 	"gorm.io/gorm"
 
-	cacheBase "github.com/go-dev-frame/sponge/pkg/cache"
 	"github.com/go-dev-frame/sponge/pkg/ggorm/query"
 	"github.com/go-dev-frame/sponge/pkg/utils"
 
@@ -142,26 +142,25 @@ func (d *roleDao) GetByID(ctx context.Context, id uint64) (*model.Role, error) {
 		return record, nil
 	}
 
-	if errors.Is(err, model.ErrCacheNotFound) {
+	// get from database
+	if errors.Is(err, database.ErrCacheNotFound) {
 		// for the same id, prevent high concurrent simultaneous access to database
 		val, err, _ := d.sfg.Do(utils.Uint64ToStr(id), func() (interface{}, error) { //nolint
 			table := &model.Role{}
 			err = d.db.WithContext(ctx).Where("id = ?", id).First(table).Error
 			if err != nil {
-				// if data is empty, set not found cache to prevent cache penetration, default expiration time 10 minutes
-				if errors.Is(err, model.ErrRecordNotFound) {
-					err = d.cache.SetCacheWithNotFound(ctx, id)
-					if err != nil {
-						return nil, err
+				if errors.Is(err, database.ErrRecordNotFound) {
+					// set placeholder cache to prevent cache penetration, default expiration time 10 minutes
+					if err = d.cache.SetPlaceholder(ctx, id); err != nil {
+						logger.Warn("cache.SetPlaceholder error", logger.Err(err), logger.Any("id", id))
 					}
-					return nil, model.ErrRecordNotFound
+					return nil, database.ErrRecordNotFound
 				}
 				return nil, err
 			}
 			// set cache
-			err = d.cache.Set(ctx, id, table, cache.RoleExpireTime)
-			if err != nil {
-				return nil, fmt.Errorf("cache.Set error: %v, id=%d", err, id)
+			if err = d.cache.Set(ctx, id, table, cache.RoleExpireTime); err != nil {
+				logger.Warn("cache.Set error", logger.Err(err), logger.Any("id", id))
 			}
 			return table, nil
 		})
@@ -170,11 +169,13 @@ func (d *roleDao) GetByID(ctx context.Context, id uint64) (*model.Role, error) {
 		}
 		table, ok := val.(*model.Role)
 		if !ok {
-			return nil, model.ErrRecordNotFound
+			return nil, database.ErrRecordNotFound
 		}
 		return table, nil
-	} else if errors.Is(err, cacheBase.ErrPlaceholder) {
-		return nil, model.ErrRecordNotFound
+	}
+
+	if d.cache.IsPlaceholderErr(err) {
+		return nil, database.ErrRecordNotFound
 	}
 
 	// fail fast, if cache error return, don't request to db
@@ -197,7 +198,7 @@ func (d *roleDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model
 		return itemMap, nil
 	}
 
-	// get form cache or database
+	// get form cache
 	itemMap, err := d.cache.MultiGet(ctx, ids)
 	if err != nil {
 		return nil, err
@@ -205,10 +206,8 @@ func (d *roleDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model
 
 	var missedIDs []uint64
 	for _, id := range ids {
-		_, ok := itemMap[id]
-		if !ok {
+		if _, ok := itemMap[id]; !ok {
 			missedIDs = append(missedIDs, id)
-			continue
 		}
 	}
 
@@ -218,30 +217,37 @@ func (d *roleDao) GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model
 		var realMissedIDs []uint64
 		for _, id := range missedIDs {
 			_, err = d.cache.Get(ctx, id)
-			if errors.Is(err, cacheBase.ErrPlaceholder) {
+			if d.cache.IsPlaceholderErr(err) {
 				continue
 			}
 			realMissedIDs = append(realMissedIDs, id)
 		}
 
+		// get missed id from database
 		if len(realMissedIDs) > 0 {
-			var missedData []*model.Role
-			err = d.db.WithContext(ctx).Where("id IN (?)", realMissedIDs).Find(&missedData).Error
+			var records []*model.Role
+			var recordIDMap = make(map[uint64]struct{})
+			err = d.db.WithContext(ctx).Where("id IN (?)", realMissedIDs).Find(&records).Error
 			if err != nil {
 				return nil, err
 			}
-
-			if len(missedData) > 0 {
-				for _, data := range missedData {
-					itemMap[data.ID] = data
+			if len(records) > 0 {
+				for _, record := range records {
+					itemMap[record.ID] = record
+					recordIDMap[record.ID] = struct{}{}
 				}
-				err = d.cache.MultiSet(ctx, missedData, cache.RoleExpireTime)
-				if err != nil {
-					return nil, err
+				if err = d.cache.MultiSet(ctx, records, cache.RoleExpireTime); err != nil {
+					logger.Warn("cache.MultiSet error", logger.Err(err), logger.Any("ids", records))
 				}
-			} else {
-				for _, id := range realMissedIDs {
-					_ = d.cache.SetCacheWithNotFound(ctx, id)
+				if len(records) == len(realMissedIDs) {
+					return itemMap, nil
+				}
+			}
+			for _, id := range realMissedIDs {
+				if _, ok := recordIDMap[id]; !ok {
+					if err = d.cache.SetPlaceholder(ctx, id); err != nil {
+						logger.Warn("cache.SetPlaceholder error", logger.Err(err), logger.Any("id", id))
+					}
 				}
 			}
 		}

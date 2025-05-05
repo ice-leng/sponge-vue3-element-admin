@@ -1,7 +1,9 @@
 package cache
 
 import (
+	"admin/internal/database"
 	"context"
+	"errors"
 	"strings"
 	"time"
 
@@ -28,7 +30,8 @@ type RoleCache interface {
 	MultiGet(ctx context.Context, ids []uint64) (map[uint64]*model.Role, error)
 	MultiSet(ctx context.Context, data []*model.Role, duration time.Duration) error
 	Del(ctx context.Context, id uint64) error
-	SetCacheWithNotFound(ctx context.Context, id uint64) error
+	SetPlaceholder(ctx context.Context, id uint64) error
+	IsPlaceholderErr(err error) bool
 }
 
 // roleCache define a cache struct
@@ -37,7 +40,7 @@ type roleCache struct {
 }
 
 // NewRoleCache new a cache
-func NewRoleCache(cacheType *model.CacheType) RoleCache {
+func NewRoleCache(cacheType *database.CacheType) RoleCache {
 	jsonEncoding := encoding.JSONEncoding{}
 	cachePrefix := ""
 
@@ -138,12 +141,13 @@ func (c *roleCache) Del(ctx context.Context, id uint64) error {
 	return nil
 }
 
-// SetCacheWithNotFound set empty cache
-func (c *roleCache) SetCacheWithNotFound(ctx context.Context, id uint64) error {
+// SetPlaceholder set placeholder value to cache
+func (c *roleCache) SetPlaceholder(ctx context.Context, id uint64) error {
 	cacheKey := c.GetRoleCacheKey(id)
-	err := c.cache.SetCacheWithNotFound(ctx, cacheKey)
-	if err != nil {
-		return err
-	}
-	return nil
+	return c.cache.SetCacheWithNotFound(ctx, cacheKey)
+}
+
+// IsPlaceholderErr check if cache is placeholder error
+func (c *roleCache) IsPlaceholderErr(err error) bool {
+	return errors.Is(err, cache.ErrPlaceholder)
 }

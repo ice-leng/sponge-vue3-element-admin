@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"admin/internal/database"
 	"testing"
 	"time"
 
@@ -23,7 +24,7 @@ func newConfigCache() *gotest.Cache {
 	}
 
 	c := gotest.NewCache(testData)
-	c.ICache = NewConfigCache(&model.CacheType{
+	c.ICache = NewConfigCache(&database.CacheType{
 		CType: "redis",
 		Rdb:   c.RedisClient,
 	})
@@ -122,22 +123,24 @@ func Test_configCache_SetCacheWithNotFound(t *testing.T) {
 	defer c.Close()
 
 	record := c.TestDataSlice[0].(*model.Config)
-	err := c.ICache.(ConfigCache).SetCacheWithNotFound(c.Ctx, record.ID)
+	err := c.ICache.(ConfigCache).SetPlaceholder(c.Ctx, record.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
+	b := c.ICache.(ConfigCache).IsPlaceholderErr(err)
+	t.Log(b)
 }
 
 func TestNewConfigCache(t *testing.T) {
-	c := NewConfigCache(&model.CacheType{
+	c := NewConfigCache(&database.CacheType{
 		CType: "",
 	})
 	assert.Nil(t, c)
-	c = NewConfigCache(&model.CacheType{
+	c = NewConfigCache(&database.CacheType{
 		CType: "memory",
 	})
 	assert.NotNil(t, c)
-	c = NewConfigCache(&model.CacheType{
+	c = NewConfigCache(&database.CacheType{
 		CType: "redis",
 	})
 	assert.NotNil(t, c)

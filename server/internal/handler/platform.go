@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"admin/internal/database"
 	"encoding/base64"
 	"errors"
 	"github.com/go-dev-frame/sponge/pkg/gocrypto"
@@ -47,16 +48,16 @@ type platformHandler struct {
 func NewPlatformHandler() PlatformHandler {
 	return &platformHandler{
 		iDao: dao.NewPlatformDao(
-			model.GetDB(),
-			cache.NewPlatformCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewPlatformCache(database.GetCacheType()),
 		),
 		iRoleDao: dao.NewRoleDao(
-			model.GetDB(),
-			cache.NewRoleCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewRoleCache(database.GetCacheType()),
 		),
 		iConfigDao: dao.NewConfigDao(
-			model.GetDB(),
-			cache.NewConfigCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewConfigCache(database.GetCacheType()),
 		),
 	}
 }

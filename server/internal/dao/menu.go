@@ -1,20 +1,18 @@
 package dao
 
 import (
+	"admin/internal/database"
 	"admin/internal/types"
 	"context"
 	"errors"
-	"fmt"
-
+	"github.com/go-dev-frame/sponge/pkg/logger"
+	"github.com/go-dev-frame/sponge/pkg/utils"
 	"golang.org/x/sync/singleflight"
 	"gorm.io/gorm"
 
-	cacheBase "github.com/go-dev-frame/sponge/pkg/cache"
-	"github.com/go-dev-frame/sponge/pkg/ggorm/query"
-	"github.com/go-dev-frame/sponge/pkg/utils"
-
 	"admin/internal/cache"
 	"admin/internal/model"
+	"github.com/go-dev-frame/sponge/pkg/ggorm/query"
 )
 
 var _ MenuDao = (*menuDao)(nil)
@@ -169,26 +167,25 @@ func (d *menuDao) GetByID(ctx context.Context, id uint64) (*model.Menu, error) {
 		return record, nil
 	}
 
-	if errors.Is(err, model.ErrCacheNotFound) {
+	// get from database
+	if errors.Is(err, database.ErrCacheNotFound) {
 		// for the same id, prevent high concurrent simultaneous access to database
 		val, err, _ := d.sfg.Do(utils.Uint64ToStr(id), func() (interface{}, error) { //nolint
 			table := &model.Menu{}
 			err = d.db.WithContext(ctx).Where("id = ?", id).First(table).Error
 			if err != nil {
-				// if data is empty, set not found cache to prevent cache penetration, default expiration time 10 minutes
-				if errors.Is(err, model.ErrRecordNotFound) {
-					err = d.cache.SetCacheWithNotFound(ctx, id)
-					if err != nil {
-						return nil, err
+				if errors.Is(err, database.ErrRecordNotFound) {
+					// set placeholder cache to prevent cache penetration, default expiration time 10 minutes
+					if err = d.cache.SetPlaceholder(ctx, id); err != nil {
+						logger.Warn("cache.SetPlaceholder error", logger.Err(err), logger.Any("id", id))
 					}
-					return nil, model.ErrRecordNotFound
+					return nil, database.ErrRecordNotFound
 				}
 				return nil, err
 			}
 			// set cache
-			err = d.cache.Set(ctx, id, table, cache.MenuExpireTime)
-			if err != nil {
-				return nil, fmt.Errorf("cache.Set error: %v, id=%d", err, id)
+			if err = d.cache.Set(ctx, id, table, cache.MenuExpireTime); err != nil {
+				logger.Warn("cache.Set error", logger.Err(err), logger.Any("id", id))
 			}
 			return table, nil
 		})
@@ -197,11 +194,13 @@ func (d *menuDao) GetByID(ctx context.Context, id uint64) (*model.Menu, error) {
 		}
 		table, ok := val.(*model.Menu)
 		if !ok {
-			return nil, model.ErrRecordNotFound
+			return nil, database.ErrRecordNotFound
 		}
 		return table, nil
-	} else if errors.Is(err, cacheBase.ErrPlaceholder) {
-		return nil, model.ErrRecordNotFound
+	}
+
+	if d.cache.IsPlaceholderErr(err) {
+		return nil, database.ErrRecordNotFound
 	}
 
 	// fail fast, if cache error return, don't request to db

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"admin/internal/database"
 	"net/http"
 	"testing"
 	"time"
@@ -28,7 +29,7 @@ func newRoleHandler() *gotest.Handler {
 
 	// init mock cache
 	c := gotest.NewCache(map[string]interface{}{utils.Uint64ToStr(testData.ID): testData})
-	c.ICache = cache.NewRoleCache(&model.CacheType{
+	c.ICache = cache.NewRoleCache(&database.CacheType{
 		CType: "redis",
 		Rdb:   c.RedisClient,
 	})

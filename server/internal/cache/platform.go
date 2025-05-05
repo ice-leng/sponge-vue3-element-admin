@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/go-dev-frame/sponge/pkg/encoding"
 	"github.com/go-dev-frame/sponge/pkg/utils"
 
+	"admin/internal/database"
 	"admin/internal/model"
 )
 
@@ -28,7 +30,8 @@ type PlatformCache interface {
 	MultiGet(ctx context.Context, ids []uint64) (map[uint64]*model.Platform, error)
 	MultiSet(ctx context.Context, data []*model.Platform, duration time.Duration) error
 	Del(ctx context.Context, id uint64) error
-	SetCacheWithNotFound(ctx context.Context, id uint64) error
+	SetPlaceholder(ctx context.Context, id uint64) error
+	IsPlaceholderErr(err error) bool
 }
 
 // platformCache define a cache struct
@@ -37,7 +40,7 @@ type platformCache struct {
 }
 
 // NewPlatformCache new a cache
-func NewPlatformCache(cacheType *model.CacheType) PlatformCache {
+func NewPlatformCache(cacheType *database.CacheType) PlatformCache {
 	jsonEncoding := encoding.JSONEncoding{}
 	cachePrefix := ""
 
@@ -138,12 +141,13 @@ func (c *platformCache) Del(ctx context.Context, id uint64) error {
 	return nil
 }
 
-// SetCacheWithNotFound set empty cache
-func (c *platformCache) SetCacheWithNotFound(ctx context.Context, id uint64) error {
+// SetPlaceholder set placeholder value to cache
+func (c *platformCache) SetPlaceholder(ctx context.Context, id uint64) error {
 	cacheKey := c.GetPlatformCacheKey(id)
-	err := c.cache.SetCacheWithNotFound(ctx, cacheKey)
-	if err != nil {
-		return err
-	}
-	return nil
+	return c.cache.SetCacheWithNotFound(ctx, cacheKey)
+}
+
+// IsPlaceholderErr check if cache is placeholder error
+func (c *platformCache) IsPlaceholderErr(err error) bool {
+	return errors.Is(err, cache.ErrPlaceholder)
 }

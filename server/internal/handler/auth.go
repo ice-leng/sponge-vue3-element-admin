@@ -3,6 +3,7 @@ package handler
 import (
 	"admin/internal/cache"
 	"admin/internal/dao"
+	"admin/internal/database"
 	"admin/internal/ecode"
 	"admin/internal/middlewares"
 	"admin/internal/model"
@@ -42,11 +43,11 @@ func NewAuthHandler() AuthHandler {
 	})
 	return &authHandler{
 		iDao: dao.NewPlatformDao(
-			model.GetDB(),
-			cache.NewPlatformCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewPlatformCache(database.GetCacheType()),
 		),
 		captcha: driver,
-		redis:   model.GetRedisCli(),
+		redis:   database.GetRedisCli(),
 	}
 }
 

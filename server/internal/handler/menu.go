@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"admin/internal/database"
 	"errors"
 	"github.com/huandu/xstrings"
 	"strings"
@@ -41,8 +42,8 @@ type menuHandler struct {
 func NewMenuHandler() MenuHandler {
 	return &menuHandler{
 		iDao: dao.NewMenuDao(
-			model.GetDB(),
-			cache.NewMenuCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewMenuCache(database.GetCacheType()),
 		),
 	}
 }

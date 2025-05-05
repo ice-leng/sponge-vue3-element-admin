@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"admin/internal/database"
 	"admin/internal/pkg/util"
 	"errors"
 	"path"
@@ -43,8 +44,8 @@ type configHandler struct {
 func NewConfigHandler() ConfigHandler {
 	return &configHandler{
 		iDao: dao.NewConfigDao(
-			model.GetDB(),
-			cache.NewConfigCache(model.GetCacheType()),
+			database.GetDB(),
+			cache.NewConfigCache(database.GetCacheType()),
 		),
 	}
 }
