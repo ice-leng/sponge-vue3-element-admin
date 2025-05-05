@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"admin/internal/database"
 	"context"
 	"testing"
 
@@ -24,7 +25,7 @@ func newRoleMenuDao() *gotest.Dao {
 	// init mock cache
 	//c := gotest.NewCache(map[string]interface{}{"no cache": testData}) // to test mysql, disable caching
 	c := gotest.NewCache(map[string]interface{}{utils.Uint64ToStr(testData.ID): testData})
-	c.ICache = cache.NewRoleMenuCache(&model.CacheType{
+	c.ICache = cache.NewRoleMenuCache(&database.CacheType{
 		CType: "redis",
 		Rdb:   c.RedisClient,
 	})
