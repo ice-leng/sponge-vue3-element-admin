@@ -131,6 +131,8 @@ export interface PlatformInfo {
   /** 用户名 */
   username?: string;
 
+  nickname?: string;
+
   /** 头像URL */
   avatar?: string;
 
@@ -146,8 +148,8 @@ export interface PlatformInfo {
  */
 export interface PlatformPageQuery extends PageQuery {
   /** 搜索关键字 */
-  username?: string;
-
+  keyword?: string;
+  mobile?: string;
   /** 用户状态 */
   status?: number;
 
@@ -170,6 +172,8 @@ export interface PlatformPageVO {
   status?: number;
   /** 用户名 */
   username?: string;
+  nickname?: string;
+  mobile?: string;
 }
 
 /** 用户表单类型 */
@@ -184,6 +188,9 @@ export interface PlatformForm {
   status?: number;
   /** 用户名 */
   username?: string;
+  nickname?: string;
+  mobile?: string;
+  gender?: number;
 }
 
 /** 个人中心用户信息 */
@@ -202,6 +209,9 @@ export interface PlatformProfileVO {
 
   /** 创建时间 */
   createdAt?: Date;
+  nickname?: string;
+  mobile?: string;
+  gender?: number;
 }
 
 /** 个人中心用户信息表单 */
@@ -217,6 +227,9 @@ export interface PlatformProfileForm {
 
   /** 角色名称，多个使用英文逗号(,)分割 */
   roleNames?: string;
+  nickname?: string;
+  mobile?: string;
+  gender?: number;
 }
 
 /** 修改密码表单 */

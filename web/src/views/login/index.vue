@@ -106,7 +106,7 @@ import { LocationQuery, RouteLocationRaw, useRoute } from "vue-router";
 import logo from "@/assets/logo.png";
 
 // 内部依赖
-import { useUserStore } from "@/store";
+import { useUserStore, useDictStore } from "@/store";
 import AuthAPI, { LoginFormData } from "@/api/auth.api";
 import router from "@/router";
 import defaultSettings from "@/settings";
@@ -117,6 +117,7 @@ import DarkModeSwitch from "@/components/DarkModeSwitch/index.vue";
 import type { FormInstance } from "element-plus";
 // 使用导入的依赖和库
 const userStore = useUserStore();
+const dictStore = useDictStore();
 const route = useRoute();
 // 窗口高度
 const { height } = useWindowSize();
@@ -189,6 +190,7 @@ function handleLoginSubmit() {
         .login(loginData.value)
         .then(async () => {
           await userStore.getUserInfo();
+          await dictStore.loadDictItems();
           // 跳转到登录前的页面
           const redirect = resolveRedirectTarget(route.query);
           await router.push(redirect);

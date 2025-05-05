@@ -18,7 +18,10 @@
               <input ref="fileInput" type="file" style="display: none" @change="handleFileChange" />
             </div>
             <div class="user-name">
-              <span class="nickname">{{ userProfile.username }}</span>
+              <span class="nickname">{{ userProfile.nickname }}</span>
+              <el-icon class="edit-icon" @click="handleOpenDialog(DialogType.ACCOUNT)">
+                <Edit />
+              </el-icon>
             </div>
             <div class="user-role">{{ userProfile.roleNames }}</div>
           </div>
@@ -49,8 +52,17 @@
             </div>
           </template>
           <el-descriptions :column="1" border>
-            <el-descriptions-item label="用户名">
-              {{ userProfile.username }}
+            <el-descriptions-item label="昵称">
+              {{ userProfile.nickname }}
+              <el-icon v-if="userProfile.gender === 1" class="gender-icon male">
+                <Male />
+              </el-icon>
+              <el-icon v-else class="gender-icon female">
+                <Female />
+              </el-icon>
+            </el-descriptions-item>
+            <el-descriptions-item label="手机号码">
+              {{ userProfile.mobile || "未绑定" }}
             </el-descriptions-item>
             <el-descriptions-item label="创建时间">
               {{ userProfile.createdAt }}
@@ -85,9 +97,16 @@
         ref="userProfileFormRef"
         :model="userProfileForm"
         :label-width="100"
+        :rules="userProfileFormRules"
       >
-        <el-form-item label="昵称">
-          <el-input v-model="userProfileForm.username" />
+        <el-form-item label="昵称" prop="nickname">
+          <el-input v-model="userProfileForm.nickname" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="mobile">
+          <el-input v-model="userProfileForm.mobile" />
+        </el-form-item>
+        <el-form-item label="性别" prop="gender">
+          <Dict v-model="userProfileForm.gender" code="gender" />
         </el-form-item>
       </el-form>
 
@@ -147,12 +166,25 @@ const dialog = reactive({
 
 const userProfileForm = reactive<PlatformProfileForm>({});
 const passwordChangeForm = reactive<PasswordChangeForm>({});
+const userProfileFormRef = ref(ElForm);
 
 // 修改密码校验规则
 const passwordChangeRules = {
   oldPassword: [{ required: true, message: "请输入原密码", trigger: "blur" }],
   newPassword: [{ required: true, message: "请输入新密码", trigger: "blur" }],
   confirmPassword: [{ required: true, message: "请再次输入新密码", trigger: "blur" }],
+};
+
+// 手机号校验规则
+const userProfileFormRules = {
+  mobile: [
+    { message: "请输入手机号", trigger: "blur" },
+    {
+      pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+      message: "请输入正确的手机号码",
+      trigger: "blur",
+    },
+  ],
 };
 
 /**
@@ -167,7 +199,9 @@ const handleOpenDialog = (type: DialogType) => {
       dialog.title = "账号资料";
       // 初始化表单数据
       userProfileForm.id = userProfile.value.id;
-      userProfileForm.username = userProfile.value.username;
+      userProfileForm.nickname = userProfile.value.nickname;
+      userProfileForm.gender = userProfile.value.gender;
+      userProfileForm.mobile = userProfile.value.mobile;
       userProfileForm.roleNames = userProfile.value.roleNames;
       break;
     case DialogType.PASSWORD:
@@ -181,10 +215,14 @@ const handleOpenDialog = (type: DialogType) => {
  */
 const handleSubmit = async () => {
   if (dialog.type === DialogType.ACCOUNT) {
-    PlatformAPI.updateProfile(userProfileForm).then(() => {
-      ElMessage.success("账号资料修改成功");
-      dialog.visible = false;
-      loadUserProfile();
+    userProfileFormRef.value.validate((valid: any) => {
+      if (valid) {
+        PlatformAPI.updateProfile(userProfileForm).then(() => {
+          ElMessage.success("账号资料修改成功");
+          dialog.visible = false;
+          loadUserProfile();
+        });
+      }
     });
   } else if (dialog.type === DialogType.PASSWORD) {
     if (passwordChangeForm.newPassword !== passwordChangeForm.confirmPassword) {

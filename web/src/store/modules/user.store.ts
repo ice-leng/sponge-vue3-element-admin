@@ -1,5 +1,6 @@
 import { store } from "@/store";
 import { usePermissionStoreHook } from "@/store/modules/permission.store";
+import { useDictStoreHook } from "@/store/modules/dict.store";
 
 import AuthAPI, { type LoginFormData } from "@/api/auth.api";
 import PlatformAPI, { type PlatformInfo } from "@/api/system/platform.api";
@@ -95,6 +96,7 @@ export const useUserStore = defineStore("user", () => {
     return new Promise<void>((resolve) => {
       clearToken();
       usePermissionStoreHook().resetRouter();
+      useDictStoreHook().clearDictCache();
       userInfo.value = {} as PlatformInfo;
       resolve();
     });

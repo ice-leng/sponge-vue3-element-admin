@@ -10,20 +10,14 @@
             />
             <div>
               <p>{{ greetings }}</p>
-              <p class="text-sm text-gray">
-                今日天气晴朗，气温在15℃至25℃之间，东南风。
-              </p>
+              <p class="text-sm text-gray">今日天气晴朗，气温在15℃至25℃之间，东南风。</p>
             </div>
           </div>
         </el-col>
 
         <el-col :span="6" :xs="24">
           <div class="flex h-full items-center justify-around">
-            <el-statistic
-              v-for="item in statisticData"
-              :key="item.key"
-              :value="item.value"
-            >
+            <el-statistic v-for="item in statisticData" :key="item.key" :value="item.value">
               <template #title>
                 <div class="flex items-center">
                   <svg-icon :icon-class="item.iconClass" size="20px" />
@@ -39,32 +33,20 @@
 
     <!-- 数据卡片 -->
     <el-row :gutter="10" class="mt-5">
-      <el-col
-        v-for="(item, index) in visitStatsList"
-        :key="index"
-        :xs="24"
-        :sm="12"
-        :lg="6"
-      >
+      <el-col v-for="(item, index) in visitStatsList" :key="index" :xs="24" :sm="12" :lg="6">
         <el-skeleton :loading="visitStatsLoading" :rows="5" animated>
           <template #template>
             <el-card>
               <template #header>
                 <div>
                   <el-skeleton-item variant="h3" style="width: 40%" />
-                  <el-skeleton-item
-                    variant="rect"
-                    style="float: right; width: 1em; height: 1em"
-                  />
+                  <el-skeleton-item variant="rect" style="float: right; width: 1em; height: 1em" />
                 </div>
               </template>
 
               <div class="flex-x-between">
                 <el-skeleton-item variant="text" style="width: 30%" />
-                <el-skeleton-item
-                  variant="circle"
-                  style="width: 2em; height: 2em"
-                />
+                <el-skeleton-item variant="circle" style="width: 2em; height: 2em" />
               </div>
               <div class="mt-5 flex-x-between">
                 <el-skeleton-item variant="text" style="width: 50%" />
@@ -88,13 +70,7 @@
               <div class="flex-x-between mt-2">
                 <div class="flex-y-center">
                   <span class="text-lg">{{ item.todayCount }}</span>
-                  <span
-                    :class="[
-                      'text-xs',
-                      'ml-2',
-                      getGrowthRateClass(item.growthRate),
-                    ]"
-                  >
+                  <span :class="['text-xs', 'ml-2', getGrowthRateClass(item.growthRate)]">
                     <el-icon>
                       <Top v-if="item.growthRate > 0" />
                       <Bottom v-else-if="item.growthRate < 0" />
@@ -105,9 +81,7 @@
                 <svg-icon :icon-class="item.icon" size="2em" />
               </div>
 
-              <div
-                class="flex-x-between mt-2 text-sm text-[var(--el-text-color-secondary)]"
-              >
+              <div class="flex-x-between mt-2 text-sm text-[var(--el-text-color-secondary)]">
                 <span>总{{ item.title }}</span>
                 <span>{{ item.totalCount }}</span>
               </div>
@@ -140,14 +114,15 @@ const userStore = useUserStore();
 const date: Date = new Date();
 const greetings = computed(() => {
   const hours = date.getHours();
+  const nickname = userStore.userInfo.nickname;
   if (hours >= 6 && hours < 8) {
     return "晨起披衣出草堂，轩窗已自喜微凉🌅！";
   } else if (hours >= 8 && hours < 12) {
-    return "上午好，" + userStore.userInfo.username + "！";
+    return `上午好，${nickname}！`;
   } else if (hours >= 12 && hours < 18) {
-    return "下午好，" + userStore.userInfo.username + "！";
+    return `下午好，${nickname}！`;
   } else if (hours >= 18 && hours < 24) {
-    return "晚上好，" + userStore.userInfo.username + "！";
+    return `晚上好，${nickname}！`;
   } else {
     return "偷偷向银河要了一把碎星，只等你闭上眼睛撒入你的梦中，晚安🌛！";
   }
@@ -194,12 +169,8 @@ const loadVisitStatsData = async () => {
   const list: StatisticsVO[] = await DashboardAPI.getStatistics();
 
   if (list) {
-    const tagTypes: ("primary" | "success" | "warning")[] = [
-      "primary",
-      "success",
-      "warning",
-    ];
-    const transformedList: VisitStats[] = list.map((item, index) => ({
+    const tagTypes: ("primary" | "success" | "warning")[] = ["primary", "success", "warning"];
+    visitStatsList.value = list.map((item, index) => ({
       title: item.title,
       icon: getVisitStatsIcon(item.type),
       tagType: tagTypes[index % tagTypes.length],
@@ -208,7 +179,6 @@ const loadVisitStatsData = async () => {
       todayCount: item.todayCount,
       totalCount: item.totalCount,
     }));
-    visitStatsList.value = transformedList;
     visitStatsLoading.value = false;
   }
 };

@@ -50,10 +50,10 @@ const ConfigAPI = {
     });
   },
 
-  refreshCache() {
-    return request({
-      url: `${CONFIG_BASE_URL}/refresh`,
-      method: "PUT",
+  dict() {
+    return request<any, DictItemOption>({
+      url: `${CONFIG_BASE_URL}/dict`,
+      method: "get",
     });
   },
 };
@@ -92,4 +92,8 @@ export interface ConfigPageVO {
   value?: string;
   /** 描述、备注 */
   description?: string;
+}
+
+export interface DictItemOption {
+  [key: string]: OptionType[];
 }
