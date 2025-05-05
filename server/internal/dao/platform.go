@@ -128,6 +128,9 @@ func (d *platformDao) updateDataByID(ctx context.Context, db *gorm.DB, table *mo
 	if table.LastTime != nil {
 		update["last_time"] = table.LastTime
 	}
+	if table.Gender != nil {
+		update["gender"] = table.Gender
+	}
 	if table.Nickname != "" {
 		update["nickname"] = table.Nickname
 	}
