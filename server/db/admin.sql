@@ -37,7 +37,6 @@ CREATE TABLE `t_config` (
 -- Records of t_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_config` (`id`, `created_at`, `updated_at`, `deleted_at`, `name`, `description`, `key`, `value`) VALUES (1, '2024-11-09 23:56:51', '2024-11-09 23:56:51', NULL, '本地上传', '本地上传配置', 'localOss', '{\"bucket\": \"public\"}');
 INSERT INTO `t_config` (`id`, `created_at`, `updated_at`, `deleted_at`, `name`, `description`, `key`, `value`) VALUES (2, '2024-11-09 23:56:51', '2024-11-09 23:56:51', NULL, '图片域名', '图片域名', 'imageDomain', 'http://127.0.0.1:9501');
 COMMIT;
 
@@ -122,6 +121,9 @@ CREATE TABLE `t_platform` (
   `username` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '账号',
   `password` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
   `avatar` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif' COMMENT '头像',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '昵称',
+  `mobile` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '手机号',
+  `gender` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '性别1男2女3保密',
   `role_id` json NOT NULL COMMENT '角色',
   `status` tinyint NOT NULL COMMENT '状态',
   `last_time` datetime DEFAULT NULL COMMENT '上次登录时间',
