@@ -134,7 +134,7 @@ CREATE TABLE `t_platform` (
 -- Records of t_platform
 -- ----------------------------
 BEGIN;
-INSERT INTO `t_platform` (`id`, `created_at`, `updated_at`, `deleted_at`, `username`, `password`, `avatar`, `role_id`, `status`, `last_time`) VALUES (1, '2024-11-09 23:56:51', '2024-11-10 00:51:47', NULL, 'admin', '$2y$12$h4UkAJlNkiAuDZguHWEYreIKlv1rnA49QO4uLEipw5TC3KGADHw.W', 'https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif', '[1]', 1, '2024-11-10 00:51:47');
+INSERT INTO `t_platform` (`id`, `created_at`, `updated_at`, `deleted_at`, `username`, `password`, `avatar`, `role_id`, `status`, `last_time`, `mobile`, `nickname`, `gender`) VALUES (1, '2024-11-09 23:56:51', '2024-11-10 00:51:47', NULL, 'admin', '$2y$12$h4UkAJlNkiAuDZguHWEYreIKlv1rnA49QO4uLEipw5TC3KGADHw.W', 'https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif', '[1]', 1, '2024-11-10 00:51:47', '', '超级管理员', 1);
 COMMIT;
 
 -- ----------------------------
