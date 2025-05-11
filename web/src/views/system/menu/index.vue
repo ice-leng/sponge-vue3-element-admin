@@ -367,7 +367,7 @@ const menuOptions = ref<OptionType[]>([]);
 // 初始菜单表单数据
 const initialMenuFormData = ref<MenuForm>({
   id: undefined,
-  parentId: "0",
+  parentId: 0,
   visible: 1,
   sort: 1,
   type: MenuTypeEnum.MENU, // 默认菜单
@@ -420,7 +420,7 @@ function handleRowClick(row: MenuVO) {
  * @param parentId 父菜单ID
  * @param menuId 菜单ID
  */
-function handleOpenDialog(parentId?: string, menuId?: string) {
+function handleOpenDialog(parentId?: number, menuId?: string) {
   MenuAPI.getOptions(true)
     .then((data) => {
       menuOptions.value = [{ value: 0, label: "顶级菜单", children: data }];
@@ -435,7 +435,7 @@ function handleOpenDialog(parentId?: string, menuId?: string) {
         });
       } else {
         dialog.title = "新增菜单";
-        formData.value.parentId = parentId?.toString();
+        formData.value.parentId = parentId;
       }
     });
 }
@@ -466,7 +466,7 @@ function handleSubmit() {
       const menuId = formData.value.id;
       if (menuId) {
         //修改时父级菜单不能为当前菜单
-        if (formData.value.parentId == menuId) {
+        if (formData.value.parentId == parseInt(menuId)) {
           ElMessage.error("父级菜单不能为当前菜单");
           return;
         }
