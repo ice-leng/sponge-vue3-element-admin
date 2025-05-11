@@ -23,7 +23,7 @@
           v-hasPerm="['sys:menu:add']"
           type="success"
           icon="plus"
-          @click="handleOpenDialog('0')"
+          @click="handleOpenDialog(0)"
         >
           新增
         </el-button>
