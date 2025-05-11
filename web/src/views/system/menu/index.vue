@@ -520,7 +520,7 @@ function resetForm() {
   menuFormRef.value.clearValidate();
   formData.value = {
     id: undefined,
-    parentId: "0",
+    parentId: 0,
     visible: 1,
     sort: 1,
     type: MenuTypeEnum.MENU, // 默认菜单

@@ -144,7 +144,7 @@ export interface MenuForm {
   /** 菜单ID */
   id?: string;
   /** 父菜单ID */
-  parentId?: string;
+  parentId?: number;
   /** 菜单名称 */
   name?: string;
   /** 菜单是否可见(1-是 0-否) */
