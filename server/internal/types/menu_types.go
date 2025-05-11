@@ -10,38 +10,38 @@ var _ time.Time
 
 // CreateMenuRequest request params
 type CreateMenuRequest struct {
-	ParentID   int    `json:"parentId" binding:""`   // 父级
-	Name       string `json:"name" binding:""`       // 菜单名称
-	Type       string `json:"type" binding:""`       // 菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)
-	Path       string `json:"routePath" binding:""`  // 路由路径
-	Component  string `json:"component" binding:""`  // 组件路径(vue页面完整路径，省略.vue后缀)
-	Perm       string `json:"perm" binding:""`       // 权限标识
-	Sort       int    `json:"sort" binding:""`       // 排序
-	Visible    int    `json:"visible" binding:""`    // 显示状态
-	Icon       string `json:"icon" binding:""`       // 菜单图标
-	Redirect   string `json:"redirect" binding:""`   // 跳转路径
-	AlwaysShow int    `json:"alwaysShow" binding:""` // 始终显示
-	KeepAlive  int    `json:"keepAlive" binding:""`  // 始终显示
-	Params     string `json:"params" binding:""`     // 路由参数
+	ParentID   int       `json:"parentId" binding:""`   // 父级
+	Name       string    `json:"name" binding:""`       // 菜单名称
+	Type       string    `json:"type" binding:""`       // 菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)
+	Path       string    `json:"routePath" binding:""`  // 路由路径
+	Component  string    `json:"component" binding:""`  // 组件路径(vue页面完整路径，省略.vue后缀)
+	Perm       string    `json:"perm" binding:""`       // 权限标识
+	Sort       int       `json:"sort" binding:""`       // 排序
+	Visible    int       `json:"visible" binding:""`    // 显示状态
+	Icon       string    `json:"icon" binding:""`       // 菜单图标
+	Redirect   string    `json:"redirect" binding:""`   // 跳转路径
+	AlwaysShow int       `json:"alwaysShow" binding:""` // 始终显示
+	KeepAlive  int       `json:"keepAlive" binding:""`  // 始终显示
+	Params     LocalJSON `json:"params" binding:""`     // 路由参数
 }
 
 // UpdateMenuByIDRequest request params
 type UpdateMenuByIDRequest struct {
 	ID uint64 `json:"id" binding:""` // uint64 id
 
-	ParentID   int    `json:"parentId" binding:""`   // 父级
-	Name       string `json:"name" binding:""`       // 菜单名称
-	Type       string `json:"type" binding:""`       // 菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)
-	Path       string `json:"routePath" binding:""`  // 路由路径
-	Component  string `json:"component" binding:""`  // 组件路径(vue页面完整路径，省略.vue后缀)
-	Perm       string `json:"perm" binding:""`       // 权限标识
-	Sort       int    `json:"sort" binding:""`       // 排序
-	Visible    int    `json:"visible" binding:""`    // 显示状态
-	Icon       string `json:"icon" binding:""`       // 菜单图标
-	Redirect   string `json:"redirect" binding:""`   // 跳转路径
-	AlwaysShow int    `json:"alwaysShow" binding:""` // 始终显示
-	KeepAlive  int    `json:"keepAlive" binding:""`  // 始终显示
-	Params     string `json:"params" binding:""`     // 路由参数
+	ParentID   int       `json:"parentId" binding:""`   // 父级
+	Name       string    `json:"name" binding:""`       // 菜单名称
+	Type       string    `json:"type" binding:""`       // 菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)
+	Path       string    `json:"routePath" binding:""`  // 路由路径
+	Component  string    `json:"component" binding:""`  // 组件路径(vue页面完整路径，省略.vue后缀)
+	Perm       string    `json:"perm" binding:""`       // 权限标识
+	Sort       int       `json:"sort" binding:""`       // 排序
+	Visible    int       `json:"visible" binding:""`    // 显示状态
+	Icon       string    `json:"icon" binding:""`       // 菜单图标
+	Redirect   string    `json:"redirect" binding:""`   // 跳转路径
+	AlwaysShow int       `json:"alwaysShow" binding:""` // 始终显示
+	KeepAlive  int       `json:"keepAlive" binding:""`  // 始终显示
+	Params     LocalJSON `json:"params" binding:""`     // 路由参数
 }
 
 // MenuObjDetail detail
@@ -63,7 +63,7 @@ type MenuObjDetail struct {
 	Redirect   string    `json:"redirect"`   // 跳转路径
 	AlwaysShow int       `json:"alwaysShow"` // 始终显示
 	KeepAlive  int       `json:"keepAlive"`  // 始终显示
-	Params     string    `json:"params"`     // 路由参数
+	Params     LocalJSON `json:"params"`     // 路由参数
 }
 
 // MenuObjPage page

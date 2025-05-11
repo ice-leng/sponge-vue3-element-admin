@@ -145,7 +145,7 @@ func (d *menuDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.
 	if table.KeepAlive != 0 {
 		update["keep_alive"] = table.KeepAlive
 	}
-	if table.Params != "" {
+	if table.Params != nil {
 		update["params"] = table.Params
 	}
 

@@ -64,26 +64,55 @@ func (a *LocalIntArray) Scan(src interface{}) error {
 	return fmt.Errorf("cannot convert %v to IntArray", src)
 }
 
-// LocalJSONMap 定义自定义字典类型
-type LocalJSONMap map[string]interface{}
+// LocalMap 定义自定义字典类型
+type LocalMap map[string]interface{}
 
 // MarshalJSON 将 JSONMap 编码为 JSON 格式
-func (m LocalJSONMap) MarshalJSON() ([]byte, error) {
+func (m LocalMap) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}(m))
 }
 
 // UnmarshalJSON 将 JSON 解码为 JSONMap
-func (m *LocalJSONMap) UnmarshalJSON(data []byte) error {
+func (m *LocalMap) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, (*map[string]interface{})(m))
 }
 
 // Value 将 JSONMap 转换为数据库驱动值（存储为 JSON）
-func (m LocalJSONMap) Value() (driver.Value, error) {
+func (m LocalMap) Value() (driver.Value, error) {
 	return json.Marshal(m)
 }
 
 // Scan 从数据库读取数据并解码为 JSONMap
-func (m *LocalJSONMap) Scan(src interface{}) error {
+func (m *LocalMap) Scan(src interface{}) error {
+	if bytes, ok := src.([]byte); ok {
+		return json.Unmarshal(bytes, m)
+	}
+	if str, ok := src.(string); ok {
+		return json.Unmarshal([]byte(str), m)
+	}
+	return fmt.Errorf("cannot convert %v to JSONMap", src)
+}
+
+// LocalJSON 定义自定义字典类型
+type LocalJSON []map[string]interface{}
+
+// MarshalJSON 将 JSONMap 编码为 JSON 格式
+func (m LocalJSON) MarshalJSON() ([]byte, error) {
+	return json.Marshal([]map[string]interface{}(m))
+}
+
+// UnmarshalJSON 将 JSON 解码为 JSONMap
+func (m *LocalJSON) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, (*[]map[string]interface{})(m))
+}
+
+// Value 将 JSONMap 转换为数据库驱动值（存储为 JSON）
+func (m LocalJSON) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+// Scan 从数据库读取数据并解码为 JSONMap
+func (m *LocalJSON) Scan(src interface{}) error {
 	if bytes, ok := src.([]byte); ok {
 		return json.Unmarshal(bytes, m)
 	}
