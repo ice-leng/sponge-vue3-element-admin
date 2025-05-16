@@ -354,7 +354,7 @@ func (d *menuDao) getListByPid(ctx context.Context, pid uint64, roleIds []uint64
 }
 
 func (d *menuDao) getChildren(ctx context.Context, pid uint64, roleIds []uint64) ([]model.Children, error) {
-	var items []model.Children
+	items := make([]model.Children, 0)
 	menus, err := d.getListByPid(ctx, pid, roleIds, false)
 	if err != nil {
 		return make([]model.Children, 0), err
