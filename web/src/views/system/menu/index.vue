@@ -476,6 +476,9 @@ function handleSubmit() {
           handleQuery();
         });
       } else {
+        if (formData.value.type == MenuTypeEnum.CATALOG) {
+          formData.value.component = "Layout";
+        }
         MenuAPI.create(formData.value).then(() => {
           ElMessage.success("新增成功");
           handleCloseDialog();
