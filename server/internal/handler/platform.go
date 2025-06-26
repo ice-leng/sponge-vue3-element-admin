@@ -201,7 +201,7 @@ func (h *platformHandler) GetByID(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
 	platform, err := h.iDao.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, model.ErrRecordNotFound) {
+		if errors.Is(err, database.ErrRecordNotFound) {
 			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 			response.Error(c, ecode.NotFound)
 		} else {
@@ -275,7 +275,7 @@ func (h *platformHandler) Me(c *gin.Context) {
 	id := c.GetUint64("id")
 	platform, err := h.iDao.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, model.ErrRecordNotFound) {
+		if errors.Is(err, database.ErrRecordNotFound) {
 			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 			response.Error(c, ecode.NotFound)
 		} else {
@@ -406,7 +406,7 @@ func (h *platformHandler) GetProfile(c *gin.Context) {
 	id := c.GetUint64("id")
 	platform, err := h.iDao.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, model.ErrRecordNotFound) {
+		if errors.Is(err, database.ErrRecordNotFound) {
 			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 			response.Error(c, ecode.NotFound)
 		} else {
@@ -495,7 +495,7 @@ func (h *platformHandler) ChangePassword(c *gin.Context) {
 
 	platform, platformErr := h.iDao.GetByID(c, form.ID)
 	if platformErr != nil {
-		if errors.Is(platformErr, model.ErrRecordNotFound) {
+		if errors.Is(platformErr, database.ErrRecordNotFound) {
 			logger.Warn("GetByID not found", logger.Err(platformErr), logger.Any("id", form.ID), middleware.GCtxRequestIDField(c))
 			response.Error(c, ecode.NotFound)
 		} else {
@@ -546,7 +546,7 @@ func (h *platformHandler) ResetPassword(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
 	_, err = h.iDao.GetByID(ctx, request.ID)
 	if err != nil {
-		if errors.Is(err, model.ErrRecordNotFound) {
+		if errors.Is(err, database.ErrRecordNotFound) {
 			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", request.ID), middleware.GCtxRequestIDField(c))
 			response.Error(c, ecode.NotFound)
 		} else {

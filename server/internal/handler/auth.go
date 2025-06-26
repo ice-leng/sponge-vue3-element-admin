@@ -5,18 +5,17 @@ import (
 	"admin/internal/dao"
 	"admin/internal/database"
 	"admin/internal/ecode"
-	"admin/internal/middlewares"
 	"admin/internal/model"
 	"admin/internal/types"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-dev-frame/sponge/pkg/ggorm"
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
+	"github.com/go-dev-frame/sponge/pkg/gin/middleware/auth"
 	"github.com/go-dev-frame/sponge/pkg/gin/response"
 	"github.com/go-dev-frame/sponge/pkg/gocrypto"
-	"github.com/go-dev-frame/sponge/pkg/jwt"
 	"github.com/go-dev-frame/sponge/pkg/logger"
+	"github.com/go-dev-frame/sponge/pkg/sgorm"
 	"github.com/go-dev-frame/sponge/pkg/utils"
 	"github.com/mojocn/base64Captcha"
 	"github.com/redis/go-redis/v9"
@@ -89,18 +88,13 @@ func (a authHandler) Login(c *gin.Context) {
 
 	lastTime := time.Now()
 	_ = a.iDao.UpdateByID(c, &model.Platform{
-		Model: ggorm.Model{
+		Model: sgorm.Model{
 			ID: platform.ID,
 		},
 		LastTime: &lastTime,
 	})
 
-	_, token, tokenErr := jwt.GenerateToken(utils.Uint64ToStr(platform.ID),
-		jwt.WithGenerateTokenSignKey([]byte(middlewares.JwtSignKey)),
-		jwt.WithGenerateTokenSignMethod(jwt.HS384),
-		jwt.WithGenerateTokenClaims([]jwt.RegisteredClaimsOption{
-			jwt.WithExpires(time.Hour * 2),
-		}...))
+	token, tokenErr := auth.GenerateToken(utils.Uint64ToStr(platform.ID))
 	if tokenErr != nil {
 		response.Error(c, ecode.ErrLogin)
 		return

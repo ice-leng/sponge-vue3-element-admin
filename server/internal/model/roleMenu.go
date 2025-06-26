@@ -1,12 +1,12 @@
 package model
 
 import (
-	"github.com/go-dev-frame/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/sgorm"
 )
 
 // RoleMenu 角色菜单关联
 type RoleMenu struct {
-	ggorm.Model `gorm:"embedded"` // embed id and time
+	sgorm.Model `gorm:"embedded"` // embed id and time
 
 	RoleID uint64 `gorm:"column:role_id;type:int(11);default:0;NOT NULL" json:"roleID"` // 角色ID
 	MenuID uint64 `gorm:"column:menu_id;type:int(11);default:0;NOT NULL" json:"menuID"` // 菜单ID

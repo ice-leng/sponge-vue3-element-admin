@@ -1,12 +1,12 @@
 package model
 
 import (
-	"github.com/go-dev-frame/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/sgorm"
 )
 
 // Config 系统配置
 type Config struct {
-	ggorm.Model `gorm:"embedded"` // embed id and time
+	sgorm.Model `gorm:"embedded"` // embed id and time
 
 	Name        string `gorm:"column:name;type:varchar(32);NOT NULL" json:"name"`                // 配置名称
 	Description string `gorm:"column:description;type:varchar(255);NOT NULL" json:"description"` // 描述

@@ -2,13 +2,13 @@ package model
 
 import (
 	"admin/internal/types"
-	"github.com/go-dev-frame/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/sgorm"
 	"time"
 )
 
 // Platform 管理员
 type Platform struct {
-	ggorm.Model `gorm:"embedded"` // embed id and time
+	sgorm.Model `gorm:"embedded"` // embed id and time
 
 	Username string              `gorm:"column:username;type:varchar(32);NOT NULL" json:"username"`                                                                                          // 账号
 	Password string              `gorm:"column:password;type:varchar(64);NOT NULL" json:"password"`                                                                                          // 密码

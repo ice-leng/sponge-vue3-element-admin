@@ -2,12 +2,12 @@ package model
 
 import (
 	"admin/internal/types"
-	"github.com/go-dev-frame/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/sgorm"
 )
 
 // Menu 菜单管理
 type Menu struct {
-	ggorm.Model `gorm:"embedded"` // embed id and time
+	sgorm.Model `gorm:"embedded"` // embed id and time
 
 	ParentID   int             `gorm:"column:parent_id;type:int(11);default:0;NOT NULL" json:"parentID"`        // 父级
 	Name       string          `gorm:"column:name;type:varchar(32);NOT NULL" json:"name"`                       // 菜单名称

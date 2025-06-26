@@ -2,6 +2,7 @@ package handler
 
 import (
 	"admin/internal/database"
+	"admin/internal/model"
 	"admin/internal/pkg/util"
 	"errors"
 	"path"
@@ -20,7 +21,6 @@ import (
 	"admin/internal/cache"
 	"admin/internal/dao"
 	"admin/internal/ecode"
-	"admin/internal/model"
 	"admin/internal/types"
 )
 
@@ -187,7 +187,7 @@ func (h *configHandler) GetByID(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
 	config, err := h.iDao.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, model.ErrRecordNotFound) {
+		if errors.Is(err, database.ErrRecordNotFound) {
 			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 			response.Error(c, ecode.NotFound)
 		} else {

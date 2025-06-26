@@ -1,12 +1,12 @@
 package model
 
 import (
-	"github.com/go-dev-frame/sponge/pkg/ggorm"
+	"github.com/go-dev-frame/sponge/pkg/sgorm"
 )
 
 // Role 角色管理
 type Role struct {
-	ggorm.Model `gorm:"embedded"` // embed id and time
+	sgorm.Model `gorm:"embedded"` // embed id and time
 
 	Name   string `gorm:"column:name;type:varchar(32);NOT NULL" json:"name"`       // 角色名称
 	Code   string `gorm:"column:code;type:varchar(32);NOT NULL" json:"code"`       // 角色编码

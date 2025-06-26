@@ -4,7 +4,7 @@ import (
 	"admin/internal/handler"
 	"admin/internal/middlewares"
 	"github.com/gin-gonic/gin"
-	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
+	"github.com/go-dev-frame/sponge/pkg/gin/middleware/auth"
 )
 
 func init() {
@@ -22,7 +22,7 @@ func authRouter(group *gin.RouterGroup, h handler.AuthHandler) {
 	// If jwt authentication is not required for all routes, authentication middleware can be added
 	// separately for only certain routes. In this case, g.Use(middleware.Auth()) above should not be used.
 
-	g.POST("/login", h.Login)                                                                                                                                   // [post] /api/v1/auth/login
-	g.GET("/captcha", h.Captcha)                                                                                                                                // [get] /api/v1/auth/captcha
-	g.DELETE("/logout", middleware.Auth(middleware.WithExtraVerify(middlewares.VerifyToken), middleware.WithSignKey([]byte(middlewares.JwtSignKey))), h.Logout) // [delete] /api/v1/auth/logout
+	g.POST("/login", h.Login)                                                               // [post] /api/v1/auth/login
+	g.GET("/captcha", h.Captcha)                                                            // [get] /api/v1/auth/captcha
+	g.DELETE("/logout", auth.Auth(auth.WithExtraVerify(middlewares.VerifyToken)), h.Logout) // [delete] /api/v1/auth/logout
 }

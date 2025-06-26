@@ -29,6 +29,8 @@ checkResult $?
 # modify duplicate numbers and error codes
 sponge patch modify-dup-num --dir=internal/ecode
 sponge patch modify-dup-err-code --dir=internal/ecode
+# handle swagger.json
+sponge web swagger --enable-to-openapi3 --enable-integer-to-string --file=docs/swagger.json > /dev/null
 
 colorGreen='\033[1;32m'
 colorCyan='\033[1;36m'

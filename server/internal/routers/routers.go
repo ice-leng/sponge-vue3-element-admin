@@ -3,6 +3,8 @@
 package routers
 
 import (
+	"admin/internal/middlewares"
+	"github.com/go-dev-frame/sponge/pkg/gin/middleware/auth"
 	"net/http"
 	"time"
 
@@ -82,6 +84,9 @@ func NewRouter() *gin.Engine {
 
 	// validator
 	binding.Validator = validator.Init()
+
+	// jwt
+	auth.InitAuth([]byte(middlewares.JwtSignKey), time.Hour*2)
 
 	r.GET("/health", handlerfunc.CheckHealth)
 	r.GET("/ping", handlerfunc.Ping)

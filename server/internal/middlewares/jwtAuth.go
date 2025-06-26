@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"admin/internal/cache"
+	"admin/internal/constant/enum"
 	"admin/internal/dao"
 	"admin/internal/database"
 	"admin/internal/ecode"
@@ -38,7 +39,7 @@ func VerifyToken(claims *jwt.Claims, c *gin.Context) error {
 		return err
 	}
 
-	if *platform.Status != 1 {
+	if *platform.Status != enum.BaseStatusNormal {
 		return ecode.ErrLoginFrozen.Err()
 	}
 
