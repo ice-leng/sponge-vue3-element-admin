@@ -220,7 +220,7 @@ func (d *configDao) GetByKey(ctx context.Context, key string) (*model.Config, er
 		// for the same id, prevent high concurrent simultaneous access to database
 		val, err, _ := d.sfg.Do(key, func() (interface{}, error) { //nolint
 			table := &model.Config{}
-			err = d.db.WithContext(ctx).Where("key = ?", key).First(table).Error
+			err = d.db.WithContext(ctx).Where("`key` = ?", key).First(table).Error
 			if err != nil {
 				if errors.Is(err, database.ErrRecordNotFound) {
 					// set placeholder cache to prevent cache penetration, default expiration time 10 minutes

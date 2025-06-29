@@ -10,7 +10,7 @@ const FileAPI = {
    */
   upload(formData: FormData) {
     return request<any, FileInfo>({
-      url: "/api/v1/files",
+      url: `${FILE_BASE_URL}/local`,
       method: "post",
       data: formData,
       headers: {
