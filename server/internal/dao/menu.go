@@ -130,7 +130,7 @@ func (d *menuDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.
 	if table.Sort != 0 {
 		update["sort"] = table.Sort
 	}
-	if table.Visible != 0 {
+	if table.Visible != nil {
 		update["visible"] = table.Visible
 	}
 	if table.Icon != "" {
@@ -139,10 +139,10 @@ func (d *menuDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.
 	if table.Redirect != "" {
 		update["redirect"] = table.Redirect
 	}
-	if table.AlwaysShow != 0 {
+	if table.AlwaysShow != nil {
 		update["always_show"] = table.AlwaysShow
 	}
-	if table.KeepAlive != 0 {
+	if table.KeepAlive != nil {
 		update["keep_alive"] = table.KeepAlive
 	}
 	if table.Params != nil {
@@ -364,9 +364,9 @@ func (d *menuDao) getChildren(ctx context.Context, pid uint64, roleIds []uint64)
 		meta := model.ChildrenMeta{
 			Title:      menu.Name,
 			Icon:       menu.Icon,
-			Hidden:     menu.Visible != 1,
-			KeepAlive:  menu.KeepAlive == 1,
-			AlwaysShow: menu.AlwaysShow == 1,
+			Hidden:     *menu.Visible != 1,
+			KeepAlive:  *menu.KeepAlive == 1,
+			AlwaysShow: *menu.AlwaysShow == 1,
 			Params:     &params,
 		}
 		item := model.Children{
@@ -391,8 +391,8 @@ func (d *menuDao) Routes(ctx context.Context, roleIds []uint64) ([]model.MenuIte
 		meta := model.MenuMeta{
 			Title:      top.Name,
 			Icon:       top.Icon,
-			Hidden:     top.Visible != 1,
-			AlwaysShow: top.AlwaysShow == 1,
+			Hidden:     *top.Visible != 1,
+			AlwaysShow: *top.AlwaysShow == 1,
 			Params:     &params,
 		}
 		children, _ := d.getChildren(ctx, top.ID, roleIds)

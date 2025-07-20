@@ -36,11 +36,11 @@ type UpdateMenuByIDRequest struct {
 	Component  string    `json:"component" binding:""`  // 组件路径(vue页面完整路径，省略.vue后缀)
 	Perm       string    `json:"perm" binding:""`       // 权限标识
 	Sort       int       `json:"sort" binding:""`       // 排序
-	Visible    int       `json:"visible" binding:""`    // 显示状态
+	Visible    *int      `json:"visible" binding:""`    // 显示状态
 	Icon       string    `json:"icon" binding:""`       // 菜单图标
 	Redirect   string    `json:"redirect" binding:""`   // 跳转路径
-	AlwaysShow int       `json:"alwaysShow" binding:""` // 始终显示
-	KeepAlive  int       `json:"keepAlive" binding:""`  // 始终显示
+	AlwaysShow *int      `json:"alwaysShow" binding:""` // 始终显示
+	KeepAlive  *int      `json:"keepAlive" binding:""`  // 始终显示
 	Params     LocalJSON `json:"params" binding:""`     // 路由参数
 }
 
