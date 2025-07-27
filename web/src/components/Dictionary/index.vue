@@ -4,6 +4,7 @@
     :placeholder="placeholder"
     :disabled="disabled"
     clearable
+    filterable
     @change="handleChange"
   >
     <el-option
