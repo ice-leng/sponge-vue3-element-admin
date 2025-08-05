@@ -49,6 +49,11 @@ func EnumChangeDict(enumDir string) map[string][]types.Options {
 			// 实际的 iota 值需要根据 spec 在 decl.Specs 中的索引来确定
 			// currentIota := 0 // 移除简单的 iota 计数器
 
+			// 用于跟踪当前的 iota 值和基础偏移量
+			currentIotaValue := 0
+			iotaOffset := 0
+			hasIotaExpression := false
+
 			for i, spec := range decl.Specs {
 				valueSpec, ok := spec.(*ast.ValueSpec)
 				if !ok {
@@ -70,6 +75,10 @@ func EnumChangeDict(enumDir string) map[string][]types.Options {
 							if err == nil {
 								val = parsedVal
 								isIntValue = true
+								// 重置 iota 跟踪
+								currentIotaValue = parsedVal
+								iotaOffset = 0
+								hasIotaExpression = false
 							} else {
 								log.Printf("Warn: Could not parse integer literal '%s' in %s: %v\n", basicLit.Value, filePath, err)
 							}
@@ -84,16 +93,42 @@ func EnumChangeDict(enumDir string) map[string][]types.Options {
 							}
 						}
 						// 其他类型 (float, complex, char) 暂不处理
+					} else if binExpr, ok := valueExpr.(*ast.BinaryExpr); ok {
+						// 处理 iota + 1 这样的表达式
+						if ident, ok := binExpr.X.(*ast.Ident); ok && ident.Name == "iota" {
+							if basicLit, ok := binExpr.Y.(*ast.BasicLit); ok && basicLit.Kind == token.INT {
+								if offset, err := strconv.Atoi(basicLit.Value); err == nil {
+									iotaOffset = offset
+									val = i + iotaOffset
+									isIntValue = true
+									hasIotaExpression = true
+									currentIotaValue = val.(int)
+								}
+							}
+						} else {
+							// 其他二元表达式，使用 iota 近似
+							val = i
+							isIntValue = true
+							currentIotaValue = i
+						}
 					} else {
 						// 如果不是基本字面量 (可能是标识符、调用等)，尝试使用 iota
-						// 注意：这里仍然是简化处理，未完全模拟 iota 行为
-						val = i           // 使用 spec 在 const 块中的索引作为 iota 的近似值
-						isIntValue = true // 假设 iota 总是整数
+						val = i
+						isIntValue = true
+						currentIotaValue = i
 					}
 				} else {
-					// 没有显式赋值，使用 iota (用索引近似)
-					val = i
-					isIntValue = true // 假设 iota 总是整数
+					// 没有显式赋值，使用前一个值的递增
+					if hasIotaExpression {
+						// 如果前面有 iota 表达式，继续递增
+						currentIotaValue++
+						val = currentIotaValue
+					} else {
+						// 否则使用索引
+						val = i
+						currentIotaValue = i
+					}
+					isIntValue = true
 				}
 
 				// 只有整数或字符串类型的常量才添加到 options

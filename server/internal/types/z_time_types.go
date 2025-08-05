@@ -9,14 +9,24 @@ import (
 
 type LocalDateTime time.Time
 
+// MarshalJSON 将 LocalDateTime 序列化为 JSON 时间字符串
+// 使用本地时区格式化时间
 func (dt LocalDateTime) MarshalJSON() ([]byte, error) {
 	value := ""
 	if !time.Time(dt).IsZero() {
-		value = time.Time(dt).Format("2006-01-02 15:04:05")
+		// 确保使用本地时区格式化时间
+		loc, err := time.LoadLocation("Local")
+		if err != nil {
+			// 如果无法加载本地时区，使用 UTC
+			loc = time.UTC
+		}
+		value = time.Time(dt).In(loc).Format("2006-01-02 15:04:05")
 	}
 	return []byte(fmt.Sprintf(`"%s"`, value)), nil
 }
 
+// UnmarshalJSON 解析 JSON 时间字符串为 LocalDateTime
+// 使用本地时区解析时间，避免时区偏移问题
 func (dt *LocalDateTime) UnmarshalJSON(b []byte) error {
 	// 检查是否为 JSON null
 	if string(b) == "null" {
@@ -24,7 +34,16 @@ func (dt *LocalDateTime) UnmarshalJSON(b []byte) error {
 	}
 
 	// 解析带引号的 JSON 时间字符串
-	t, err := time.Parse(`2006-01-02 15:04:05`, strings.Trim(string(b), "\""))
+	timeStr := strings.Trim(string(b), "\"")
+
+	// 使用本地时区解析时间
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		// 如果无法加载本地时区，使用 UTC
+		loc = time.UTC
+	}
+
+	t, err := time.ParseInLocation("2006-01-02 15:04:05", timeStr, loc)
 	if err != nil {
 		return err
 	}
@@ -58,7 +77,13 @@ type LocalDate time.Time
 func (dt LocalDate) MarshalJSON() ([]byte, error) {
 	value := ""
 	if !time.Time(dt).IsZero() {
-		value = time.Time(dt).Format("2006-01-02 15:04:05")
+		// 确保使用本地时区格式化时间
+		loc, err := time.LoadLocation("Local")
+		if err != nil {
+			// 如果无法加载本地时区，使用 UTC
+			loc = time.UTC
+		}
+		value = time.Time(dt).In(loc).Format("2006-01-02")
 	}
 	return []byte(fmt.Sprintf(`"%s"`, value)), nil
 }
@@ -70,7 +95,17 @@ func (dt *LocalDate) UnmarshalJSON(b []byte) error {
 	}
 
 	// 解析带引号的 JSON 时间字符串
-	t, err := time.Parse(`2006-01-02 15:04:05`, strings.Trim(string(b), "\""))
+	timeStr := strings.Trim(string(b), "\"")
+
+	// 使用本地时区解析时间
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		// 如果无法加载本地时区，使用 UTC
+		loc = time.UTC
+	}
+
+	// 解析带引号的 JSON 时间字符串
+	t, err := time.ParseInLocation(`2006-01-02`, timeStr, loc)
 	if err != nil {
 		return err
 	}
