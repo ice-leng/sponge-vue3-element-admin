@@ -2,21 +2,23 @@ package handler
 
 import (
 	"admin/internal/cache"
+	"admin/internal/constant"
 	"admin/internal/dao"
 	"admin/internal/database"
 	"admin/internal/ecode"
 	"admin/internal/types"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/go-dev-frame/sponge/pkg/errcode"
-	"github.com/go-dev-frame/sponge/pkg/gin/response"
-	"github.com/go-dev-frame/sponge/pkg/gocrypto"
-	"github.com/go-dev-frame/sponge/pkg/gofile"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-dev-frame/sponge/pkg/errcode"
+	"github.com/go-dev-frame/sponge/pkg/gin/response"
+	"github.com/go-dev-frame/sponge/pkg/gocrypto"
+	"github.com/go-dev-frame/sponge/pkg/gofile"
 )
 
 type UploadHandler interface {
@@ -88,6 +90,6 @@ func (h *uploadHandler) Local(c *gin.Context) {
 	response.Success(c, types.UploadItem{
 		Name: newFileName,
 		Path: "/" + filePath,
-		Url:  h.iConfigDao.MakePathByConfig(c, "/"+filePath, "imageDomain"),
+		Url:  h.iConfigDao.MakePathByConfig(c, "/"+filePath, constant.ConfigKeyImageDomain),
 	})
 }

@@ -1,7 +1,7 @@
 <!-- 单图上传组件 -->
 <template>
   <el-upload
-    v-model="modelValue"
+    v-model="displayImageUrl"
     class="single-upload"
     list-type="picture-card"
     :show-file-list="false"
@@ -12,8 +12,8 @@
     :on-error="onError"
   >
     <template #default>
-      <el-image v-if="modelValue" :src="modelValue" />
-      <el-icon v-if="modelValue" class="single-upload__delete-btn" @click.stop="handleDelete">
+      <el-image v-if="displayImageUrl" :src="displayImageUrl" />
+      <el-icon v-if="displayImageUrl" class="single-upload__delete-btn" @click.stop="handleDelete">
         <CircleCloseFilled />
       </el-icon>
       <el-icon v-else class="single-upload__add-btn">
@@ -74,10 +74,40 @@ const props = defineProps({
   },
 });
 
+// modelValue 存储 path，用于表单提交
 const modelValue = defineModel("modelValue", {
   type: String,
   default: () => "",
 });
+
+// 用于显示的图片URL
+const displayImageUrl = ref("");
+
+/**
+ * 监听 modelValue 变化，处理回显逻辑
+ * 当 modelValue 是 path 时，需要转换为完整的 URL 用于显示
+ */
+watch(
+  () => modelValue.value,
+  (newPath: string) => {
+    if (!newPath) {
+      displayImageUrl.value = "";
+      return;
+    }
+
+    // 如果是完整的URL（包含协议），直接使用
+    if (newPath.startsWith("http://") || newPath.startsWith("https://")) {
+      displayImageUrl.value = newPath;
+      return;
+    }
+
+    // 如果是相对路径，需要构建完整的URL用于显示
+    // 使用配置的API URL作为基础URL
+    const baseUrl = import.meta.env.VITE_APP_API_URL || "";
+    displayImageUrl.value = baseUrl + newPath;
+  },
+  { immediate: true }
+);
 
 /**
  * 限制用户上传文件的格式和大小
@@ -143,6 +173,7 @@ function handleUpload(options: UploadRequestOptions) {
  */
 function handleDelete() {
   modelValue.value = "";
+  displayImageUrl.value = "";
 }
 
 /**
@@ -152,7 +183,10 @@ function handleDelete() {
  */
 const onSuccess = (fileInfo: FileInfo) => {
   ElMessage.success("上传成功");
-  modelValue.value = fileInfo.url;
+  // modelValue 存储 path，用于表单提交
+  modelValue.value = fileInfo.path;
+  // 显示用的是 url
+  displayImageUrl.value = fileInfo.url;
 };
 
 /**

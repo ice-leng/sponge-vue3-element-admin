@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"admin/internal/constant"
 	"admin/internal/database"
 	"encoding/base64"
 	"errors"
-	"github.com/go-dev-frame/sponge/pkg/gocrypto"
 	"strings"
+
+	"github.com/go-dev-frame/sponge/pkg/gocrypto"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -287,7 +289,7 @@ func (h *platformHandler) Me(c *gin.Context) {
 
 	reply := types.MeItem{}
 	_ = copier.Copy(&reply, platform)
-	reply.Avatar = h.iConfigDao.MakePathByConfig(c, platform.Avatar, "imageDomain")
+	reply.Avatar = h.iConfigDao.MakePathByConfig(c, platform.Avatar, constant.ConfigKeyImageDomain)
 
 	var (
 		roleCodes []string
@@ -418,7 +420,7 @@ func (h *platformHandler) GetProfile(c *gin.Context) {
 
 	reply := types.ProfileItem{}
 	_ = copier.Copy(&reply, platform)
-	reply.Avatar = h.iConfigDao.MakePathByConfig(c, platform.Avatar, "imageDomain")
+	reply.Avatar = h.iConfigDao.MakePathByConfig(c, platform.Avatar, constant.ConfigKeyImageDomain)
 	reply.Mobile = decryptMobile(reply.Mobile)
 	var (
 		roleCodes []string
