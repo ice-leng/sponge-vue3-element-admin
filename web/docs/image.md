@@ -27,8 +27,8 @@
 ```vue
   ....
 
-  <el-form-item label="图片" prop="imageUrl">
-    <single-upload v-model="formData.imageUrl" />
+  <el-form-item label="封面图" prop="cover">
+    <SingleImageUpload v-model="formData.cover" />
   </el-form-item>
 
 ```

@@ -95,9 +95,16 @@ watch(
       return;
     }
 
-    // 如果是完整的URL（包含协议），直接使用
+    // 如果是完整的URL（包含协议），直接使用，但确保 modelValue 不包含协议和域名
     if (newPath.startsWith("http://") || newPath.startsWith("https://")) {
       displayImageUrl.value = newPath;
+      // 从 URL 中提取路径部分（去掉协议和域名），更新 modelValue
+      try {
+        const urlObj = new URL(newPath);
+        modelValue.value = urlObj.pathname;
+      } catch (error) {
+        console.error("解析URL失败:", error);
+      }
       return;
     }
 
