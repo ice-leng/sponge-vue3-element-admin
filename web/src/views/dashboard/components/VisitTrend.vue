@@ -16,11 +16,7 @@
           </el-tooltip>
         </div>
 
-        <el-radio-group
-          v-model="dataRange"
-          size="small"
-          @change="handleDateRangeChange"
-        >
+        <el-radio-group v-model="dataRange" size="small" @change="handleDateRangeChange">
           <el-radio-button label="近7天" :value="1" />
           <el-radio-button label="近30天" :value="2" />
         </el-radio-group>
@@ -65,12 +61,28 @@ const setChartOptions = (data: EchartsVO) => {
     return;
   }
 
+  const series = data.series.map((item) => ({
+    name: item.name,
+    type: "line",
+    data: item.data,
+    areaStyle: {
+      color: item.areaStyle,
+    },
+    smooth: true,
+    itemStyle: {
+      color: item.itemStyle,
+    },
+    lineStyle: {
+      color: item.lineStyle,
+    },
+  }));
+
   const options = {
     tooltip: {
       trigger: "axis",
     },
     legend: {
-      data: ["浏览量(PV)", "IP"],
+      data: data.names,
       bottom: 0,
     },
     grid: {
@@ -92,38 +104,7 @@ const setChartOptions = (data: EchartsVO) => {
         },
       },
     },
-    series: [
-      {
-        name: "浏览量(PV)",
-        type: "line",
-        data: data.pvList,
-        areaStyle: {
-          color: "rgba(64, 158, 255, 0.1)",
-        },
-        smooth: true,
-        itemStyle: {
-          color: "#4080FF",
-        },
-        lineStyle: {
-          color: "#4080FF",
-        },
-      },
-      {
-        name: "IP",
-        type: "line",
-        data: data.ipList,
-        areaStyle: {
-          color: "rgba(103, 194, 58, 0.1)",
-        },
-        smooth: true,
-        itemStyle: {
-          color: "#67C23A",
-        },
-        lineStyle: {
-          color: "#67C23A",
-        },
-      },
-    ],
+    series: series,
   };
 
   chart.value.setOption(options);
@@ -157,8 +138,8 @@ const calculateDateRange = () => {
 const loadData = () => {
   const { startDate, endDate } = calculateDateRange();
   DashboardAPI.getEcharts({
-    startDate,
-    endDate,
+    startTime: startDate,
+    endTime: endDate,
   } as EchartsQuery).then((data) => {
     setChartOptions(data);
   });
@@ -209,9 +190,7 @@ const handleResize = () => {
 };
 /** 初始化图表  */
 onMounted(() => {
-  chart.value = markRaw(
-    echarts.init(document.getElementById(props.id) as HTMLDivElement)
-  );
+  chart.value = markRaw(echarts.init(document.getElementById(props.id) as HTMLDivElement));
   loadData();
 
   window.addEventListener("resize", handleResize);

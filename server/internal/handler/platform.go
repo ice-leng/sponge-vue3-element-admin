@@ -295,7 +295,7 @@ func (h *platformHandler) Me(c *gin.Context) {
 		roleCodes []string
 	)
 	roles, _ := h.iRoleDao.GetByIDs(c, platform.RoleID)
-	if roles != nil {
+	if len(roles) > 0 {
 		for _, role := range roles {
 			roleCodes = append(roleCodes, role.Code)
 		}
@@ -352,7 +352,7 @@ func (h *platformHandler) convertPlatforms(c *gin.Context, fromValues []*model.P
 
 	roleCodes := map[uint64]string{}
 	roles, _ := h.iRoleDao.GetByIDs(c, roleIds)
-	if roles != nil {
+	if len(roles) > 0 {
 		for _, role := range roles {
 			roleCodes[role.ID] = role.Name
 		}
@@ -426,7 +426,7 @@ func (h *platformHandler) GetProfile(c *gin.Context) {
 		roleCodes []string
 	)
 	roles, _ := h.iRoleDao.GetByIDs(c, platform.RoleID)
-	if roles != nil {
+	if len(roles) > 0 {
 		for _, role := range roles {
 			roleCodes = append(roleCodes, role.Name)
 		}

@@ -25,3 +25,12 @@ type Platform struct {
 func (m *Platform) TableName() string {
 	return "t_platform"
 }
+
+type Operator struct {
+	ID       uint64 `gorm:"column:id;AUTO_INCREMENT;primary_key" json:"id"`
+	Nickname string `gorm:"column:nickname;type:varchar(32);NOT NULL" json:"nickname"`
+}
+
+func (m *Operator) TableName() string {
+	return "t_platform"
+}

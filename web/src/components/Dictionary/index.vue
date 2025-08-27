@@ -17,7 +17,6 @@
 </template>
 
 <script setup lang="ts">
-
 const props = defineProps({
   /**
    * 字典编码(eg: 性别-gender)
@@ -57,7 +56,8 @@ watch(
     } else {
       selectedValue.value = String(newModelValue);
     }
-  }
+  },
+  { immediate: true }
 );
 
 function handleChange(val?: string | number | undefined) {

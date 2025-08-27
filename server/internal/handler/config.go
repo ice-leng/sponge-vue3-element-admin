@@ -2,12 +2,7 @@ package handler
 
 import (
 	"admin/internal/database"
-	"admin/internal/model"
-	"admin/internal/pkg/util"
 	"errors"
-	"path"
-	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +16,7 @@ import (
 	"admin/internal/cache"
 	"admin/internal/dao"
 	"admin/internal/ecode"
+	"admin/internal/model"
 	"admin/internal/types"
 )
 
@@ -37,7 +33,8 @@ type ConfigHandler interface {
 }
 
 type configHandler struct {
-	iDao dao.ConfigDao
+	iDao  dao.ConfigDao
+	cEnum cache.EnumCache
 }
 
 // NewConfigHandler creating the handler interface
@@ -47,6 +44,7 @@ func NewConfigHandler() ConfigHandler {
 			database.GetDB(),
 			cache.NewConfigCache(database.GetCacheType()),
 		),
+		cEnum: cache.NewEnumCache(),
 	}
 }
 
@@ -257,11 +255,8 @@ func (h *configHandler) List(c *gin.Context) {
 // @Router /api/v1/config/dict [get]
 // @Security BearerAuth
 func (h *configHandler) Dict(c *gin.Context) {
-	// 获取当前文件的路径
-	_, filename, _, _ := runtime.Caller(0)
-	root := path.Dir(path.Dir(filename))
-	enumDir := filepath.Join(root, "constant", "enum")
-	result := util.EnumChangeDict(enumDir)
+	ctx := middleware.WrapCtx(c)
+	result := h.cEnum.GetAll(ctx)
 	response.Success(c, result)
 }
 

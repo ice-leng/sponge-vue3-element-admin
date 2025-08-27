@@ -261,24 +261,9 @@ definitions:
         description: return code
         type: integer
       data:
+        allOf:
+        - $ref: '#/definitions/types.Echarts'
         description: return data
-        properties:
-          dates:
-            description: 日期
-            items:
-              type: string
-            type: array
-          ipList:
-            description: ip 列表
-            items:
-              type: integer
-            type: array
-          pvList:
-            description: pv 列表
-            items:
-              type: integer
-            type: array
-        type: object
       msg:
         description: return information description
         type: string
@@ -290,16 +275,13 @@ definitions:
         type: string
       growthRate:
         description: 增长率
-        type: number
       title:
         description: 标题
         type: string
       todayCount:
         description: 今日数量
-        type: integer
       totalCount:
         description: 总数量
-        type: integer
       type:
         description: 类型 "pv" | "uv" | "ip"
         type: string
@@ -371,6 +353,37 @@ definitions:
         description: return data
       msg:
         description: return information description
+        type: string
+    type: object
+  types.Echarts:
+    properties:
+      dates:
+        description: 日期
+        items:
+          type: string
+        type: array
+      names:
+        items:
+          type: string
+        type: array
+      series:
+        items:
+          $ref: '#/definitions/types.EchartsSeries'
+        type: array
+    type: object
+  types.EchartsSeries:
+    properties:
+      areaStyle:
+        type: string
+      data:
+        items:
+          type: integer
+        type: array
+      itemStyle:
+        type: string
+      lineStyle:
+        type: string
+      name:
         type: string
     type: object
   types.GetConfigByIDReply:
@@ -715,6 +728,7 @@ definitions:
       label:
         description: 标签
         type: string
+      other: {}
       value:
         description: 值
     type: object
@@ -1303,6 +1317,15 @@ paths:
       consumes:
       - application/json
       description: data echarts
+      parameters:
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
       produces:
       - application/json
       responses:

@@ -19,8 +19,8 @@ type Menu struct {
 	Visible    *int            `gorm:"column:visible;type:tinyint(4);NOT NULL" json:"visible"`                  // 显示状态
 	Icon       string          `gorm:"column:icon;type:varchar(255);NOT NULL" json:"icon"`                      // 菜单图标
 	Redirect   string          `gorm:"column:redirect;type:varchar(255);NOT NULL" json:"redirect"`              // 跳转路径
-	AlwaysShow *int            `gorm:"column:always_show;type:tinyint(4);default:0;NOT NULL" json:"alwaysShow"` // 始终显示
-	KeepAlive  *int            `gorm:"column:keep_alive;type:tinyint(4);default:1;NOT NULL" json:"keepAlive"`   // 始终显示
+	AlwaysShow int             `gorm:"column:always_show;type:tinyint(4);default:0;NOT NULL" json:"alwaysShow"` // 始终显示
+	KeepAlive  int             `gorm:"column:keep_alive;type:tinyint(4);default:1;NOT NULL" json:"keepAlive"`   // 始终显示
 	Params     types.LocalJSON `gorm:"column:params;type:json" json:"params"`                                   // 路由参数
 }
 

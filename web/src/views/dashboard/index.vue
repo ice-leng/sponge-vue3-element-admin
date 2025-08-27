@@ -185,21 +185,17 @@ const loadVisitStatsData = async () => {
 
 /** 格式化增长率 */
 const formatGrowthRate = (growthRate: number): string => {
-  if (growthRate === 0) {
+  if (growthRate == 0) {
     return "-";
   }
-
-  const formattedRate = Math.abs(growthRate * 100)
-    .toFixed(2)
-    .replace(/\.?0+$/, "");
-  return formattedRate + "%";
+  return growthRate + "%";
 };
 
 /** 获取增长率文本颜色类 */
 const getGrowthRateClass = (growthRate: number): string => {
-  if (growthRate > 0) {
+  if (growthRate < 0) {
     return "color-[--el-color-danger]";
-  } else if (growthRate < 0) {
+  } else if (growthRate > 0) {
     return "color-[--el-color-success]";
   } else {
     return "color-[--el-color-info]";

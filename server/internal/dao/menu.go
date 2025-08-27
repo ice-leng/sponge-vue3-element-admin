@@ -139,10 +139,10 @@ func (d *menuDao) updateDataByID(ctx context.Context, db *gorm.DB, table *model.
 	if table.Redirect != "" {
 		update["redirect"] = table.Redirect
 	}
-	if table.AlwaysShow != nil {
+	if table.AlwaysShow != 0 {
 		update["always_show"] = table.AlwaysShow
 	}
-	if table.KeepAlive != nil {
+	if table.KeepAlive != 0 {
 		update["keep_alive"] = table.KeepAlive
 	}
 	if table.Params != nil {
@@ -365,8 +365,8 @@ func (d *menuDao) getChildren(ctx context.Context, pid uint64, roleIds []uint64)
 			Title:      menu.Name,
 			Icon:       menu.Icon,
 			Hidden:     *menu.Visible != 1,
-			KeepAlive:  *menu.KeepAlive == 1,
-			AlwaysShow: *menu.AlwaysShow == 1,
+			KeepAlive:  menu.KeepAlive == 1,
+			AlwaysShow: menu.AlwaysShow == 1,
 			Params:     &params,
 		}
 		item := model.Children{
@@ -392,7 +392,7 @@ func (d *menuDao) Routes(ctx context.Context, roleIds []uint64) ([]model.MenuIte
 			Title:      top.Name,
 			Icon:       top.Icon,
 			Hidden:     *top.Visible != 1,
-			AlwaysShow: *top.AlwaysShow == 1,
+			AlwaysShow: top.AlwaysShow == 1,
 			Params:     &params,
 		}
 		children, _ := d.getChildren(ctx, top.ID, roleIds)

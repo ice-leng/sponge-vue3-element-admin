@@ -9,6 +9,9 @@ import (
 	"admin/internal/types"
 	"context"
 	"fmt"
+	"image/color"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware/auth"
@@ -19,8 +22,6 @@ import (
 	"github.com/go-dev-frame/sponge/pkg/utils"
 	"github.com/mojocn/base64Captcha"
 	"github.com/redis/go-redis/v9"
-	"image/color"
-	"time"
 )
 
 type AuthHandler interface {

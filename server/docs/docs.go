@@ -366,6 +366,20 @@ const docTemplate = `{
                     "dashboard"
                 ],
                 "summary": "data echarts",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "startTime",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2033,30 +2047,11 @@ const docTemplate = `{
                 },
                 "data": {
                     "description": "return data",
-                    "type": "object",
-                    "properties": {
-                        "dates": {
-                            "description": "日期",
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "ipList": {
-                            "description": "ip 列表",
-                            "type": "array",
-                            "items": {
-                                "type": "integer"
-                            }
-                        },
-                        "pvList": {
-                            "description": "pv 列表",
-                            "type": "array",
-                            "items": {
-                                "type": "integer"
-                            }
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.Echarts"
                         }
-                    }
+                    ]
                 },
                 "msg": {
                     "description": "return information description",
@@ -2072,20 +2067,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "growthRate": {
-                    "description": "增长率",
-                    "type": "number"
+                    "description": "增长率"
                 },
                 "title": {
                     "description": "标题",
                     "type": "string"
                 },
                 "todayCount": {
-                    "description": "今日数量",
-                    "type": "integer"
+                    "description": "今日数量"
                 },
                 "totalCount": {
-                    "description": "总数量",
-                    "type": "integer"
+                    "description": "总数量"
                 },
                 "type": {
                     "description": "类型 \"pv\" | \"uv\" | \"ip\"",
@@ -2189,6 +2181,53 @@ const docTemplate = `{
                 },
                 "msg": {
                     "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "types.Echarts": {
+            "type": "object",
+            "properties": {
+                "dates": {
+                    "description": "日期",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "series": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.EchartsSeries"
+                    }
+                }
+            }
+        },
+        "types.EchartsSeries": {
+            "type": "object",
+            "properties": {
+                "areaStyle": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "itemStyle": {
+                    "type": "string"
+                },
+                "lineStyle": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -2695,6 +2734,7 @@ const docTemplate = `{
                     "description": "标签",
                     "type": "string"
                 },
+                "other": {},
                 "value": {
                     "description": "值"
                 }

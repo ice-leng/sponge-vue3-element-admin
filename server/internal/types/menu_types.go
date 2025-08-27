@@ -39,8 +39,8 @@ type UpdateMenuByIDRequest struct {
 	Visible    *int      `json:"visible" binding:""`    // 显示状态
 	Icon       string    `json:"icon" binding:""`       // 菜单图标
 	Redirect   string    `json:"redirect" binding:""`   // 跳转路径
-	AlwaysShow *int      `json:"alwaysShow" binding:""` // 始终显示
-	KeepAlive  *int      `json:"keepAlive" binding:""`  // 始终显示
+	AlwaysShow int       `json:"alwaysShow" binding:""` // 始终显示
+	KeepAlive  int       `json:"keepAlive" binding:""`  // 始终显示
 	Params     LocalJSON `json:"params" binding:""`     // 路由参数
 }
 

@@ -70,6 +70,11 @@ type PlatformObjDetail struct {
 	Gender    int           `json:"gender" `   // 性别
 }
 
+type Operator struct {
+	ID       uint64 `json:"id"` // convert to uint64 id
+	Nickname string `json:"nickname"`
+}
+
 // PlatformListPage list
 type PlatformListPage struct {
 	PlatformObjDetail

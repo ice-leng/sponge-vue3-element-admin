@@ -1,10 +1,12 @@
 package dao
 
 import (
+	"admin/internal/constant/enum"
 	"admin/internal/database"
 	"admin/internal/types"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/go-dev-frame/sponge/pkg/logger"
 	"github.com/go-dev-frame/sponge/pkg/utils"
 	"golang.org/x/sync/singleflight"
@@ -27,6 +29,7 @@ type PlatformDao interface {
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Platform, int64, error)
 	GetByParams(ctx context.Context, params *types.ListPlatformsRequest) ([]*model.Platform, int64, error)
 	GetByUsername(ctx context.Context, username string) (*model.Platform, error)
+	Options(ctx context.Context, roleCode string) ([]types.Options, error)
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Platform) (uint64, error)
 	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
@@ -328,4 +331,35 @@ func (d *platformDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.
 	_ = d.deleteCache(ctx, table.ID)
 
 	return err
+}
+
+func (d *platformDao) Options(ctx context.Context, roleCode string) ([]types.Options, error) {
+	records := []*model.Operator{}
+
+	var (
+		operator          = model.Operator{}
+		operatorTableName = operator.TableName()
+		role              = model.Role{}
+		roleTableName     = role.TableName()
+	)
+
+	err := d.db.WithContext(ctx).
+		Model(&operator).
+		Table(operatorTableName+" as o").
+		Joins(fmt.Sprintf("LEFT JOIN %s r ON JSON_CONTAINS(o.role_id, CAST(r.id AS JSON))", roleTableName)).
+		Where("r.code = ? and o.status = ?", roleCode, enum.BaseStatusNormal).
+		Find(&records).Error
+	if err != nil {
+		return make([]types.Options, 0), err
+	}
+
+	var items []types.Options
+	for _, record := range records {
+		item := types.Options{
+			Label: record.Nickname,
+			Value: record.ID,
+		}
+		items = append(items, item)
+	}
+	return items, nil
 }

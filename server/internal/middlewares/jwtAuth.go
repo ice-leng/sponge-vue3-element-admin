@@ -7,13 +7,15 @@ import (
 	"admin/internal/database"
 	"admin/internal/ecode"
 	"context"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-dev-frame/sponge/pkg/jwt"
 	"github.com/go-dev-frame/sponge/pkg/utils"
-	"time"
 )
 
 var iPlatformDao dao.PlatformDao
+var iRoleDao dao.RoleDao
 
 const JwtSignKey = "UxeY8GUv4CH8fH7hCQM9CA2"
 
@@ -43,7 +45,21 @@ func VerifyToken(claims *jwt.Claims, c *gin.Context) error {
 		return ecode.ErrLoginFrozen.Err()
 	}
 
+	if iRoleDao == nil {
+		iRoleDao = dao.NewRoleDao(
+			database.GetDB(),
+			cache.NewRoleCache(database.GetCacheType()),
+		)
+	}
+
+	roleCode := make([]string, len(platform.RoleID))
+	roles, err := iRoleDao.GetByIDs(context.Background(), platform.RoleID)
+	for _, role := range roles {
+		roleCode = append(roleCode, role.Code)
+	}
+
 	c.Set("id", platform.ID)
 	c.Set("roleId", platform.RoleID)
+	c.Set("roleCode", roleCode)
 	return nil
 }

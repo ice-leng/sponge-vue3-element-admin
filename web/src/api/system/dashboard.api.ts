@@ -39,19 +39,31 @@ export interface StatisticsVO {
 /** 访问趋势查询参数 */
 export interface EchartsQuery {
   /** 开始日期 */
-  startDate: string;
+  startTime: string;
   /** 结束日期 */
-  endDate: string;
+  endTime: string;
 }
 
 /**  访问趋势视图对象 */
 export interface EchartsVO {
+  /** 名称列表 */
+  names: string[];
   /** 日期列表 */
   dates: string[];
-  /** 浏览量(PV) */
-  pvList: number[];
-  /** 访客数(UV) */
-  uvList: number[];
-  /** IP数 */
-  ipList: number[];
+  /** 数据列表 */
+  series: EchartsSeries[];
+}
+
+/**  访问趋势数据项 */
+export interface EchartsSeries {
+  /** 名称 */
+  name: string;
+  /** 数据 */
+  data: any[];
+  /** 面积样式 */
+  areaStyle: string;
+  /** 项目样式 */
+  itemStyle: string;
+  /** 线样式 */
+  lineStyle: string;
 }

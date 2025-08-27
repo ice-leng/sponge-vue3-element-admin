@@ -37,6 +37,7 @@ type Conditions struct {
 type Options struct {
 	Label    string      `json:"label"` // 标签
 	Value    interface{} `json:"value"` // 值
+	Other    interface{} `json:"other"`
 	Children []Options   `json:"children"`
 }
 

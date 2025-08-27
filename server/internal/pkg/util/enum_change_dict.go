@@ -14,8 +14,8 @@ import (
 
 // EnumChangeDict
 // 扫描目录constant/enum 下的文件，文件名称为 map 的key, 文件内容 以结构体 types.Options 为值， 其中 value 为常量的值，label 为常量的注解 生成 map[string][]types.Options
-func EnumChangeDict(enumDir string) map[string][]types.Options {
-	result := make(map[string][]types.Options)
+func EnumChangeDict(enumDir string) map[string][]*types.Options {
+	result := make(map[string][]*types.Options)
 
 	files, err := os.ReadDir(enumDir)
 	if err != nil {
@@ -37,7 +37,7 @@ func EnumChangeDict(enumDir string) map[string][]types.Options {
 		}
 
 		fileNameKey := strings.TrimSuffix(file.Name(), ".go")
-		var options []types.Options
+		var options []*types.Options
 
 		ast.Inspect(node, func(n ast.Node) bool {
 			decl, ok := n.(*ast.GenDecl)
@@ -143,7 +143,7 @@ func EnumChangeDict(enumDir string) map[string][]types.Options {
 
 					// 添加到 options 列表 (只添加有名字的常量)
 					if len(valueSpec.Names) > 0 && valueSpec.Names[0].Name != "_" {
-						options = append(options, types.Options{
+						options = append(options, &types.Options{
 							Value: val, // 使用解析出的或 iota 的值
 							Label: label,
 						})
