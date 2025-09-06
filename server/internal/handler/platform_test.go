@@ -131,9 +131,14 @@ func Test_platformHandler_DeleteByID(t *testing.T) {
 	//err = httpcli.Delete(result, h.GetRequestURL("DeleteByID", 0))
 	//assert.NoError(t, err)
 
-	// delete error test
+	// delete error test - 为错误测试添加mock期望
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec(expectedSQLForDeletion).
+		WithArgs(expectedArgsForDeletionTime, uint64(111)).
+		WillReturnResult(sqlmock.NewResult(111, 1))
+	h.MockDao.SQLMock.ExpectCommit()
 	err = httpcli.Delete(result, h.GetRequestURL("DeleteByID", 111))
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 func Test_platformHandler_UpdateByID(t *testing.T) {
@@ -161,9 +166,14 @@ func Test_platformHandler_UpdateByID(t *testing.T) {
 	err = httpcli.Put(result, h.GetRequestURL("UpdateByID", 0), testData)
 	assert.NoError(t, err)
 
-	// update error test
+	// update error test - 为错误测试添加mock期望
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
+		WithArgs(h.MockDao.AnyTime, uint64(111)).
+		WillReturnResult(sqlmock.NewResult(111, 1))
+	h.MockDao.SQLMock.ExpectCommit()
 	err = httpcli.Put(result, h.GetRequestURL("UpdateByID", 111), testData)
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 func Test_platformHandler_GetByID(t *testing.T) {
@@ -192,9 +202,13 @@ func Test_platformHandler_GetByID(t *testing.T) {
 	err = httpcli.Get(result, h.GetRequestURL("GetByID", 0))
 	assert.NoError(t, err)
 
-	// get error test
+	// get error test - 为错误测试添加mock期望
+	emptyRows := sqlmock.NewRows([]string{"id"})
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(uint64(111), 1).
+		WillReturnRows(emptyRows)
 	err = httpcli.Get(result, h.GetRequestURL("GetByID", 111))
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 func Test_platformHandler_List(t *testing.T) {

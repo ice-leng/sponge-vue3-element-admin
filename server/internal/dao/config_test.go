@@ -61,6 +61,13 @@ func Test_configDao_DeleteByID(t *testing.T) {
 	expectedSQLForDeletion := "UPDATE .*"
 	expectedArgsForDeletionTime := d.AnyTime
 
+	// DeleteByID方法首先会调用GetByID查询记录
+	rows := sqlmock.NewRows([]string{"id"}).
+		AddRow(testData.ID)
+	d.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(testData.ID, 1).
+		WillReturnRows(rows)
+
 	d.SQLMock.ExpectBegin()
 	d.SQLMock.ExpectExec(expectedSQLForDeletion).
 		WithArgs(expectedArgsForDeletionTime, testData.ID).
