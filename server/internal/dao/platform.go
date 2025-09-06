@@ -7,14 +7,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/go-dev-frame/sponge/pkg/logger"
+	"github.com/go-dev-frame/sponge/pkg/sgorm/query"
 	"github.com/go-dev-frame/sponge/pkg/utils"
 	"golang.org/x/sync/singleflight"
 	"gorm.io/gorm"
 
 	"admin/internal/cache"
 	"admin/internal/model"
-	"github.com/go-dev-frame/sponge/pkg/ggorm/query"
 )
 
 var _ PlatformDao = (*platformDao)(nil)

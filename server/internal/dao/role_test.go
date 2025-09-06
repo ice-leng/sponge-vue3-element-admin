@@ -6,9 +6,6 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/go-dev-frame/sponge/pkg/ggorm/query"
-	"github.com/go-dev-frame/sponge/pkg/gotest"
-	"github.com/go-dev-frame/sponge/pkg/utils"
 	"github.com/stretchr/testify/assert"
 
 	"admin/internal/cache"
