@@ -92,15 +92,14 @@ func NewRouter() *gin.Engine {
 	r.GET("/ping", handlerfunc.Ping)
 	r.GET("/codes", handlerfunc.ListCodes)
 
-	// static upload router
-	r.Static("/uploads", "./uploads")
-
 	if config.Get().App.Env != "prod" {
 		r.GET("/config", gin.WrapF(errcode.ShowConfig([]byte(config.Show()))))
 		// register swagger routes, generate code via swag init
 		docs.SwaggerInfo.BasePath = ""
 		// access path /swagger/index.html
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		// static upload router
+		r.Static("/uploads", "./uploads")
 	}
 
 	// register routers, middleware support

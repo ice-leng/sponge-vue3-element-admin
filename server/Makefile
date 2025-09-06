@@ -39,7 +39,7 @@ graph:
 # Generate swagger docs, only for ⓵ Web services created based on sql
 docs:
 	@bash scripts/swag-docs.sh $(HOST)
-
+	@bash scripts/mysql-dump.sh
 
 .PHONY: build
 # Build admin for linux amd64 binary

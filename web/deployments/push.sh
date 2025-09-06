@@ -9,9 +9,9 @@ set hostname [lindex $argv 2]
 
 set timeout 120
 
-spawn scp -r ./${serviceName}-binary.tar.gz ${username}@${hostname}:/tmp/
+spawn scp -r ./dist.tar.gz ${username}@${hostname}:/tmp/
 #expect "*yes/no*"
-#send  "yes\r"
+##send  "yes\r"
 expect "*password:*"
 send  "${password}\r"
 expect eof
@@ -24,9 +24,9 @@ send  "${password}\r"
 
 # execute a command or script
 expect "*${username}@*"
-send "cd /tmp && tar --no-same-owner --no-same-permissions -zxvf ${serviceName}-binary.tar.gz && find /tmp/${serviceName}-binary -name '._*' -delete 2>/dev/null || true\r"
+send "cd /tmp && tar --no-same-owner --no-same-permissions -zxvf dist.tar.gz && find /tmp/dist -name '._*' -delete 2>/dev/null || true\r"
 expect "*${username}@*"
-send "bash /tmp/${serviceName}-binary/deploy.sh\r"
+send "bash /tmp/dist/deploy.sh\r"
 
 # logging out of a session
 expect "*${username}@*"

@@ -91,6 +91,7 @@
       </el-col>
     </el-row>
 
+    <!-- 访问趋势统计图 -->
     <el-row :gutter="10" class="mt-5">
       <el-col :xs="24" :span="24">
         <!-- 访问趋势统计图 -->
@@ -203,7 +204,7 @@ const getGrowthRateClass = (growthRate: number): string => {
 };
 
 /** 获取访问统计图标 */
-const getVisitStatsIcon = (type: string) => {
+const getVisitStatsIcon = (type: string): string => {
   switch (type) {
     case "pv":
       return "pv";

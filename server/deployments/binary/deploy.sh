@@ -10,24 +10,28 @@ function checkResult() {
 }
 
 # determine if the startup service script run.sh exists
-runFile="~/app/${serviceName}/run.sh"
+runFile="/app/${serviceName}-binary/run.sh"
 if [ ! -f "$runFile" ]; then
   # if it does not exist, copy the entire directory
-  mkdir -p ~/app
-  cp -rf /tmp/${serviceName}-binary ~/app/
+  mkdir -p /app
+  cp -rf /tmp/${serviceName}-binary /app/
   checkResult $?
   rm -rf /tmp/${serviceName}-binary*
 else
   # replace only the binary file if it exists
-  cp -f ${serviceName}-binary/${serviceName} ~/app/${serviceName}-binary/${serviceName}
+  cp -f ${serviceName}-binary/${serviceName} /app/${serviceName}-binary/${serviceName}
+  checkResult $?
+  rm -rf /app/${serviceName}-binary/enum.json
+  checkResult $?
+  cp -rf ${serviceName}-binary/enum.json /app/${serviceName}-binary
   checkResult $?
   rm -rf /tmp/${serviceName}-binary*
 fi
 
 # running service
-cd ~/app/${serviceName}-binary
+cd /app/${serviceName}-binary
 chmod +x run.sh
 ./run.sh
 checkResult $?
 
-echo "server directory is ~/app/${serviceName}-binary"
+echo "server directory is /app/${serviceName}-binary"

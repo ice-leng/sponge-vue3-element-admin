@@ -3,6 +3,7 @@ package routers
 import (
 	"admin/internal/handler"
 	"admin/internal/middlewares"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware/auth"
 )

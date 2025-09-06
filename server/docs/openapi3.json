@@ -1,0 +1,3322 @@
+{
+  "components": {
+    "schemas": {
+      "types.CaptchaItem": {
+        "properties": {
+          "captchaBase64": {
+            "type": "string"
+          },
+          "captchaKey": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CaptchaReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.CaptchaItem"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ChangePasswordRequest": {
+        "properties": {
+          "confirmPassword": {
+            "description": "密码",
+            "type": "string"
+          },
+          "id": {
+            "description": "uint64 id",
+            "type": "integer"
+          },
+          "newPassword": {
+            "description": "密码",
+            "type": "string"
+          },
+          "oldPassword": {
+            "description": "密码",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirmPassword",
+          "newPassword",
+          "oldPassword"
+        ],
+        "type": "object"
+      },
+      "types.ConfigObjDetail": {
+        "properties": {
+          "createdAt": {
+            "description": "创建时间",
+            "type": "string"
+          },
+          "description": {
+            "description": "描述",
+            "type": "string"
+          },
+          "id": {
+            "description": "convert to uint64 id",
+            "type": "integer"
+          },
+          "key": {
+            "description": "配置键",
+            "type": "string"
+          },
+          "name": {
+            "description": "配置名称",
+            "type": "string"
+          },
+          "updatedAt": {
+            "description": "更新时间",
+            "type": "string"
+          },
+          "value": {
+            "description": "配置值",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreateConfigReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "id": {
+                "description": "id",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreateConfigRequest": {
+        "properties": {
+          "description": {
+            "description": "描述",
+            "type": "string"
+          },
+          "key": {
+            "description": "配置键",
+            "type": "string"
+          },
+          "name": {
+            "description": "配置名称",
+            "type": "string"
+          },
+          "value": {
+            "description": "配置值",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreateMenuReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "id": {
+                "description": "id",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreateMenuRequest": {
+        "properties": {
+          "alwaysShow": {
+            "description": "始终显示",
+            "type": "integer"
+          },
+          "component": {
+            "description": "组件路径(vue页面完整路径，省略.vue后缀)",
+            "type": "string"
+          },
+          "icon": {
+            "description": "菜单图标",
+            "type": "string"
+          },
+          "keepAlive": {
+            "description": "始终显示",
+            "type": "integer"
+          },
+          "name": {
+            "description": "菜单名称",
+            "type": "string"
+          },
+          "params": {
+            "description": "路由参数",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "parentId": {
+            "description": "父级",
+            "type": "integer"
+          },
+          "perm": {
+            "description": "权限标识",
+            "type": "string"
+          },
+          "redirect": {
+            "description": "跳转路径",
+            "type": "string"
+          },
+          "routePath": {
+            "description": "路由路径",
+            "type": "string"
+          },
+          "sort": {
+            "description": "排序",
+            "type": "integer"
+          },
+          "type": {
+            "description": "菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)",
+            "type": "string"
+          },
+          "visible": {
+            "description": "显示状态",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreatePlatformReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "id": {
+                "description": "id",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreatePlatformRequest": {
+        "properties": {
+          "avatar": {
+            "description": "头像",
+            "type": "string"
+          },
+          "gender": {
+            "description": "性别",
+            "type": "integer"
+          },
+          "mobile": {
+            "description": "手机号",
+            "type": "string"
+          },
+          "nickname": {
+            "description": "昵称",
+            "type": "string"
+          },
+          "password": {
+            "description": "密码",
+            "type": "string"
+          },
+          "roleId": {
+            "description": "角色",
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "status": {
+            "description": "状态",
+            "type": "integer"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreateRoleMenuReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "id": {
+                "description": "id",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreateRoleMenuRequest": {
+        "properties": {
+          "menuID": {
+            "description": "菜单ID",
+            "type": "integer"
+          },
+          "roleID": {
+            "description": "角色ID",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreateRoleReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "id": {
+                "description": "id",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.CreateRoleRequest": {
+        "properties": {
+          "code": {
+            "description": "角色编码",
+            "type": "string"
+          },
+          "name": {
+            "description": "角色名称",
+            "type": "string"
+          },
+          "sort": {
+            "description": "排序",
+            "type": "integer"
+          },
+          "status": {
+            "description": "状态",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "types.DashboardEchartsReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.Echarts"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.DashboardStatisticsItem": {
+        "properties": {
+          "granularityLabel": {
+            "description": "粒度标签",
+            "type": "string"
+          },
+          "growthRate": {
+            "description": "增长率"
+          },
+          "title": {
+            "description": "标题",
+            "type": "string"
+          },
+          "todayCount": {
+            "description": "今日数量"
+          },
+          "totalCount": {
+            "description": "总数量"
+          },
+          "type": {
+            "description": "类型 \"pv\" | \"uv\" | \"ip\"",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.DashboardStatisticsReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "items": {
+              "$ref": "#/components/schemas/types.DashboardStatisticsItem"
+            },
+            "type": "array"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.DeleteConfigByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.DeleteMenuByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.DeletePlatformByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.DeleteRoleByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.DeleteRoleMenuByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.Echarts": {
+        "properties": {
+          "dates": {
+            "description": "日期",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/types.EchartsSeries"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "types.EchartsSeries": {
+        "properties": {
+          "areaStyle": {
+            "type": "string"
+          },
+          "data": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "itemStyle": {
+            "type": "string"
+          },
+          "lineStyle": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.GetConfigByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.ConfigObjDetail"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.GetMenuByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.MenuObjDetail"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.GetPlatformByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.PlatformObjDetail"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.GetRoleByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.RoleObjDetail"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.GetRoleMenuByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.RoleMenuObjDetail"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ListConfigsReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "configs": {
+                "items": {
+                  "$ref": "#/components/schemas/types.ConfigObjDetail"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ListMenusReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "list": {
+                "items": {
+                  "$ref": "#/components/schemas/types.MenuObjPage"
+                },
+                "type": "array"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ListPlatformsReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "list": {
+                "items": {
+                  "$ref": "#/components/schemas/types.PlatformObjDetail"
+                },
+                "type": "array"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ListRoleMenusReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "roleMenus": {
+                "items": {
+                  "$ref": "#/components/schemas/types.RoleMenuObjDetail"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ListRolesReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "properties": {
+              "roles": {
+                "items": {
+                  "$ref": "#/components/schemas/types.RoleObjDetail"
+                },
+                "type": "array"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.LoginItem": {
+        "properties": {
+          "accessToken": {
+            "description": "access token",
+            "type": "string"
+          },
+          "expires": {
+            "description": "expire time",
+            "type": "integer"
+          },
+          "tokenType": {
+            "description": "token type",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.LoginReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.LoginItem"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.LoginRequest": {
+        "properties": {
+          "captchaCode": {
+            "description": "验证码code",
+            "type": "string"
+          },
+          "captchaKey": {
+            "description": "验证码key",
+            "type": "string"
+          },
+          "password": {
+            "description": "密码",
+            "type": "string"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.MeItem": {
+        "properties": {
+          "avatar": {
+            "description": "头像",
+            "type": "string"
+          },
+          "id": {
+            "description": "convert to uint64 id",
+            "type": "integer"
+          },
+          "nickname": {
+            "description": "昵称",
+            "type": "string"
+          },
+          "perms": {
+            "description": "权限组",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "roles": {
+            "description": "角色组",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.MeReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.MeItem"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.MenuObjDetail": {
+        "properties": {
+          "alwaysShow": {
+            "description": "始终显示",
+            "type": "integer"
+          },
+          "component": {
+            "description": "组件路径(vue页面完整路径，省略.vue后缀)",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "创建时间",
+            "type": "string"
+          },
+          "icon": {
+            "description": "菜单图标",
+            "type": "string"
+          },
+          "id": {
+            "description": "convert to uint64 id",
+            "type": "integer"
+          },
+          "keepAlive": {
+            "description": "始终显示",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "params": {
+            "description": "路由参数",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "parentId": {
+            "description": "父级",
+            "type": "integer"
+          },
+          "perm": {
+            "description": "权限标识",
+            "type": "string"
+          },
+          "redirect": {
+            "description": "跳转路径",
+            "type": "string"
+          },
+          "routeName": {
+            "description": "路由名称",
+            "type": "string"
+          },
+          "routePath": {
+            "description": "路由路径",
+            "type": "string"
+          },
+          "sort": {
+            "description": "排序",
+            "type": "integer"
+          },
+          "type": {
+            "description": "菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)",
+            "type": "string"
+          },
+          "updatedAt": {
+            "description": "更新时间",
+            "type": "string"
+          },
+          "visible": {
+            "description": "显示状态",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "types.MenuObjPage": {
+        "properties": {
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/types.MenuObjPage"
+            },
+            "type": "array"
+          },
+          "component": {
+            "description": "组件路径(vue页面完整路径，省略.vue后缀)",
+            "type": "string"
+          },
+          "icon": {
+            "description": "菜单图标",
+            "type": "string"
+          },
+          "id": {
+            "description": "convert to uint64 id",
+            "type": "integer"
+          },
+          "name": {
+            "description": "菜单名称",
+            "type": "string"
+          },
+          "parentId": {
+            "description": "父级",
+            "type": "integer"
+          },
+          "perm": {
+            "description": "权限标识",
+            "type": "string"
+          },
+          "redirect": {
+            "description": "跳转路径",
+            "type": "string"
+          },
+          "routeName": {
+            "description": "路由名称",
+            "type": "string"
+          },
+          "routePath": {
+            "description": "路由路径",
+            "type": "string"
+          },
+          "sort": {
+            "description": "排序",
+            "type": "integer"
+          },
+          "type": {
+            "description": "菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)",
+            "type": "string"
+          },
+          "visible": {
+            "description": "显示状态",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "types.Options": {
+        "properties": {
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/types.Options"
+            },
+            "type": "array"
+          },
+          "label": {
+            "description": "标签",
+            "type": "string"
+          },
+          "other": {},
+          "value": {
+            "description": "值"
+          }
+        },
+        "type": "object"
+      },
+      "types.OptionsReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data",
+            "items": {
+              "$ref": "#/components/schemas/types.Options"
+            },
+            "type": "array"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.PlatformObjDetail": {
+        "properties": {
+          "avatar": {
+            "description": "头像",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "创建时间",
+            "type": "string"
+          },
+          "gender": {
+            "description": "性别",
+            "type": "integer"
+          },
+          "id": {
+            "description": "convert to uint64 id",
+            "type": "integer"
+          },
+          "lastTime": {
+            "description": "上次登录时间",
+            "type": "string"
+          },
+          "mobile": {
+            "description": "手机号",
+            "type": "string"
+          },
+          "nickname": {
+            "description": "昵称",
+            "type": "string"
+          },
+          "roleId": {
+            "description": "角色",
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "status": {
+            "description": "状态",
+            "type": "integer"
+          },
+          "updatedAt": {
+            "description": "更新时间",
+            "type": "string"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ProfileItem": {
+        "properties": {
+          "avatar": {
+            "description": "头像",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "创建时间",
+            "type": "string"
+          },
+          "gender": {
+            "description": "性别",
+            "type": "integer"
+          },
+          "id": {
+            "description": "convert to uint64 id",
+            "type": "integer"
+          },
+          "mobile": {
+            "description": "手机号",
+            "type": "string"
+          },
+          "nickname": {
+            "description": "昵称",
+            "type": "string"
+          },
+          "roleNames": {
+            "description": "角色组",
+            "type": "string"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ProfileReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.ProfileItem"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.ResetPasswordRequest": {
+        "properties": {
+          "id": {
+            "description": "uint64 id",
+            "type": "integer"
+          },
+          "password": {
+            "description": "密码",
+            "type": "string"
+          }
+        },
+        "required": [
+          "password"
+        ],
+        "type": "object"
+      },
+      "types.Result": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.RoleMenuObjDetail": {
+        "properties": {
+          "createdAt": {
+            "description": "创建时间",
+            "type": "string"
+          },
+          "id": {
+            "description": "convert to uint64 id",
+            "type": "integer"
+          },
+          "menuID": {
+            "description": "菜单ID",
+            "type": "integer"
+          },
+          "roleID": {
+            "description": "角色ID",
+            "type": "integer"
+          },
+          "updatedAt": {
+            "description": "更新时间",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.RoleObjDetail": {
+        "properties": {
+          "code": {
+            "description": "角色编码",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "创建时间",
+            "type": "string"
+          },
+          "id": {
+            "description": "convert to uint64 id",
+            "type": "integer"
+          },
+          "name": {
+            "description": "角色名称",
+            "type": "string"
+          },
+          "sort": {
+            "description": "排序",
+            "type": "integer"
+          },
+          "status": {
+            "description": "状态",
+            "type": "integer"
+          },
+          "updatedAt": {
+            "description": "更新时间",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdateConfigByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdateConfigByIDRequest": {
+        "properties": {
+          "description": {
+            "description": "描述",
+            "type": "string"
+          },
+          "id": {
+            "description": "uint64 id",
+            "type": "integer"
+          },
+          "key": {
+            "description": "配置键",
+            "type": "string"
+          },
+          "name": {
+            "description": "配置名称",
+            "type": "string"
+          },
+          "value": {
+            "description": "配置值",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdateMenuByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdateMenuByIDRequest": {
+        "properties": {
+          "alwaysShow": {
+            "description": "始终显示",
+            "type": "integer"
+          },
+          "component": {
+            "description": "组件路径(vue页面完整路径，省略.vue后缀)",
+            "type": "string"
+          },
+          "icon": {
+            "description": "菜单图标",
+            "type": "string"
+          },
+          "id": {
+            "description": "uint64 id",
+            "type": "integer"
+          },
+          "keepAlive": {
+            "description": "始终显示",
+            "type": "integer"
+          },
+          "name": {
+            "description": "菜单名称",
+            "type": "string"
+          },
+          "params": {
+            "description": "路由参数",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "parentId": {
+            "description": "父级",
+            "type": "integer"
+          },
+          "perm": {
+            "description": "权限标识",
+            "type": "string"
+          },
+          "redirect": {
+            "description": "跳转路径",
+            "type": "string"
+          },
+          "routePath": {
+            "description": "路由路径",
+            "type": "string"
+          },
+          "sort": {
+            "description": "排序",
+            "type": "integer"
+          },
+          "type": {
+            "description": "菜单类型(CATALOG-菜单；MENU-目录；BUTTON-按钮；EXTLINK-外链)",
+            "type": "string"
+          },
+          "visible": {
+            "description": "显示状态",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdatePlatformByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdatePlatformByIDRequest": {
+        "properties": {
+          "avatar": {
+            "description": "头像",
+            "type": "string"
+          },
+          "gender": {
+            "description": "性别",
+            "type": "integer"
+          },
+          "id": {
+            "description": "uint64 id",
+            "type": "integer"
+          },
+          "mobile": {
+            "description": "手机号",
+            "type": "string"
+          },
+          "nickname": {
+            "description": "昵称",
+            "type": "string"
+          },
+          "password": {
+            "description": "密码",
+            "type": "string"
+          },
+          "roleId": {
+            "description": "角色",
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "status": {
+            "description": "状态",
+            "type": "integer"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdateRoleByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdateRoleByIDRequest": {
+        "properties": {
+          "code": {
+            "description": "角色编码",
+            "type": "string"
+          },
+          "id": {
+            "description": "uint64 id",
+            "type": "integer"
+          },
+          "name": {
+            "description": "角色名称",
+            "type": "string"
+          },
+          "sort": {
+            "description": "排序",
+            "type": "integer"
+          },
+          "status": {
+            "description": "状态",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdateRoleMenuByIDReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UpdateRoleMenuByIDRequest": {
+        "properties": {
+          "id": {
+            "description": "uint64 id",
+            "type": "integer"
+          },
+          "menuID": {
+            "description": "菜单ID",
+            "type": "integer"
+          },
+          "roleID": {
+            "description": "角色ID",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "types.UploadItem": {
+        "properties": {
+          "name": {
+            "description": "文件名称",
+            "type": "string"
+          },
+          "path": {
+            "description": "path",
+            "type": "string"
+          },
+          "url": {
+            "description": "url",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "types.UploadLocalReply": {
+        "properties": {
+          "code": {
+            "description": "return code",
+            "type": "integer"
+          },
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/types.UploadItem"
+              }
+            ],
+            "description": "return data"
+          },
+          "msg": {
+            "description": "return information description",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "description": "Type Bearer your-jwt-token to Value",
+        "in": "header",
+        "name": "Authorization",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "http server api docs",
+    "title": "admin api docs",
+    "version": "2.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/api/v1/auth/captcha": {
+      "get": {
+        "description": "get a captcha",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.CaptchaReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "get a captcha",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "description": "with username and password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.LoginRequest"
+              }
+            }
+          },
+          "description": "login information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.LoginReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "with username and password",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "delete": {
+        "description": "logout",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.Result"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "logout",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/config": {
+      "get": {
+        "description": "list of configs by paging and conditions",
+        "parameters": [
+          {
+            "description": "结束时间",
+            "in": "query",
+            "name": "endTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "关键字",
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "分页",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "分页大小",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "排序",
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "开始时间",
+            "in": "query",
+            "name": "startTime",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.ListConfigsReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "list of configs by query parameters",
+        "tags": [
+          "config"
+        ]
+      },
+      "post": {
+        "description": "submit information to create config",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.CreateConfigRequest"
+              }
+            }
+          },
+          "description": "config information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.CreateConfigReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "create config",
+        "tags": [
+          "config"
+        ]
+      }
+    },
+    "/api/v1/config/dict": {
+      "get": {
+        "description": "get dict",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.GetConfigByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get dict",
+        "tags": [
+          "config"
+        ]
+      }
+    },
+    "/api/v1/config/{id}": {
+      "delete": {
+        "description": "delete config by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.DeleteConfigByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "delete config",
+        "tags": [
+          "config"
+        ]
+      },
+      "get": {
+        "description": "get config detail by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.GetConfigByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get config detail",
+        "tags": [
+          "config"
+        ]
+      },
+      "put": {
+        "description": "update config information by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.UpdateConfigByIDRequest"
+              }
+            }
+          },
+          "description": "config information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.UpdateConfigByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "update config",
+        "tags": [
+          "config"
+        ]
+      }
+    },
+    "/api/v1/dashboard/echarts": {
+      "get": {
+        "description": "data echarts",
+        "parameters": [
+          {
+            "description": "结束时间",
+            "in": "query",
+            "name": "endTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "开始时间",
+            "in": "query",
+            "name": "startTime",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.DashboardEchartsReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "data echarts",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/api/v1/dashboard/statistics": {
+      "get": {
+        "description": "data statistics",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.DashboardStatisticsReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "data statistics",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/api/v1/menu": {
+      "get": {
+        "description": "list of menus by paging and conditions",
+        "parameters": [
+          {
+            "description": "结束时间",
+            "in": "query",
+            "name": "endTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "keywords",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "分页",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "分页大小",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "parentId",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "排序",
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "开始时间",
+            "in": "query",
+            "name": "startTime",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.ListMenusReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "list of menus by query parameters",
+        "tags": [
+          "menu"
+        ]
+      },
+      "post": {
+        "description": "submit information to create menu",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.CreateMenuRequest"
+              }
+            }
+          },
+          "description": "menu information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.CreateMenuReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "create menu",
+        "tags": [
+          "menu"
+        ]
+      }
+    },
+    "/api/v1/menu/options": {
+      "get": {
+        "description": "get role options",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "onlyParent",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.OptionsReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get role options",
+        "tags": [
+          "role"
+        ]
+      }
+    },
+    "/api/v1/menu/routes": {
+      "get": {
+        "description": "list routes",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.Result"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "list of routes",
+        "tags": [
+          "menu"
+        ]
+      }
+    },
+    "/api/v1/menu/{id}": {
+      "delete": {
+        "description": "delete menu by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.DeleteMenuByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "delete menu",
+        "tags": [
+          "menu"
+        ]
+      },
+      "get": {
+        "description": "get menu detail by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.GetMenuByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get menu detail",
+        "tags": [
+          "menu"
+        ]
+      },
+      "put": {
+        "description": "update menu information by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.UpdateMenuByIDRequest"
+              }
+            }
+          },
+          "description": "menu information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.UpdateMenuByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "update menu",
+        "tags": [
+          "menu"
+        ]
+      }
+    },
+    "/api/v1/platform": {
+      "get": {
+        "description": "list of platforms by paging and conditions",
+        "parameters": [
+          {
+            "description": "结束时间",
+            "in": "query",
+            "name": "endTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "账号",
+            "in": "query",
+            "name": "keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "手机号",
+            "in": "query",
+            "name": "mobile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "分页",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "分页大小",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "排序",
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "开始时间",
+            "in": "query",
+            "name": "startTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "状态",
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.ListPlatformsReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "list of platforms by query parameters",
+        "tags": [
+          "platform"
+        ]
+      },
+      "post": {
+        "description": "submit information to create platform",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.CreatePlatformRequest"
+              }
+            }
+          },
+          "description": "platform information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.CreatePlatformReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "create platform",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/api/v1/platform/me": {
+      "get": {
+        "description": "current information",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.MeReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "current information",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/api/v1/platform/password": {
+      "put": {
+        "description": "change password by self",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.ChangePasswordRequest"
+              }
+            }
+          },
+          "description": "platform information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.Result"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "change password by self",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/api/v1/platform/password/reset": {
+      "put": {
+        "description": "reset password by self",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.ResetPasswordRequest"
+              }
+            }
+          },
+          "description": "platform information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.Result"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "reset password by self",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/api/v1/platform/profile": {
+      "get": {
+        "description": "current information",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.ProfileReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "current information",
+        "tags": [
+          "platform"
+        ]
+      },
+      "put": {
+        "description": "update platform information by self",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.UpdatePlatformByIDRequest"
+              }
+            }
+          },
+          "description": "platform information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.Result"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "update platform",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/api/v1/platform/{id}": {
+      "delete": {
+        "description": "delete platform by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.DeletePlatformByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "delete platform",
+        "tags": [
+          "platform"
+        ]
+      },
+      "get": {
+        "description": "get platform detail by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.GetPlatformByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get platform detail",
+        "tags": [
+          "platform"
+        ]
+      },
+      "put": {
+        "description": "update platform information by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.UpdatePlatformByIDRequest"
+              }
+            }
+          },
+          "description": "platform information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.UpdatePlatformByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "update platform",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/api/v1/role": {
+      "get": {
+        "description": "list of roles by paging and conditions",
+        "parameters": [
+          {
+            "description": "结束时间",
+            "in": "query",
+            "name": "endTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "分页",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "分页大小",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "排序",
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "开始时间",
+            "in": "query",
+            "name": "startTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "状态",
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.ListRolesReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "list of roles by query parameters",
+        "tags": [
+          "role"
+        ]
+      },
+      "post": {
+        "description": "submit information to create role",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.CreateRoleRequest"
+              }
+            }
+          },
+          "description": "role information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.CreateRoleReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "create role",
+        "tags": [
+          "role"
+        ]
+      }
+    },
+    "/api/v1/role/options": {
+      "get": {
+        "description": "get role options",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.OptionsReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get role options",
+        "tags": [
+          "role"
+        ]
+      }
+    },
+    "/api/v1/role/{id}": {
+      "delete": {
+        "description": "delete role by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.DeleteRoleByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "delete role",
+        "tags": [
+          "role"
+        ]
+      },
+      "get": {
+        "description": "get role detail by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.GetRoleByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get role detail",
+        "tags": [
+          "role"
+        ]
+      },
+      "put": {
+        "description": "update role information by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.UpdateRoleByIDRequest"
+              }
+            }
+          },
+          "description": "role information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.UpdateRoleByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "update role",
+        "tags": [
+          "role"
+        ]
+      }
+    },
+    "/api/v1/role/{id}/menus": {
+      "put": {
+        "description": "update permission",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.UpdateRoleByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "update permission",
+        "tags": [
+          "role"
+        ]
+      }
+    },
+    "/api/v1/roleMenu": {
+      "get": {
+        "description": "list of roleMenus by paging and conditions",
+        "parameters": [
+          {
+            "description": "结束时间",
+            "in": "query",
+            "name": "endTime",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "分页",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "分页大小",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "排序",
+            "in": "query",
+            "name": "roleId",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "排序",
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "开始时间",
+            "in": "query",
+            "name": "startTime",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.ListRoleMenusReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "list of roleMenus by query parameters",
+        "tags": [
+          "roleMenu"
+        ]
+      },
+      "post": {
+        "description": "submit information to create roleMenu",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.CreateRoleMenuRequest"
+              }
+            }
+          },
+          "description": "roleMenu information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.CreateRoleMenuReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "create roleMenu",
+        "tags": [
+          "roleMenu"
+        ]
+      }
+    },
+    "/api/v1/roleMenu/{id}": {
+      "delete": {
+        "description": "delete roleMenu by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.DeleteRoleMenuByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "delete roleMenu",
+        "tags": [
+          "roleMenu"
+        ]
+      },
+      "get": {
+        "description": "get roleMenu detail by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.GetRoleMenuByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get roleMenu detail",
+        "tags": [
+          "roleMenu"
+        ]
+      },
+      "put": {
+        "description": "update roleMenu information by id",
+        "parameters": [
+          {
+            "description": "id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/types.UpdateRoleMenuByIDRequest"
+              }
+            }
+          },
+          "description": "roleMenu information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.UpdateRoleMenuByIDReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "update roleMenu",
+        "tags": [
+          "roleMenu"
+        ]
+      }
+    },
+    "/api/v1/roles/{id}/menuIds": {
+      "get": {
+        "description": "get role menuIds",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.Result"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "get role menuIds",
+        "tags": [
+          "role"
+        ]
+      }
+    },
+    "/api/v1/upload/local": {
+      "post": {
+        "description": "upload local file",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "description": "file",
+                    "format": "binary",
+                    "type": "string",
+                    "x-formData-name": "file"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/types.UploadLocalReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "upload local file",
+        "tags": [
+          "upload"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/"
+    },
+    {
+      "url": "https://localhost:8080/"
+    }
+  ]
+}

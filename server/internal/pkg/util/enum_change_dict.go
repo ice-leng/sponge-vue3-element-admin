@@ -2,6 +2,8 @@ package util
 
 import (
 	"admin/internal/types"
+	"encoding/json"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -10,6 +12,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/go-dev-frame/sponge/pkg/logger"
 )
 
 // EnumChangeDict
@@ -178,6 +182,52 @@ func EnumChangeDict(enumDir string) map[string][]*types.Options {
 		if len(options) > 0 {
 			result[fileNameKey] = options
 		}
+	}
+
+	return result
+}
+
+func EnumSaveToJSONFile(enumDir, filePath string) error {
+	data := EnumChangeDict(enumDir)
+	// 确保目录存在
+	dir := filepath.Dir(filePath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return fmt.Errorf("创建目录失败: %w", err)
+	}
+
+	// 序列化数据为JSON
+	jsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return fmt.Errorf("序列化JSON数据失败: %w", err)
+	}
+
+	// 写入文件
+	if err := os.WriteFile(filePath, jsonData, 0644); err != nil {
+		return fmt.Errorf("写入缓存文件失败: %w", err)
+	}
+
+	return nil
+}
+
+func EnumChangeDictByFile(filePath string) map[string][]*types.Options {
+	result := make(map[string][]*types.Options)
+
+	// 检查文件是否存在
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		logger.Errorf("缓存文件不存在: %s", filePath)
+		return result
+	}
+
+	// 读取文件内容
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		logger.Errorf("读取缓存文件失败: %w", err)
+		return result
+	}
+
+	if err = json.Unmarshal(data, &result); err != nil {
+		logger.Errorf("解析JSON数据失败: %w", err)
+		return result
 	}
 
 	return result

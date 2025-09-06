@@ -276,8 +276,18 @@ func IsToday(dateType int, date time.Time) (bool, error) {
 }
 
 // GetDaysRange
-// 给定2个日期范围 返回 这个2个日期之间的所有日
-func GetDaysRange(startDate, endDate time.Time, format ...string) []string {
+// 给定2个日期范围 返回 这个2个日期之间的所有日期
+// dateType: 类型参数（1=日，2=周，3=月，4=季度，5=年）
+// startDate, endDate: 开始和结束日期
+// format: 可选的日期格式化参数
+// 返回日期字符串切片
+func GetDaysRange(dateType int, startDate, endDate time.Time, format ...string) []string {
+	// 检查类型参数是否有效
+	if err := checkDateType(dateType); err != nil {
+		// 如果类型无效，返回空切片
+		return []string{}
+	}
+
 	// 确保开始日期不晚于结束日期
 	if startDate.After(endDate) {
 		startDate, endDate = endDate, startDate
@@ -287,23 +297,110 @@ func GetDaysRange(startDate, endDate time.Time, format ...string) []string {
 	startDate = time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 0, 0, 0, 0, startDate.Location())
 	endDate = time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 0, 0, 0, 0, endDate.Location())
 
-	// 计算日期差
-	duration := endDate.Sub(startDate)
-	days := int(duration.Hours()/24) + 1 // 包括开始和结束日期
-
-	// 创建结果切片
-	result := make([]string, 0, days)
+	// 设置默认格式
 	f := "2006-01-02"
 	if len(format) > 0 {
 		f = format[0]
 	}
 
-	// 逐天添加日期
-	currentDate := startDate
-	for i := 0; i < days; i++ {
-		result = append(result, currentDate.Format(f))
-		currentDate = currentDate.AddDate(0, 0, 1) // 增加一天
-	}
+	// 根据日期类型处理
+	switch dateType {
+	case DateTypeDay: // 日
+		// 计算日期差
+		duration := endDate.Sub(startDate)
+		days := int(duration.Hours()/24) + 1 // 包括开始和结束日期
 
-	return result
+		// 创建结果切片
+		result := make([]string, 0, days)
+
+		// 逐天添加日期
+		currentDate := startDate
+		for i := 0; i < days; i++ {
+			result = append(result, currentDate.Format(f))
+			currentDate = currentDate.AddDate(0, 0, 1) // 增加一天
+		}
+
+		return result
+
+	case DateTypeWeek: // 周
+		// 获取每周的开始日期（周一）
+		result := []string{}
+		currentDate := startDate
+
+		// 调整到当周的周一
+		weekday := currentDate.Weekday()
+		if weekday == time.Sunday { // Go中Sunday是0，我们将其视为一周的最后一天
+			weekday = 7
+		}
+		offset := int(weekday) - 1
+		currentDate = currentDate.AddDate(0, 0, -offset) // 调整到本周一
+
+		// 逐周添加日期，直到超过结束日期
+		for !currentDate.After(endDate) {
+			result = append(result, currentDate.Format(f))
+			currentDate = currentDate.AddDate(0, 0, 7) // 增加一周
+		}
+
+		return result
+
+	case DateTypeMonth: // 月
+		// 获取每月的第一天
+		result := []string{}
+		currentDate := time.Date(startDate.Year(), startDate.Month(), 1, 0, 0, 0, 0, startDate.Location())
+
+		// 逐月添加日期，直到超过结束日期
+		for !currentDate.After(endDate) {
+			result = append(result, currentDate.Format(f))
+			currentDate = time.Date(currentDate.Year(), currentDate.Month()+1, 1, 0, 0, 0, 0, currentDate.Location())
+		}
+
+		return result
+
+	case DateTypeQuarter: // 季度
+		// 获取每季度的第一天
+		result := []string{}
+
+		// 计算开始日期所在季度的第一个月
+		quarterMonth := ((int(startDate.Month())-1)/3)*3 + 1
+		currentDate := time.Date(startDate.Year(), time.Month(quarterMonth), 1, 0, 0, 0, 0, startDate.Location())
+
+		// 逐季度添加日期，直到超过结束日期
+		for !currentDate.After(endDate) {
+			result = append(result, currentDate.Format(f))
+			// 增加一个季度（3个月）
+			currentDate = time.Date(currentDate.Year(), currentDate.Month()+3, 1, 0, 0, 0, 0, currentDate.Location())
+		}
+
+		return result
+
+	case DateTypeYear: // 年
+		// 获取每年的第一天
+		result := []string{}
+		currentDate := time.Date(startDate.Year(), 1, 1, 0, 0, 0, 0, startDate.Location())
+
+		// 逐年添加日期，直到超过结束日期
+		for !currentDate.After(endDate) {
+			result = append(result, currentDate.Format(f))
+			currentDate = time.Date(currentDate.Year()+1, 1, 1, 0, 0, 0, 0, currentDate.Location())
+		}
+
+		return result
+
+	default:
+		// 默认按天处理
+		duration := endDate.Sub(startDate)
+		days := int(duration.Hours()/24) + 1 // 包括开始和结束日期
+
+		// 创建结果切片
+		result := make([]string, 0, days)
+
+		// 逐天添加日期
+		currentDate := startDate
+		for i := 0; i < days; i++ {
+			result = append(result, currentDate.Format(f))
+			currentDate = currentDate.AddDate(0, 0, 1) // 增加一天
+		}
+
+		return result
+	}
 }

@@ -211,19 +211,60 @@ func showDateTypeExample(date time.Time, dateType int, typeName string) {
 func showDaysBetween() {
 	testDate := time.Now()
 	fmt.Printf("测试日期: %s\n\n", formatTime(testDate, ""))
-	// 获取当前周期的开始和结束时间
-	startTime, err := GetStartTime(DateTypeMonth, testDate)
+
+	// 测试不同日期类型的范围
+	testDateTypeRange(DateTypeDay, "日")
+	testDateTypeRange(DateTypeWeek, "周")
+	testDateTypeRange(DateTypeMonth, "月")
+	testDateTypeRange(DateTypeQuarter, "季度")
+	testDateTypeRange(DateTypeYear, "年")
+}
+
+// testDateTypeRange 测试特定日期类型的范围
+func testDateTypeRange(dateType int, typeName string) {
+	testDate := time.Now()
+
+	// 创建一个更长的日期范围进行测试
+	var startTime, endTime time.Time
+	var err error
+
+	switch dateType {
+	case DateTypeDay:
+		// 测试一周的日期范围
+		startTime, err = GetStartTime(DateTypeWeek, testDate)
+		endTime, _ = GetEndTime(DateTypeWeek, testDate)
+	case DateTypeWeek:
+		// 测试一个季度内的周范围
+		startTime, err = GetStartTime(DateTypeQuarter, testDate)
+		endTime, _ = GetEndTime(DateTypeQuarter, testDate)
+	case DateTypeMonth:
+		// 测试一年内的月份范围
+		startTime, err = GetStartTime(DateTypeYear, testDate)
+		endTime, _ = GetEndTime(DateTypeYear, testDate)
+	case DateTypeQuarter:
+		// 测试两年内的季度范围
+		startTime, err = GetStartTime(DateTypeYear, testDate)
+		endTime, _ = GetEndTime(DateTypeYear, testDate.AddDate(1, 0, 0))
+	case DateTypeYear:
+		// 测试五年的范围
+		startTime = time.Date(testDate.Year()-2, 1, 1, 0, 0, 0, 0, testDate.Location())
+		endTime = time.Date(testDate.Year()+2, 12, 31, 23, 59, 59, 0, testDate.Location())
+	}
+
 	if err != nil {
 		fmt.Printf("获取开始时间失败: %v\n", err)
 		return
 	}
 
-	endTime, err := GetEndTime(DateTypeMonth, testDate)
-	if err != nil {
-		fmt.Printf("获取结束时间失败: %v\n", err)
-		return
+	// 使用相同的日期类型获取范围
+	result := GetDaysRange(dateType, startTime, endTime)
+
+	// 限制输出，避免过多日期显示
+	displayResult := result
+	if len(result) > 10 {
+		displayResult = append(result[:3], "...")
+		displayResult = append(displayResult, result[len(result)-3:]...)
 	}
 
-	result := GetDaysRange(startTime, endTime)
-	fmt.Printf("日期范围：\n%s\n", strings.Join(result, "\n"))
+	fmt.Printf("%s类型范围（%d个）：\n%s\n\n", typeName, len(result), strings.Join(displayResult, "\n"))
 }
