@@ -118,8 +118,8 @@ github.com/gin-contrib/sse v0.1.0/go.mod h1:RHrZQHXnP2xjPF+u1gW/2HnVO7nvIa9PG3Gm
 github.com/gin-gonic/gin v1.8.1/go.mod h1:ji8BvRH1azfM+SYow9zQ6SZMvR8qOMZHmsCuWR9tTTk=
 github.com/gin-gonic/gin v1.10.1 h1:T0ujvqyCSqRopADpgPgiTT63DUQVSfojyME59Ei63pQ=
 github.com/gin-gonic/gin v1.10.1/go.mod h1:4PMNQiOhvDRa013RKVbsiNwoyezlm2rm0uX/T7kzp5Y=
-github.com/go-dev-frame/sponge v1.14.6 h1:i2oBzEtah0PndO8EYvLP/XlgpePGvf54khLJOtU4Ojg=
-github.com/go-dev-frame/sponge v1.14.6/go.mod h1:PYb1pIU6gKZ581gXktq6bZoZe9yMRYNowEfizXovQ9A=
+github.com/go-dev-frame/sponge v1.15.0 h1:1ztK4fLH53+rsun4XykVxxkUm/P+JTSMy6o/5Q58p8s=
+github.com/go-dev-frame/sponge v1.15.0/go.mod h1:kTYWZQUSR5Iuu9Ur4tHC+v/1eP48W7hGxhvO6hVylNs=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
