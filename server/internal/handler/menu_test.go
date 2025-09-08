@@ -220,7 +220,29 @@ func Test_menuHandler_List(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id"}).
 		AddRow(testData.ID)
 
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
+	// List方法会调用GetByParams，先执行count查询，再执行主查询
+	// 然后convertMenu会递归查询子菜单
+	// 1. 第一次count查询（parent_id=0）
+	countRows := sqlmock.NewRows([]string{"count"}).
+		AddRow(1)
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WithArgs(0).
+		WillReturnRows(countRows)
+	// 2. 第一次主查询（parent_id=0）
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(0, 10).
+		WillReturnRows(rows)
+	// 3. 第二次count查询（parent_id=1，查询子菜单）
+	childCountRows := sqlmock.NewRows([]string{"count"}).
+		AddRow(0)
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WithArgs(1).
+		WillReturnRows(childCountRows)
+	// 4. 第二次主查询（parent_id=1，查询子菜单）
+	childRows := sqlmock.NewRows([]string{"id"})
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(1, 10).
+		WillReturnRows(childRows)
 
 	result := &httpcli.StdResult{}
 	params := httpcli.KV{"page": 1, "pageSize": 10, "sort": "ignore count"}
@@ -237,7 +259,6 @@ func Test_menuHandler_List(t *testing.T) {
 	//assert.NoError(t, err)
 
 	params["sort"] = "unknown-column"
-	// get error test
 	err = httpcli.Post(result, h.GetRequestURL("List"), httpcli.WithParams(params))
 	assert.Error(t, err)
 }

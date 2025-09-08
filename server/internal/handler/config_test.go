@@ -112,14 +112,25 @@ func Test_configHandler_DeleteByID(t *testing.T) {
 	expectedSQLForDeletion := "UPDATE .*"
 	expectedArgsForDeletionTime := h.MockDao.AnyTime
 
-	// DeleteByID方法调用DeleteByIDs，先查询记录再删除
+	// DeleteByID方法调用DeleteByIDs，先执行count查询，再查询记录，最后删除
+	// 1. count查询
+	countRows := sqlmock.NewRows([]string{"count"}).
+		AddRow(1)
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WithArgs(testData.ID).
+		WillReturnRows(countRows)
+	// 2. 查询记录
 	rows := sqlmock.NewRows([]string{"id"}).
 		AddRow(testData.ID)
 	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(testData.ID, 1000).
 		WillReturnRows(rows)
+	// 3. 删除操作（GORM会自动开启事务）
+	h.MockDao.SQLMock.ExpectBegin()
 	h.MockDao.SQLMock.ExpectExec(expectedSQLForDeletion).
 		WithArgs(expectedArgsForDeletionTime, testData.ID). // adjusted for the amount of test data
 		WillReturnResult(sqlmock.NewResult(int64(testData.ID), 1))
+	h.MockDao.SQLMock.ExpectCommit()
 
 	result := &httpcli.StdResult{}
 	err := httpcli.Delete(result, h.GetRequestURL("DeleteByID", testData.ID))

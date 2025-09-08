@@ -122,7 +122,7 @@ func Test_roleDao_GetByID(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// notfound error
+	// error test
 	d.SQLMock.ExpectQuery("SELECT .*").
 		WithArgs(2).
 		WillReturnRows(rows)

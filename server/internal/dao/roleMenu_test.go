@@ -202,12 +202,11 @@ func Test_roleMenuDao_DeleteByTx(t *testing.T) {
 	d := newRoleMenuDao()
 	defer d.Close()
 	testData := d.TestData.(*model.RoleMenu)
-	expectedSQLForDeletion := "UPDATE .*"
-	expectedArgsForDeletionTime := d.AnyTime
+	expectedSQLForDeletion := "DELETE"
 
 	d.SQLMock.ExpectBegin()
 	d.SQLMock.ExpectExec(expectedSQLForDeletion).
-		WithArgs(expectedArgsForDeletionTime, testData.ID).
+		WithArgs(testData.ID).
 		WillReturnResult(sqlmock.NewResult(int64(testData.ID), 1))
 	d.SQLMock.ExpectCommit()
 
