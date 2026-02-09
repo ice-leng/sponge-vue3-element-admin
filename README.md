@@ -7,7 +7,7 @@ sponge admin
 
 ## 初始化 数据库
 ```mysql
-    source server/db/admin.sql
+    source server/internal/database/admin.sql 
 ```
 ## 前端 使用, 如有问题请移驾到 [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin)
 ```npm
