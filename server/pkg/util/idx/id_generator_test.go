@@ -1,4 +1,4 @@
-package util
+package idx
 
 import (
 	"regexp"

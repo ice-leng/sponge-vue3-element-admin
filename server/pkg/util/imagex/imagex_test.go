@@ -1,8 +1,9 @@
-package util
+package imagex
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsValidURL(t *testing.T) {

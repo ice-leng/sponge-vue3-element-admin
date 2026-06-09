@@ -3,6 +3,9 @@ package handler
 import (
 	"admin/internal/constant"
 	"admin/internal/database"
+	"admin/internal/logic"
+	"admin/pkg/gin/handlerfunc"
+	"admin/pkg/gin/validator"
 	"encoding/base64"
 	"errors"
 	"strings"
@@ -17,8 +20,6 @@ import (
 	"github.com/go-dev-frame/sponge/pkg/logger"
 	"github.com/go-dev-frame/sponge/pkg/utils"
 
-	"admin/internal/cache"
-	"admin/internal/dao"
 	"admin/internal/ecode"
 	"admin/internal/model"
 	"admin/internal/types"
@@ -41,26 +42,13 @@ type PlatformHandler interface {
 }
 
 type platformHandler struct {
-	iDao       dao.PlatformDao
-	iRoleDao   dao.RoleDao
-	iConfigDao dao.ConfigDao
+	logic logic.PlatformLogic
 }
 
 // NewPlatformHandler creating the handler interface
 func NewPlatformHandler() PlatformHandler {
 	return &platformHandler{
-		iDao: dao.NewPlatformDao(
-			database.GetDB(),
-			cache.NewPlatformCache(database.GetCacheType()),
-		),
-		iRoleDao: dao.NewRoleDao(
-			database.GetDB(),
-			cache.NewRoleCache(database.GetCacheType()),
-		),
-		iConfigDao: dao.NewConfigDao(
-			database.GetDB(),
-			cache.NewConfigCache(database.GetCacheType()),
-		),
+		logic: logic.NewPlatformLogic(),
 	}
 }
 
@@ -78,29 +66,23 @@ func (h *platformHandler) Create(c *gin.Context) {
 	form := &types.CreatePlatformRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 
-	platform := &model.Platform{}
-	err = copier.Copy(platform, form)
-	if err != nil {
-		response.Error(c, ecode.ErrCreatePlatform)
-		return
-	}
-	platform.Mobile = encryptMobile(form.Mobile)
-	// Note: if copier.Copy cannot assign a value to a field, add it here
-	platform.Password = convertPassword(form.Password)
 	ctx := middleware.WrapCtx(c)
-	err = h.iDao.Create(ctx, platform)
+	id, err := h.logic.Create(ctx, form)
 	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
 		logger.Error("Create error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
 
-	response.Success(c, gin.H{"id": platform.ID})
+	response.Success(c, gin.H{"id": id})
 }
 
 // DeleteByID delete a record by id
@@ -114,21 +96,20 @@ func (h *platformHandler) Create(c *gin.Context) {
 // @Router /api/v1/platform/{id} [delete]
 // @Security BearerAuth
 func (h *platformHandler) DeleteByID(c *gin.Context) {
-	idStr := c.Param("id")
-	if idStr == "" {
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
+	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
-	var ids []uint64
-	for _, v := range strings.Split(idStr, ",") {
-		ids = append(ids, utils.StrToUint64(v))
-	}
-
 	ctx := middleware.WrapCtx(c)
-	err := h.iDao.DeleteByIDs(ctx, ids)
+	err := h.logic.DeleteByID(ctx, id)
 	if err != nil {
-		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", idStr), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
@@ -148,7 +129,7 @@ func (h *platformHandler) DeleteByID(c *gin.Context) {
 // @Router /api/v1/platform/{id} [put]
 // @Security BearerAuth
 func (h *platformHandler) UpdateByID(c *gin.Context) {
-	_, id, isAbort := getPlatformIDFromPath(c)
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
 	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
@@ -157,24 +138,18 @@ func (h *platformHandler) UpdateByID(c *gin.Context) {
 	form := &types.UpdatePlatformByIDRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 	form.ID = id
 
-	platform := &model.Platform{}
-	err = copier.Copy(platform, form)
-	if err != nil {
-		response.Error(c, ecode.ErrUpdateByIDPlatform)
-		return
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
-	platform.Mobile = encryptMobile(form.Mobile)
-	platform.Password = convertPassword(form.Password)
 	ctx := middleware.WrapCtx(c)
-	err = h.iDao.UpdateByID(ctx, platform)
+	err = h.logic.UpdateByID(ctx, form)
 	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
 		logger.Error("UpdateByID error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
@@ -194,32 +169,24 @@ func (h *platformHandler) UpdateByID(c *gin.Context) {
 // @Router /api/v1/platform/{id} [get]
 // @Security BearerAuth
 func (h *platformHandler) GetByID(c *gin.Context) {
-	_, id, isAbort := getPlatformIDFromPath(c)
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
 	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
 	ctx := middleware.WrapCtx(c)
-	platform, err := h.iDao.GetByID(ctx, id)
+	data, err := h.logic.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, database.ErrRecordNotFound) {
-			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Error(c, ecode.NotFound)
-		} else {
-			logger.Error("GetByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
 		}
+		logger.Error("GetByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
 
-	data := &types.PlatformObjDetail{}
-	err = copier.Copy(data, platform)
-	if err != nil {
-		response.Error(c, ecode.ErrGetByIDPlatform)
-		return
-	}
-	data.Mobile = decryptMobile(data.Mobile)
 	response.Success(c, data)
 }
 

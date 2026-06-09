@@ -28,7 +28,6 @@ type PlatformDao interface {
 	UpdateByID(ctx context.Context, table *model.Platform) error
 	GetByID(ctx context.Context, id uint64) (*model.Platform, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Platform, int64, error)
-	GetByParams(ctx context.Context, params *types.ListPlatformsRequest) ([]*model.Platform, int64, error)
 	GetByUsername(ctx context.Context, username string) (*model.Platform, error)
 	Options(ctx context.Context, roleCode string) ([]types.Options, error)
 
@@ -152,7 +151,7 @@ func (d *platformDao) GetByID(ctx context.Context, id uint64) (*model.Platform, 
 		return record, err
 	}
 
-	// get from cache or database
+	// get from cache
 	record, err := d.cache.Get(ctx, id)
 	if err == nil {
 		return record, nil
@@ -194,7 +193,6 @@ func (d *platformDao) GetByID(ctx context.Context, id uint64) (*model.Platform, 
 		return nil, database.ErrRecordNotFound
 	}
 
-	// fail fast, if cache error return, don't request to db
 	return nil, err
 }
 
@@ -261,47 +259,6 @@ func (d *platformDao) GetByColumns(ctx context.Context, params *query.Params) ([
 		return nil, 0, err
 	}
 
-	return records, total, err
-}
-
-func (d *platformDao) GetByParams(ctx context.Context, request *types.ListPlatformsRequest) ([]*model.Platform, int64, error) {
-	page := query.NewPage(request.Page-1, request.PageSize, request.Sort)
-
-	db := d.db.WithContext(ctx).Model(&model.Platform{}).Order(page.Sort())
-	if request.StartTime != "" && request.EndTime != "" {
-		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime+" 23:59:59")
-	}
-
-	if request.Keyword != "" {
-		db = db.Where("username like ? or nickname like ?", "%"+request.Keyword+"%", "%"+request.Keyword+"%")
-	}
-	if request.Mobile != "" {
-		db = db.Where("mobile = ?", request.Mobile)
-	}
-	if request.Status != nil {
-		db = db.Where("status = ?", request.Status)
-	}
-
-	var total int64 = 0
-	if request.Sort != "ignore count" { // determine if count is required
-		err := db.Count(&total).Error
-		if err != nil {
-			return nil, 0, err
-		}
-		if total == 0 {
-			return nil, total, nil
-		}
-	}
-
-	if request.PageSize > 0 {
-		db = db.Limit(page.Limit()).Offset(page.Page() * page.Limit())
-	}
-
-	records := []*model.Platform{}
-	err := db.Find(&records).Error
-	if err != nil {
-		return nil, 0, err
-	}
 	return records, total, err
 }
 

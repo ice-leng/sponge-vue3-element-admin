@@ -1,4 +1,4 @@
-package util
+package enumx
 
 import (
 	"admin/internal/types"
