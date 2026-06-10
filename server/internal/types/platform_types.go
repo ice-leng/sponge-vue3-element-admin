@@ -68,6 +68,7 @@ type PlatformObjDetail struct {
 	Status    int           `json:"status"`    // 状态
 	LastTime  LocalDateTime `json:"lastTime"`  // 上次登录时间
 	Gender    int           `json:"gender" `   // 性别
+	RoleNames []string      `json:"roleNames"`
 }
 
 type Operator struct {

@@ -2,8 +2,8 @@ package dao
 
 import (
 	"admin/internal/database"
-	"admin/internal/pkg/util"
 	"admin/internal/types"
+	"admin/pkg/util/imagex"
 	"context"
 	"errors"
 
@@ -391,5 +391,5 @@ func (d *configDao) MakePathByConfig(ctx context.Context, path, key string) stri
 	if config != nil {
 		host = config.Value
 	}
-	return util.ImageMakePath(path, host)
+	return imagex.ImageMakePath(path, host)
 }

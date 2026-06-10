@@ -2,6 +2,7 @@ package logic
 
 import (
 	"admin/internal/cache"
+	"admin/internal/constant"
 	"admin/internal/dao"
 	"admin/internal/database"
 	"admin/internal/ecode"
@@ -22,6 +23,7 @@ type PlatformLogic interface {
 	UpdateByID(ctx context.Context, request *types.UpdatePlatformByIDRequest) error
 	GetByID(ctx context.Context, id uint64) (*types.PlatformObjDetail, error)
 	List(ctx context.Context, request *types.ListPlatformsRequest) ([]*types.PlatformObjDetail, int64, error)
+	Me(ctx context.Context, id uint64) (*types.MeItem, error)
 }
 
 type platformLogic struct {
@@ -156,6 +158,32 @@ func (p platformLogic) List(ctx context.Context, request *types.ListPlatformsReq
 	return data, total, nil
 }
 
+func (p platformLogic) Me(ctx context.Context, id uint64) (*types.MeItem, error) {
+	reply := &types.MeItem{}
+	platform, err := p.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = copier.Copy(&reply, platform)
+	reply.Avatar = p.iConfigDao.MakePathByConfig(ctx, platform.Avatar, constant.ConfigKeyImageDomain)
+
+	var (
+		roleCodes []string
+	)
+	roles, _ := p.iRoleDao.GetByIDs(ctx, platform.RoleID)
+	if len(roles) > 0 {
+		for _, role := range roles {
+			roleCodes = append(roleCodes, role.Code)
+		}
+	}
+	reply.Roles = roleCodes
+
+	perms, _ := p.iRoleDao.GetPermissionsByIds(ctx, platform.RoleID)
+	reply.Perms = perms
+	return reply, nil
+}
+
 func encryptMobile(mobile string) string {
 	if mobile == "" {
 		return ""
@@ -189,6 +217,7 @@ func convertPlatform(platform *model.Platform) (*types.PlatformObjDetail, error)
 	}
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 	data.Mobile = decryptMobile(data.Mobile)
+
 	return data, nil
 }
 

@@ -15,14 +15,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 
-	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
-	"github.com/go-dev-frame/sponge/pkg/gin/response"
-	"github.com/go-dev-frame/sponge/pkg/logger"
-	"github.com/go-dev-frame/sponge/pkg/utils"
-
 	"admin/internal/ecode"
 	"admin/internal/model"
 	"admin/internal/types"
+
+	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
+	"github.com/go-dev-frame/sponge/pkg/gin/response"
+	"github.com/go-dev-frame/sponge/pkg/logger"
 )
 
 var _ PlatformHandler = (*platformHandler)(nil)
@@ -204,23 +203,19 @@ func (h *platformHandler) List(c *gin.Context) {
 	request := &types.ListPlatformsRequest{}
 	err := c.ShouldBindQuery(request)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 
 	ctx := middleware.WrapCtx(c)
-	request.Mobile = encryptMobile(request.Mobile)
-	platforms, total, err := h.iDao.GetByParams(ctx, request)
+	data, total, err := h.logic.List(ctx, request)
 	if err != nil {
-		logger.Error("GetByParams error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("List error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
-		return
-	}
-
-	data, err := h.convertPlatforms(c, platforms)
-	if err != nil {
-		response.Error(c, ecode.ErrListPlatform)
 		return
 	}
 
@@ -242,47 +237,17 @@ func (h *platformHandler) List(c *gin.Context) {
 func (h *platformHandler) Me(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
 	id := c.GetUint64("id")
-	platform, err := h.iDao.GetByID(ctx, id)
+	data, err := h.logic.Me(ctx, id)
 	if err != nil {
-		if errors.Is(err, database.ErrRecordNotFound) {
-			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Error(c, ecode.NotFound)
-		} else {
-			logger.Error("GetByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
 		}
+		logger.Error("Me error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
-
-	reply := types.MeItem{}
-	_ = copier.Copy(&reply, platform)
-	reply.Avatar = h.iConfigDao.MakePathByConfig(c, platform.Avatar, constant.ConfigKeyImageDomain)
-
-	var (
-		roleCodes []string
-	)
-	roles, _ := h.iRoleDao.GetByIDs(c, platform.RoleID)
-	if len(roles) > 0 {
-		for _, role := range roles {
-			roleCodes = append(roleCodes, role.Code)
-		}
-	}
-	reply.Roles = roleCodes
-
-	perms, _ := h.iRoleDao.GetPermissionsByIds(c, platform.RoleID)
-	reply.Perms = perms
-	response.Success(c, reply)
-}
-
-func getPlatformIDFromPath(c *gin.Context) (string, uint64, bool) {
-	idStr := c.Param("id")
-	id, err := utils.StrToUint64E(idStr)
-	if err != nil || id == 0 {
-		logger.Warn("StrToUint64E error: ", logger.String("idStr", idStr), middleware.GCtxRequestIDField(c))
-		return "", 0, true
-	}
-
-	return idStr, id, false
+	response.Success(c, data)
 }
 
 func convertPlatform(platform *model.Platform, roleCodes map[uint64]string) (*types.PlatformListPage, error) {
