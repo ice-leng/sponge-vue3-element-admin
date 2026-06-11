@@ -11,6 +11,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"strings"
 
 	"github.com/go-dev-frame/sponge/pkg/copier"
 	"github.com/go-dev-frame/sponge/pkg/gocrypto"
@@ -24,6 +25,9 @@ type PlatformLogic interface {
 	GetByID(ctx context.Context, id uint64) (*types.PlatformObjDetail, error)
 	List(ctx context.Context, request *types.ListPlatformsRequest) ([]*types.PlatformObjDetail, int64, error)
 	Me(ctx context.Context, id uint64) (*types.MeItem, error)
+	Profile(ctx context.Context, id uint64) (*types.ProfileItem, error)
+	ChangePassword(ctx context.Context, request *types.ChangePasswordRequest) error
+	ResetPassword(ctx context.Context, request *types.ResetPasswordRequest) error
 }
 
 type platformLogic struct {
@@ -91,12 +95,20 @@ func (p platformLogic) GetByID(ctx context.Context, id uint64) (*types.PlatformO
 	result, err := p.iDao.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, database.ErrRecordNotFound) {
-			return nil, ecode.NotFound.Err()
+			return nil, ecode.ErrGetByIDPlatform.Err()
 		}
 		return nil, err
 	}
+	result.Avatar = p.iConfigDao.MakePathByConfig(ctx, result.Avatar, constant.ConfigKeyImageDomain)
 
-	data, err := convertPlatform(result)
+	roleCodes := make(map[uint64]string)
+	roles, _ := p.iRoleDao.GetByIDs(ctx, result.RoleID)
+	if len(roles) > 0 {
+		for _, role := range roles {
+			roleCodes[role.ID] = role.Name
+		}
+	}
+	data, err := convertPlatform(result, roleCodes)
 	if err != nil {
 		return nil, ecode.ErrGetByIDPlatform.Err()
 	}
@@ -123,7 +135,6 @@ func (p platformLogic) List(ctx context.Context, request *types.ListPlatformsReq
 			Value: request.EndTime + " 23:59:59",
 		})
 	}
-
 	if request.Mobile != "" {
 		params.Columns = append(params.Columns, query.Column{
 			Name:  "mobile",
@@ -138,7 +149,6 @@ func (p platformLogic) List(ctx context.Context, request *types.ListPlatformsReq
 			Value: *request.Status,
 		})
 	}
-
 	if request.Keyword != "" {
 		params.Columns = append(params.Columns, query.Column{
 			Name:  "keyword",
@@ -147,11 +157,11 @@ func (p platformLogic) List(ctx context.Context, request *types.ListPlatformsReq
 		})
 	}
 
-	orders, total, err := p.iDao.GetByColumns(ctx, params)
+	result, total, err := p.iDao.GetByColumns(ctx, params)
 	if err != nil {
 		return nil, 0, err
 	}
-	data, err := convertPlatforms(orders)
+	data, err := p.convertPlatforms(ctx, result)
 	if err != nil {
 		return nil, 0, ecode.ErrListPlatform.Err()
 	}
@@ -166,22 +176,56 @@ func (p platformLogic) Me(ctx context.Context, id uint64) (*types.MeItem, error)
 	}
 
 	_ = copier.Copy(&reply, platform)
-	reply.Avatar = p.iConfigDao.MakePathByConfig(ctx, platform.Avatar, constant.ConfigKeyImageDomain)
-
-	var (
-		roleCodes []string
-	)
-	roles, _ := p.iRoleDao.GetByIDs(ctx, platform.RoleID)
-	if len(roles) > 0 {
-		for _, role := range roles {
-			roleCodes = append(roleCodes, role.Code)
-		}
-	}
-	reply.Roles = roleCodes
 
 	perms, _ := p.iRoleDao.GetPermissionsByIds(ctx, platform.RoleID)
 	reply.Perms = perms
 	return reply, nil
+}
+
+func (p platformLogic) Profile(ctx context.Context, id uint64) (*types.ProfileItem, error) {
+	reply := &types.ProfileItem{}
+	platform, err := p.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	_ = copier.Copy(&reply, platform)
+	reply.Roles = strings.Join(platform.RoleNames, ",")
+
+	return reply, nil
+}
+
+func (p platformLogic) ChangePassword(ctx context.Context, request *types.ChangePasswordRequest) error {
+	platform, err := p.iDao.GetByID(ctx, request.ID)
+	if err != nil {
+		if errors.Is(err, database.ErrRecordNotFound) {
+			return ecode.ErrGetByIDPlatform.Err()
+		}
+		return err
+	}
+	ok := gocrypto.VerifyPassword(request.OldPassword, platform.Password)
+	if !ok {
+		return ecode.ErrPassword.Err()
+	}
+
+	form := &types.UpdatePlatformByIDRequest{}
+	form.ID = request.ID
+	form.Password = request.NewPassword
+
+	return p.UpdateByID(ctx, form)
+}
+
+func (p platformLogic) ResetPassword(ctx context.Context, request *types.ResetPasswordRequest) error {
+	if _, err := p.iDao.GetByID(ctx, request.ID); err != nil {
+		if errors.Is(err, database.ErrRecordNotFound) {
+			return ecode.ErrGetByIDPlatform.Err()
+		}
+		return err
+	}
+	form := &types.UpdatePlatformByIDRequest{}
+	form.ID = request.ID
+	form.Password = request.Password
+
+	return p.UpdateByID(ctx, form)
 }
 
 func encryptMobile(mobile string) string {
@@ -209,7 +253,7 @@ func convertPassword(password string) string {
 	return hash
 }
 
-func convertPlatform(platform *model.Platform) (*types.PlatformObjDetail, error) {
+func convertPlatform(platform *model.Platform, roleCodes map[uint64]string) (*types.PlatformObjDetail, error) {
 	data := &types.PlatformObjDetail{}
 	err := copier.Copy(data, platform)
 	if err != nil {
@@ -217,14 +261,35 @@ func convertPlatform(platform *model.Platform) (*types.PlatformObjDetail, error)
 	}
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 	data.Mobile = decryptMobile(data.Mobile)
+	data.RoleNames = make([]string, 0)
+	for _, roleId := range platform.RoleID {
+		if roleName, ok := roleCodes[roleId]; ok {
+			data.RoleNames = append(data.RoleNames, roleName)
+		}
+	}
 
 	return data, nil
 }
 
-func convertPlatforms(fromValues []*model.Platform) ([]*types.PlatformObjDetail, error) {
-	toValues := []*types.PlatformObjDetail{}
+func (p platformLogic) convertPlatforms(ctx context.Context, fromValues []*model.Platform) ([]*types.PlatformObjDetail, error) {
+	var (
+		roleIds  []uint64
+		toValues []*types.PlatformObjDetail
+	)
 	for _, v := range fromValues {
-		data, err := convertPlatform(v)
+		roleIds = append(roleIds, v.RoleID...)
+	}
+
+	roleCodes := map[uint64]string{}
+	roles, _ := p.iRoleDao.GetByIDs(ctx, roleIds)
+	if len(roles) > 0 {
+		for _, role := range roles {
+			roleCodes[role.ID] = role.Name
+		}
+	}
+
+	for _, v := range fromValues {
+		data, err := convertPlatform(v, roleCodes)
 		if err != nil {
 			return nil, err
 		}

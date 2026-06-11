@@ -1,23 +1,13 @@
 package handler
 
 import (
-	"admin/internal/constant"
-	"admin/internal/database"
+	"admin/internal/ecode"
 	"admin/internal/logic"
+	"admin/internal/types"
 	"admin/pkg/gin/handlerfunc"
 	"admin/pkg/gin/validator"
-	"encoding/base64"
-	"errors"
-	"strings"
-
-	"github.com/go-dev-frame/sponge/pkg/gocrypto"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/copier"
-
-	"admin/internal/ecode"
-	"admin/internal/model"
-	"admin/internal/types"
 
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
 	"github.com/go-dev-frame/sponge/pkg/gin/response"
@@ -236,7 +226,7 @@ func (h *platformHandler) List(c *gin.Context) {
 // @Security BearerAuth
 func (h *platformHandler) Me(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
-	id := c.GetUint64("id")
+	id := handlerfunc.GetCurrentUid(c)
 	data, err := h.logic.Me(ctx, id)
 	if err != nil {
 		if ec, ok := handlerfunc.IsErrcode(err); ok {
@@ -250,82 +240,6 @@ func (h *platformHandler) Me(c *gin.Context) {
 	response.Success(c, data)
 }
 
-func convertPlatform(platform *model.Platform, roleCodes map[uint64]string) (*types.PlatformListPage, error) {
-	data := &types.PlatformListPage{}
-	err := copier.Copy(data, platform)
-	if err != nil {
-		return nil, err
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
-
-	var (
-		roleNames []string
-	)
-
-	for _, roleId := range platform.RoleID {
-		if roleName, ok := roleCodes[roleId]; ok {
-			roleNames = append(roleNames, roleName)
-		}
-	}
-	data.RoleNames = roleNames
-
-	data.Mobile = decryptMobile(data.Mobile)
-	return data, nil
-}
-
-func (h *platformHandler) convertPlatforms(c *gin.Context, fromValues []*model.Platform) ([]*types.PlatformListPage, error) {
-	var (
-		roleIds  []uint64
-		toValues []*types.PlatformListPage
-	)
-	for _, v := range fromValues {
-		roleIds = append(roleIds, v.RoleID...)
-	}
-
-	roleCodes := map[uint64]string{}
-	roles, _ := h.iRoleDao.GetByIDs(c, roleIds)
-	if len(roles) > 0 {
-		for _, role := range roles {
-			roleCodes[role.ID] = role.Name
-		}
-	}
-
-	for _, v := range fromValues {
-		data, err := convertPlatform(v, roleCodes)
-		if err != nil {
-			return nil, err
-		}
-		toValues = append(toValues, data)
-	}
-
-	return toValues, nil
-}
-
-func convertPassword(password string) string {
-	if password == "" {
-		return ""
-	}
-	hash, _ := gocrypto.HashAndSaltPassword(password)
-	return hash
-}
-
-func encryptMobile(mobile string) string {
-	if mobile == "" {
-		return ""
-	}
-	hash, _ := gocrypto.AesEncrypt([]byte(mobile))
-	return base64.StdEncoding.EncodeToString(hash)
-}
-
-func decryptMobile(mobile string) string {
-	if mobile == "" {
-		return ""
-	}
-	hash, _ := base64.StdEncoding.DecodeString(mobile)
-	str, _ := gocrypto.AesDecrypt(hash)
-	return string(str)
-}
-
 // GetProfile get me information
 // @Summary current information
 // @Description current information
@@ -337,34 +251,18 @@ func decryptMobile(mobile string) string {
 // @Security BearerAuth
 func (h *platformHandler) GetProfile(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
-	id := c.GetUint64("id")
-	platform, err := h.iDao.GetByID(ctx, id)
+	id := handlerfunc.GetCurrentUid(c)
+	data, err := h.logic.Profile(ctx, id)
 	if err != nil {
-		if errors.Is(err, database.ErrRecordNotFound) {
-			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Error(c, ecode.NotFound)
-		} else {
-			logger.Error("GetByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
 		}
+		logger.Error("Profile error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
-
-	reply := types.ProfileItem{}
-	_ = copier.Copy(&reply, platform)
-	reply.Avatar = h.iConfigDao.MakePathByConfig(c, platform.Avatar, constant.ConfigKeyImageDomain)
-	reply.Mobile = decryptMobile(reply.Mobile)
-	var (
-		roleCodes []string
-	)
-	roles, _ := h.iRoleDao.GetByIDs(c, platform.RoleID)
-	if len(roles) > 0 {
-		for _, role := range roles {
-			roleCodes = append(roleCodes, role.Name)
-		}
-	}
-	reply.Roles = strings.Join(roleCodes, ",")
-	response.Success(c, reply)
+	response.Success(c, data)
 }
 
 // UpdateProfile update information by self
@@ -381,24 +279,18 @@ func (h *platformHandler) UpdateProfile(c *gin.Context) {
 	form := &types.UpdatePlatformByIDRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
-	form.ID = c.GetUint64("id")
-
-	platform := &model.Platform{}
-	err = copier.Copy(platform, form)
-	if err != nil {
-		response.Error(c, ecode.ErrUpdateByIDPlatform)
-		return
-	}
-
-	platform.Mobile = encryptMobile(form.Mobile)
 	ctx := middleware.WrapCtx(c)
-	err = h.iDao.UpdateByID(ctx, platform)
+	form.ID = handlerfunc.GetCurrentUid(c)
+	err = h.logic.UpdateByID(ctx, form)
 	if err != nil {
-		logger.Error("UpdateByID error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("UpdateProfile error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
@@ -417,44 +309,25 @@ func (h *platformHandler) UpdateProfile(c *gin.Context) {
 // @Router /api/v1/platform/password [put]
 // @Security BearerAuth
 func (h *platformHandler) ChangePassword(c *gin.Context) {
-	request := &types.ChangePasswordRequest{}
-	err := c.ShouldBindJSON(request)
+	form := &types.ChangePasswordRequest{}
+	err := c.ShouldBindJSON(form)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
-	form := &model.Platform{}
-	form.ID = c.GetUint64("id")
-
-	platform, platformErr := h.iDao.GetByID(c, form.ID)
-	if platformErr != nil {
-		if errors.Is(platformErr, database.ErrRecordNotFound) {
-			logger.Warn("GetByID not found", logger.Err(platformErr), logger.Any("id", form.ID), middleware.GCtxRequestIDField(c))
-			response.Error(c, ecode.NotFound)
-		} else {
-			logger.Error("GetByID error", logger.Err(platformErr), logger.Any("id", form.ID), middleware.GCtxRequestIDField(c))
-			response.Output(c, ecode.InternalServerError.ToHTTPCode())
-		}
-		return
-	}
-
-	ok := gocrypto.VerifyPassword(request.OldPassword, platform.Password)
-	if !ok {
-		response.Error(c, ecode.ErrPassword)
-		return
-	}
-
-	form.Password = convertPassword(request.NewPassword)
 
 	ctx := middleware.WrapCtx(c)
-	err = h.iDao.UpdateByID(ctx, form)
+	form.ID = handlerfunc.GetCurrentUid(c)
+	err = h.logic.ChangePassword(ctx, form)
 	if err != nil {
-		logger.Error("UpdateByID error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("ChangePassword error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
-
 	response.Success(c)
 }
 
@@ -472,34 +345,21 @@ func (h *platformHandler) ResetPassword(c *gin.Context) {
 	request := &types.ResetPasswordRequest{}
 	err := c.ShouldBindJSON(request)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 
 	ctx := middleware.WrapCtx(c)
-	_, err = h.iDao.GetByID(ctx, request.ID)
+	request.ID = handlerfunc.GetCurrentUid(c)
+	err = h.logic.ResetPassword(ctx, request)
 	if err != nil {
-		if errors.Is(err, database.ErrRecordNotFound) {
-			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", request.ID), middleware.GCtxRequestIDField(c))
-			response.Error(c, ecode.NotFound)
-		} else {
-			logger.Error("GetByID error", logger.Err(err), logger.Any("id", request.ID), middleware.GCtxRequestIDField(c))
-			response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
 		}
-		return
-	}
-
-	form := &model.Platform{}
-	form.ID = request.ID
-	form.Password = convertPassword(request.Password)
-
-	err = h.iDao.UpdateByID(ctx, form)
-	if err != nil {
-		logger.Error("ResetPassword error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
+		logger.Error("ResetPassword error", logger.Err(err), logger.Any("form", request), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
-
 	response.Success(c)
 }

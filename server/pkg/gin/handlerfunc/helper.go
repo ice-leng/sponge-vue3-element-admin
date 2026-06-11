@@ -9,8 +9,11 @@ import (
 )
 
 // GetCurrentUid get the current user id from context
-func GetCurrentUid(c *gin.Context) uint64 {
-	uid, ok := c.Get("id")
+func GetCurrentUid(c *gin.Context, key ...string) uint64 {
+	if len(key) == 0 {
+		key = append(key, "id")
+	}
+	uid, ok := c.Get(key[0])
 	if !ok {
 		return 0
 	}
