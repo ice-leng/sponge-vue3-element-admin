@@ -2,8 +2,8 @@ package cache
 
 import (
 	"admin/internal/config"
-	"admin/internal/pkg/util"
 	"admin/internal/types"
+	"admin/pkg/util/enumx"
 	"context"
 	"os"
 	"path"
@@ -85,12 +85,12 @@ func (c *enumCache) getOptions() map[string][]*types.Options {
 		// 尝试从当前工作目录获取缓存路径
 		wd, _ := os.Getwd()
 		filePath := filepath.Join(wd, "enum.json")
-		return util.EnumChangeDictByFile(filePath)
+		return enumx.EnumChangeDictByFile(filePath)
 	}
 	_, filename, _, _ := runtime.Caller(0)
 	root := path.Dir(path.Dir(filename))
 	enumDir := filepath.Join(root, "constant", "enum")
-	return util.EnumChangeDict(enumDir)
+	return enumx.EnumChangeDict(enumDir)
 }
 
 func (c *enumCache) setAll(options map[string][]*types.Options) error {

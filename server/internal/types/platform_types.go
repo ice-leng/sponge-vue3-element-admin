@@ -50,8 +50,8 @@ type ChangePasswordRequest struct {
 }
 
 type ResetPasswordRequest struct {
-	ID       uint64 `json:"id" binding:""`               // uint64 id
-	Password string `json:"password" binding:"required"` // 密码
+	ID       uint64 `json:"id" binding:""`       // uint64 id
+	Password string `json:"password" binding:""` // 密码
 }
 
 // PlatformObjDetail detail
@@ -74,12 +74,6 @@ type PlatformObjDetail struct {
 type Operator struct {
 	ID       uint64 `json:"id"` // convert to uint64 id
 	Nickname string `json:"nickname"`
-}
-
-// PlatformListPage list
-type PlatformListPage struct {
-	PlatformObjDetail
-	RoleNames []string `json:"roleNames"`
 }
 
 // CreatePlatformReply only for api docs

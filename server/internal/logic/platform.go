@@ -151,9 +151,16 @@ func (p platformLogic) List(ctx context.Context, request *types.ListPlatformsReq
 	}
 	if request.Keyword != "" {
 		params.Columns = append(params.Columns, query.Column{
-			Name:  "keyword",
+			Name:  "username",
 			Exp:   "like",
 			Value: "%" + request.Keyword + "%",
+			Logic: "or:(",
+		})
+		params.Columns = append(params.Columns, query.Column{
+			Name:  "nickname",
+			Exp:   "like",
+			Value: "%" + request.Keyword + "%",
+			Logic: "and:)",
 		})
 	}
 
@@ -176,6 +183,17 @@ func (p platformLogic) Me(ctx context.Context, id uint64) (*types.MeItem, error)
 	}
 
 	_ = copier.Copy(&reply, platform)
+
+	var (
+		roleCodes []string
+	)
+	roles, _ := p.iRoleDao.GetByIDs(ctx, platform.RoleID)
+	if len(roles) > 0 {
+		for _, role := range roles {
+			roleCodes = append(roleCodes, role.Code)
+		}
+	}
+	reply.Roles = roleCodes
 
 	perms, _ := p.iRoleDao.GetPermissionsByIds(ctx, platform.RoleID)
 	reply.Perms = perms
@@ -223,6 +241,10 @@ func (p platformLogic) ResetPassword(ctx context.Context, request *types.ResetPa
 	}
 	form := &types.UpdatePlatformByIDRequest{}
 	form.ID = request.ID
+	// 默认密码 123456
+	if request.Password == "" {
+		request.Password = "123456"
+	}
 	form.Password = request.Password
 
 	return p.UpdateByID(ctx, form)
