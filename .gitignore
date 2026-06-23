@@ -28,3 +28,4 @@ server/cmd/admin/admin
 
 server/uploads/
 
+.worktrees/
