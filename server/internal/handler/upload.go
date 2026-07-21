@@ -1,40 +1,31 @@
 package handler
 
 import (
-	"admin/internal/cache"
-	"admin/internal/constant"
-	"admin/internal/dao"
-	"admin/internal/database"
 	"admin/internal/ecode"
-	"admin/internal/types"
-	"fmt"
-	"io"
-	"os"
-	"path/filepath"
-	"strings"
-	"time"
+	"admin/internal/logic"
+	"admin/pkg/gin/handlerfunc"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-dev-frame/sponge/pkg/errcode"
+	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
 	"github.com/go-dev-frame/sponge/pkg/gin/response"
-	"github.com/go-dev-frame/sponge/pkg/gocrypto"
-	"github.com/go-dev-frame/sponge/pkg/gofile"
+	"github.com/go-dev-frame/sponge/pkg/logger"
 )
 
+var _ UploadHandler = (*uploadHandler)(nil)
+
+// UploadHandler defining the handler interface
 type UploadHandler interface {
 	Local(c *gin.Context)
 }
 
 type uploadHandler struct {
-	iConfigDao dao.ConfigDao
+	logic logic.UploadLogic
 }
 
+// NewUploadHandler creating the handler interface
 func NewUploadHandler() UploadHandler {
 	return &uploadHandler{
-		iConfigDao: dao.NewConfigDao(
-			database.GetDB(),
-			cache.NewConfigCache(database.GetCacheType()),
-		),
+		logic: logic.NewUploadLogic(),
 	}
 }
 
@@ -49,47 +40,23 @@ func NewUploadHandler() UploadHandler {
 // @Router /api/v1/upload/local [post]
 // @Security BearerAuth
 func (h *uploadHandler) Local(c *gin.Context) {
-	_, file, err := c.Request.FormFile("file")
+	_, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		response.Error(c, ecode.InvalidParams)
 		return
 	}
-	ext := filepath.Ext(file.Filename)
-	name := strings.TrimSuffix(file.Filename, ext)
-	newFileName := gocrypto.Md5([]byte(name+time.Now().Format("20060102150405"))) + ext
 
-	path := fmt.Sprintf("%s/%s", "uploads", time.Now().Format("2006-01-02"))
-	if !gofile.IsExists(path) {
-		if err := gofile.CreateDir(path); err != nil {
-			response.Error(c, errcode.NewError(10001, err.Error()))
+	ctx := middleware.WrapCtx(c)
+	data, err := h.logic.Local(ctx, fileHeader)
+	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
 			return
 		}
-	}
-	filePath := path + "/" + newFileName
-	f, openError := file.Open() // 读取文件
-	if openError != nil {
-		response.Error(c, errcode.NewError(10001, openError.Error()))
-		return
-	}
-	defer f.Close() // 创建文件 defer 关闭
-
-	out, createErr := os.Create(filePath)
-	if createErr != nil {
-		response.Error(c, errcode.NewError(10001, createErr.Error()))
-		return
-	}
-	defer out.Close() // 创建文件 defer 关闭
-
-	_, copyErr := io.Copy(out, f) // 传输（拷贝）文件
-	if copyErr != nil {
-		response.Error(c, errcode.NewError(10001, copyErr.Error()))
+		logger.Error("Local upload error", logger.Err(err), logger.Any("filename", fileHeader.Filename), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
 
-	// 上传成功
-	response.Success(c, types.UploadItem{
-		Name: newFileName,
-		Path: "/" + filePath,
-		Url:  h.iConfigDao.MakePathByConfig(c, "/"+filePath, constant.ConfigKeyImageDomain),
-	})
+	response.Success(c, data)
 }

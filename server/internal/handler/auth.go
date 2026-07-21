@@ -1,29 +1,21 @@
 package handler
 
 import (
-	"admin/internal/cache"
-	"admin/internal/dao"
-	"admin/internal/database"
 	"admin/internal/ecode"
-	"admin/internal/model"
+	"admin/internal/logic"
 	"admin/internal/types"
-	"context"
-	"fmt"
-	"image/color"
-	"time"
+	"admin/pkg/gin/handlerfunc"
+	"admin/pkg/gin/validator"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
-	"github.com/go-dev-frame/sponge/pkg/gin/middleware/auth"
 	"github.com/go-dev-frame/sponge/pkg/gin/response"
-	"github.com/go-dev-frame/sponge/pkg/gocrypto"
 	"github.com/go-dev-frame/sponge/pkg/logger"
-	"github.com/go-dev-frame/sponge/pkg/sgorm"
-	"github.com/go-dev-frame/sponge/pkg/utils"
-	"github.com/mojocn/base64Captcha"
-	"github.com/redis/go-redis/v9"
 )
 
+var _ AuthHandler = (*authHandler)(nil)
+
+// AuthHandler defining the handler interface
 type AuthHandler interface {
 	Login(c *gin.Context)
 	Captcha(c *gin.Context)
@@ -31,23 +23,13 @@ type AuthHandler interface {
 }
 
 type authHandler struct {
-	iDao    dao.PlatformDao
-	captcha *base64Captcha.DriverMath
-	redis   *redis.Client
+	logic logic.AuthLogic
 }
 
+// NewAuthHandler creating the handler interface
 func NewAuthHandler() AuthHandler {
-	bgColor := color.RGBA{R: 0, G: 0, B: 0, A: 0}
-	driver := base64Captcha.NewDriverMath(60, 240, 0, 0, &bgColor, nil, []string{
-		"wqy-microhei.ttc",
-	})
 	return &authHandler{
-		iDao: dao.NewPlatformDao(
-			database.GetDB(),
-			cache.NewPlatformCache(database.GetCacheType()),
-		),
-		captcha: driver,
-		redis:   database.GetRedisCli(),
+		logic: logic.NewAuthLogic(),
 	}
 }
 
@@ -60,56 +42,27 @@ func NewAuthHandler() AuthHandler {
 // @Param data body types.LoginRequest true "login information"
 // @Success 200 {object} types.LoginReply{}
 // @Router /api/v1/auth/login [post]
-func (a authHandler) Login(c *gin.Context) {
+func (h *authHandler) Login(c *gin.Context) {
 	request := &types.LoginRequest{}
 	err := c.ShouldBindJSON(request)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 
-	code := a.redis.Get(context.Background(), fmt.Sprintf("captcha:%s", request.CaptchaKey)).Val()
-	if code != request.CaptchaCode {
-		response.Error(c, ecode.ErrLoginCaptcha)
+	ctx := middleware.WrapCtx(c)
+	data, err := h.logic.Login(ctx, request)
+	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("Login error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
 
-	platform, platformErr := a.iDao.GetByUsername(c, request.Username)
-	if platformErr != nil {
-		response.Error(c, ecode.ErrLogin)
-		return
-	}
-
-	ok := gocrypto.VerifyPassword(request.Password, platform.Password)
-	if !ok {
-		response.Error(c, ecode.ErrLogin)
-		return
-	}
-
-	lastTime := time.Now()
-	_ = a.iDao.UpdateByID(c, &model.Platform{
-		Model: sgorm.Model{
-			ID: platform.ID,
-		},
-		LastTime: &lastTime,
-	})
-
-	token, tokenErr := auth.GenerateToken(utils.Uint64ToStr(platform.ID))
-	if tokenErr != nil {
-		response.Error(c, ecode.ErrLogin)
-		return
-	}
-
-	response.Success(c, a.loginReply(token))
-}
-
-func (a authHandler) loginReply(token string) types.LoginItem {
-	return types.LoginItem{
-		AccessToken: token,
-		Expires:     7200,
-		TokenType:   "Bearer",
-	}
+	response.Success(c, data)
 }
 
 // Logout of logout
@@ -121,7 +74,14 @@ func (a authHandler) loginReply(token string) types.LoginItem {
 // @Success 200 {object} types.Result{}
 // @Router /api/v1/auth/logout [delete]
 // @Security BearerAuth
-func (a authHandler) Logout(c *gin.Context) {
+func (h *authHandler) Logout(c *gin.Context) {
+	ctx := middleware.WrapCtx(c)
+	err := h.logic.Logout(ctx)
+	if err != nil {
+		logger.Error("Logout error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		return
+	}
 	response.Success(c)
 }
 
@@ -133,13 +93,13 @@ func (a authHandler) Logout(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} types.CaptchaReply{}
 // @Router /api/v1/auth/captcha [get]
-func (a authHandler) Captcha(c *gin.Context) {
-	id, content, answer := a.captcha.GenerateIdQuestionAnswer()
-	item, _ := a.captcha.DrawCaptcha(content)
-	result := types.CaptchaItem{
-		CaptchaKey:    id,
-		CaptchaBase64: item.EncodeB64string(),
+func (h *authHandler) Captcha(c *gin.Context) {
+	ctx := middleware.WrapCtx(c)
+	data, err := h.logic.Captcha(ctx)
+	if err != nil {
+		logger.Error("Captcha error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		return
 	}
-	a.redis.Set(context.Background(), fmt.Sprintf("captcha:%s", id), answer, 2*time.Minute)
-	response.Success(c, result)
+	response.Success(c, data)
 }

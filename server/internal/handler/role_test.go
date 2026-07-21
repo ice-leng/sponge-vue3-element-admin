@@ -1,23 +1,22 @@
 package handler
 
 import (
+	"admin/internal/cache"
+	"admin/internal/dao"
 	"admin/internal/database"
+	"admin/internal/logic"
+	"admin/internal/model"
+	"admin/internal/types"
+	"encoding/json"
 	"net/http"
 	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jinzhu/copier"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/go-dev-frame/sponge/pkg/gotest"
 	"github.com/go-dev-frame/sponge/pkg/httpcli"
 	"github.com/go-dev-frame/sponge/pkg/utils"
-
-	"admin/internal/cache"
-	"admin/internal/dao"
-	"admin/internal/model"
-	"admin/internal/types"
+	"github.com/jinzhu/copier"
+	"github.com/stretchr/testify/assert"
 )
 
 func newRoleHandler() *gotest.Handler {
@@ -38,9 +37,13 @@ func newRoleHandler() *gotest.Handler {
 	d := gotest.NewDao(c, testData)
 	d.IDao = dao.NewRoleDao(d.DB, c.ICache.(cache.RoleCache))
 
+	// init mock roleMenu dao
+	dRoleMenu := gotest.NewDao(c, &model.RoleMenu{})
+	dRoleMenu.IDao = dao.NewRoleMenuDao(dRoleMenu.DB, c.ICache.(cache.RoleMenuCache))
+
 	// init mock handler
 	h := gotest.NewHandler(d, testData)
-	h.IHandler = &roleHandler{iDao: d.IDao.(dao.RoleDao)}
+	h.IHandler = &roleHandler{logic: logic.NewRoleLogicByDAO(d.IDao.(dao.RoleDao), dRoleMenu.IDao.(dao.RoleMenuDao))}
 	iHandler := h.IHandler.(RoleHandler)
 
 	testFns := []gotest.RouterInfo{
@@ -71,14 +74,30 @@ func newRoleHandler() *gotest.Handler {
 		{
 			FuncName:    "List",
 			Method:      http.MethodGet,
-			Path:        "/role/list",
+			Path:        "/role",
 			HandlerFunc: iHandler.List,
+		},
+		{
+			FuncName:    "Options",
+			Method:      http.MethodGet,
+			Path:        "/role/options",
+			HandlerFunc: iHandler.Options,
+		},
+		{
+			FuncName:    "MenuIds",
+			Method:      http.MethodGet,
+			Path:        "/roles/:id/menuIds",
+			HandlerFunc: iHandler.MenuIds,
+		},
+		{
+			FuncName:    "Menus",
+			Method:      http.MethodPut,
+			Path:        "/role/:id/menus",
+			HandlerFunc: iHandler.Menus,
 		},
 	}
 
 	h.GoRunHTTPServer(testFns)
-
-	time.Sleep(time.Millisecond * 200)
 	return h
 }
 
@@ -131,9 +150,14 @@ func Test_roleHandler_DeleteByID(t *testing.T) {
 	//err = httpcli.Delete(result, h.GetRequestURL("DeleteByID", 0))
 	//assert.NoError(t, err)
 
-	// delete error test
+	// delete error test - 为错误测试添加mock期望
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec(expectedSQLForDeletion).
+		WithArgs(expectedArgsForDeletionTime, uint64(111)).
+		WillReturnResult(sqlmock.NewResult(111, 1))
+	h.MockDao.SQLMock.ExpectCommit()
 	err = httpcli.Delete(result, h.GetRequestURL("DeleteByID", 111))
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 func Test_roleHandler_UpdateByID(t *testing.T) {
@@ -161,9 +185,14 @@ func Test_roleHandler_UpdateByID(t *testing.T) {
 	err = httpcli.Put(result, h.GetRequestURL("UpdateByID", 0), testData)
 	assert.NoError(t, err)
 
-	// update error test
+	// update error test - 为错误测试添加mock期望
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
+		WithArgs(h.MockDao.AnyTime, uint64(111)).
+		WillReturnResult(sqlmock.NewResult(111, 1))
+	h.MockDao.SQLMock.ExpectCommit()
 	err = httpcli.Put(result, h.GetRequestURL("UpdateByID", 111), testData)
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 func Test_roleHandler_GetByID(t *testing.T) {
@@ -192,9 +221,13 @@ func Test_roleHandler_GetByID(t *testing.T) {
 	err = httpcli.Get(result, h.GetRequestURL("GetByID", 0))
 	assert.NoError(t, err)
 
-	// get error test
+	// get error test - 为错误测试添加mock期望
+	emptyRows := sqlmock.NewRows([]string{"id"})
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(uint64(111), 1).
+		WillReturnRows(emptyRows)
 	err = httpcli.Get(result, h.GetRequestURL("GetByID", 111))
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 func Test_roleHandler_List(t *testing.T) {
@@ -206,7 +239,17 @@ func Test_roleHandler_List(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id"}).
 		AddRow(testData.ID)
 
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
+	// List方法会调用GetByParams
+	// 1. count查询
+	countRows := sqlmock.NewRows([]string{"count"}).
+		AddRow(1)
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WithArgs(0).
+		WillReturnRows(countRows)
+	// 2. 主查询
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(0, 10).
+		WillReturnRows(rows)
 
 	result := &httpcli.StdResult{}
 	params := httpcli.KV{"page": 1, "pageSize": 10, "sort": "ignore count"}
@@ -223,14 +266,68 @@ func Test_roleHandler_List(t *testing.T) {
 	//assert.NoError(t, err)
 
 	params["sort"] = "unknown-column"
-	// get error test
 	err = httpcli.Post(result, h.GetRequestURL("List"), httpcli.WithParams(params))
 	assert.Error(t, err)
 }
 
-func TestNewRoleHandler(t *testing.T) {
-	defer func() {
-		recover()
-	}()
-	_ = NewRoleHandler()
+func Test_roleHandler_Options(t *testing.T) {
+	h := newRoleHandler()
+	defer h.Close()
+
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(h.TestData.(*model.Role).ID, "test"))
+
+	result := &httpcli.StdResult{}
+	err := httpcli.Get(result, h.GetRequestURL("Options"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
+}
+
+func Test_roleHandler_MenuIds(t *testing.T) {
+	h := newRoleHandler()
+	defer h.Close()
+	testData := h.TestData.(*model.Role)
+
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(testData.ID).
+		WillReturnRows(sqlmock.NewRows([]string{"menu_id"}).AddRow(uint64(1)))
+
+	result := &httpcli.StdResult{}
+	err := httpcli.Get(result, h.GetRequestURL("MenuIds", testData.ID))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
+}
+
+func Test_roleHandler_Menus(t *testing.T) {
+	h := newRoleHandler()
+	defer h.Close()
+	testData := h.TestData.(*model.Role)
+	menuIds := []uint64{1, 2, 3}
+
+	jsonData, _ := json.Marshal(menuIds)
+
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec("DELETE FROM .*").
+		WithArgs(testData.ID).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	h.MockDao.SQLMock.ExpectExec("INSERT INTO .*").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	h.MockDao.SQLMock.ExpectCommit()
+
+	result := &httpcli.StdResult{}
+	err := httpcli.Put(result, h.GetRequestURL("Menus", testData.ID), string(jsonData))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
 }

@@ -1,24 +1,17 @@
 package handler
 
 import (
-	"admin/internal/database"
+	"admin/internal/ecode"
+	"admin/internal/logic"
+	"admin/internal/types"
+	"admin/pkg/gin/handlerfunc"
+	"admin/pkg/gin/validator"
 	"encoding/json"
-	"errors"
-	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/copier"
-
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
 	"github.com/go-dev-frame/sponge/pkg/gin/response"
 	"github.com/go-dev-frame/sponge/pkg/logger"
-	"github.com/go-dev-frame/sponge/pkg/utils"
-
-	"admin/internal/cache"
-	"admin/internal/dao"
-	"admin/internal/ecode"
-	"admin/internal/model"
-	"admin/internal/types"
 )
 
 var _ RoleHandler = (*roleHandler)(nil)
@@ -36,21 +29,13 @@ type RoleHandler interface {
 }
 
 type roleHandler struct {
-	iDao         dao.RoleDao
-	iRoleMenuDao dao.RoleMenuDao
+	logic logic.RoleLogic
 }
 
 // NewRoleHandler creating the handler interface
 func NewRoleHandler() RoleHandler {
 	return &roleHandler{
-		iDao: dao.NewRoleDao(
-			database.GetDB(),
-			cache.NewRoleCache(database.GetCacheType()),
-		),
-		iRoleMenuDao: dao.NewRoleMenuDao(
-			database.GetDB(),
-			cache.NewRoleMenuCache(database.GetCacheType()),
-		),
+		logic: logic.NewRoleLogic(),
 	}
 }
 
@@ -68,28 +53,23 @@ func (h *roleHandler) Create(c *gin.Context) {
 	form := &types.CreateRoleRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
-
-	role := &model.Role{}
-	err = copier.Copy(role, form)
-	if err != nil {
-		response.Error(c, ecode.ErrCreateRole)
-		return
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
 
 	ctx := middleware.WrapCtx(c)
-	err = h.iDao.Create(ctx, role)
+	id, err := h.logic.Create(ctx, form)
 	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
 		logger.Error("Create error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
 
-	response.Success(c, gin.H{"id": role.ID})
+	response.Success(c, gin.H{"id": id})
 }
 
 // DeleteByID delete a record by id
@@ -103,21 +83,20 @@ func (h *roleHandler) Create(c *gin.Context) {
 // @Router /api/v1/role/{id} [delete]
 // @Security BearerAuth
 func (h *roleHandler) DeleteByID(c *gin.Context) {
-	idStr := c.Param("id")
-	if idStr == "" {
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
+	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
-	var ids []uint64
-	for _, v := range strings.Split(idStr, ",") {
-		ids = append(ids, utils.StrToUint64(v))
-	}
-
 	ctx := middleware.WrapCtx(c)
-	err := h.iDao.DeleteByIDs(ctx, ids)
+	err := h.logic.DeleteByID(ctx, id)
 	if err != nil {
-		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", idStr), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
@@ -137,7 +116,7 @@ func (h *roleHandler) DeleteByID(c *gin.Context) {
 // @Router /api/v1/role/{id} [put]
 // @Security BearerAuth
 func (h *roleHandler) UpdateByID(c *gin.Context) {
-	_, id, isAbort := getRoleIDFromPath(c)
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
 	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
@@ -146,23 +125,18 @@ func (h *roleHandler) UpdateByID(c *gin.Context) {
 	form := &types.UpdateRoleByIDRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 	form.ID = id
 
-	role := &model.Role{}
-	err = copier.Copy(role, form)
-	if err != nil {
-		response.Error(c, ecode.ErrUpdateByIDRole)
-		return
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
-
 	ctx := middleware.WrapCtx(c)
-	err = h.iDao.UpdateByID(ctx, role)
+	err = h.logic.UpdateByID(ctx, form)
 	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
 		logger.Error("UpdateByID error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
@@ -182,32 +156,23 @@ func (h *roleHandler) UpdateByID(c *gin.Context) {
 // @Router /api/v1/role/{id} [get]
 // @Security BearerAuth
 func (h *roleHandler) GetByID(c *gin.Context) {
-	_, id, isAbort := getRoleIDFromPath(c)
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
 	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
 	ctx := middleware.WrapCtx(c)
-	role, err := h.iDao.GetByID(ctx, id)
+	data, err := h.logic.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, database.ErrRecordNotFound) {
-			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Error(c, ecode.NotFound)
-		} else {
-			logger.Error("GetByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
 		}
+		logger.Error("GetByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
-
-	data := &types.RoleObjDetail{}
-	err = copier.Copy(data, role)
-	if err != nil {
-		response.Error(c, ecode.ErrGetByIDRole)
-		return
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
 
 	response.Success(c, data)
 }
@@ -226,22 +191,19 @@ func (h *roleHandler) List(c *gin.Context) {
 	request := &types.ListRolesRequest{}
 	err := c.ShouldBindQuery(request)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 
 	ctx := middleware.WrapCtx(c)
-	roles, total, err := h.iDao.GetByParams(ctx, request)
+	data, total, err := h.logic.List(ctx, request)
 	if err != nil {
-		logger.Error("GetByParams error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("List error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
-		return
-	}
-
-	data, err := convertRoles(roles)
-	if err != nil {
-		response.Error(c, ecode.ErrListRole)
 		return
 	}
 
@@ -249,41 +211,6 @@ func (h *roleHandler) List(c *gin.Context) {
 		"list":  data,
 		"total": total,
 	})
-}
-
-func getRoleIDFromPath(c *gin.Context) (string, uint64, bool) {
-	idStr := c.Param("id")
-	id, err := utils.StrToUint64E(idStr)
-	if err != nil || id == 0 {
-		logger.Warn("StrToUint64E error: ", logger.String("idStr", idStr), middleware.GCtxRequestIDField(c))
-		return "", 0, true
-	}
-
-	return idStr, id, false
-}
-
-func convertRole(role *model.Role) (*types.RoleObjDetail, error) {
-	data := &types.RoleObjDetail{}
-	err := copier.Copy(data, role)
-	if err != nil {
-		return nil, err
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
-
-	return data, nil
-}
-
-func convertRoles(fromValues []*model.Role) ([]*types.RoleObjDetail, error) {
-	toValues := []*types.RoleObjDetail{}
-	for _, v := range fromValues {
-		data, err := convertRole(v)
-		if err != nil {
-			return nil, err
-		}
-		toValues = append(toValues, data)
-	}
-
-	return toValues, nil
 }
 
 // Options get role options
@@ -297,18 +224,15 @@ func convertRoles(fromValues []*model.Role) ([]*types.RoleObjDetail, error) {
 // @Security BearerAuth
 func (h *roleHandler) Options(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
-	status := 1
-	params := types.ListRolesRequest{
-		Sort:   "sort",
-		Status: &status,
-	}
-	roles, _, _ := h.iDao.GetByParams(ctx, &params)
-	var options []types.Options
-	for _, role := range roles {
-		options = append(options, types.Options{
-			Value: role.ID,
-			Label: role.Name,
-		})
+	options, err := h.logic.Options(ctx)
+	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("Options error", logger.Err(err), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		return
 	}
 	response.Success(c, options)
 }
@@ -323,20 +247,22 @@ func (h *roleHandler) Options(c *gin.Context) {
 // @Router /api/v1/roles/{id}/menuIds [get]
 // @Security BearerAuth
 func (h *roleHandler) MenuIds(c *gin.Context) {
-	_, id, isAbort := getRoleIDFromPath(c)
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
 	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
 	}
-	var menuIds []uint64
-	params := types.ListRoleMenusRequest{
-		RoleId: &id,
-	}
-	ctx := middleware.WrapCtx(c)
-	roleMenus, _, _ := h.iRoleMenuDao.GetByParams(ctx, &params)
 
-	for _, roleMenu := range roleMenus {
-		menuIds = append(menuIds, roleMenu.MenuID)
+	ctx := middleware.WrapCtx(c)
+	menuIds, err := h.logic.MenuIds(ctx, id)
+	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("MenuIds error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		return
 	}
 
 	response.Success(c, menuIds)
@@ -353,7 +279,7 @@ func (h *roleHandler) MenuIds(c *gin.Context) {
 // @Router /api/v1/role/{id}/menus [put]
 // @Security BearerAuth
 func (h *roleHandler) Menus(c *gin.Context) {
-	_, id, isAbort := getRoleIDFromPath(c)
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
 	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
@@ -372,9 +298,13 @@ func (h *roleHandler) Menus(c *gin.Context) {
 	}
 
 	ctx := middleware.WrapCtx(c)
-	err = h.iRoleMenuDao.UpdateByRoleIds(ctx, id, menuIds)
+	err = h.logic.Menus(ctx, id, menuIds)
 	if err != nil {
-		logger.Error("UpdateByRoleId error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("Menus error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}

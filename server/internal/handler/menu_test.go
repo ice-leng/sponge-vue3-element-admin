@@ -2,6 +2,7 @@ package handler
 
 import (
 	"admin/internal/database"
+	"admin/internal/logic"
 	"net/http"
 	"testing"
 	"time"
@@ -40,7 +41,7 @@ func newMenuHandler() *gotest.Handler {
 
 	// init mock handler
 	h := gotest.NewHandler(d, testData)
-	h.IHandler = &menuHandler{iDao: d.IDao.(dao.MenuDao)}
+	h.IHandler = &menuHandler{logic: logic.NewMenuLogicByDAO(d.IDao.(dao.MenuDao))}
 	iHandler := h.IHandler.(MenuHandler)
 
 	testFns := []gotest.RouterInfo{

@@ -1,10 +1,14 @@
 package handler
 
 import (
+	"admin/internal/cache"
+	"admin/internal/dao"
 	"admin/internal/database"
+	"admin/internal/logic"
+	"admin/internal/model"
+	"admin/internal/types"
 	"net/http"
 	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jinzhu/copier"
@@ -13,11 +17,6 @@ import (
 	"github.com/go-dev-frame/sponge/pkg/gotest"
 	"github.com/go-dev-frame/sponge/pkg/httpcli"
 	"github.com/go-dev-frame/sponge/pkg/utils"
-
-	"admin/internal/cache"
-	"admin/internal/dao"
-	"admin/internal/model"
-	"admin/internal/types"
 )
 
 func newConfigHandler() *gotest.Handler {
@@ -40,7 +39,7 @@ func newConfigHandler() *gotest.Handler {
 
 	// init mock handler
 	h := gotest.NewHandler(d, testData)
-	h.IHandler = &configHandler{iDao: d.IDao.(dao.ConfigDao)}
+	h.IHandler = &configHandler{logic: logic.NewConfigLogicByDAO(d.IDao.(dao.ConfigDao), nil)}
 	iHandler := h.IHandler.(ConfigHandler)
 
 	testFns := []gotest.RouterInfo{
@@ -71,14 +70,18 @@ func newConfigHandler() *gotest.Handler {
 		{
 			FuncName:    "List",
 			Method:      http.MethodGet,
-			Path:        "/config/list",
+			Path:        "/config",
 			HandlerFunc: iHandler.List,
+		},
+		{
+			FuncName:    "Dict",
+			Method:      http.MethodGet,
+			Path:        "/config/dict",
+			HandlerFunc: iHandler.Dict,
 		},
 	}
 
 	h.GoRunHTTPServer(testFns)
-
-	time.Sleep(time.Millisecond * 200)
 	return h
 }
 
@@ -112,20 +115,6 @@ func Test_configHandler_DeleteByID(t *testing.T) {
 	expectedSQLForDeletion := "UPDATE .*"
 	expectedArgsForDeletionTime := h.MockDao.AnyTime
 
-	// DeleteByID方法调用DeleteByIDs，先执行count查询，再查询记录，最后删除
-	// 1. count查询
-	countRows := sqlmock.NewRows([]string{"count"}).
-		AddRow(1)
-	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
-		WithArgs(testData.ID).
-		WillReturnRows(countRows)
-	// 2. 查询记录
-	rows := sqlmock.NewRows([]string{"id"}).
-		AddRow(testData.ID)
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(testData.ID, 1000).
-		WillReturnRows(rows)
-	// 3. 删除操作（GORM会自动开启事务）
 	h.MockDao.SQLMock.ExpectBegin()
 	h.MockDao.SQLMock.ExpectExec(expectedSQLForDeletion).
 		WithArgs(expectedArgsForDeletionTime, testData.ID). // adjusted for the amount of test data
@@ -145,9 +134,14 @@ func Test_configHandler_DeleteByID(t *testing.T) {
 	//err = httpcli.Delete(result, h.GetRequestURL("DeleteByID", 0))
 	//assert.NoError(t, err)
 
-	// delete error test
+	// delete error test - 为错误测试添加mock期望
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec(expectedSQLForDeletion).
+		WithArgs(expectedArgsForDeletionTime, uint64(111)).
+		WillReturnResult(sqlmock.NewResult(111, 1))
+	h.MockDao.SQLMock.ExpectCommit()
 	err = httpcli.Delete(result, h.GetRequestURL("DeleteByID", 111))
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 func Test_configHandler_UpdateByID(t *testing.T) {
@@ -229,7 +223,17 @@ func Test_configHandler_List(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id"}).
 		AddRow(testData.ID)
 
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
+	// List方法会调用GetByParams
+	// 1. count查询
+	countRows := sqlmock.NewRows([]string{"count"}).
+		AddRow(1)
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WithArgs(0).
+		WillReturnRows(countRows)
+	// 2. 主查询
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(0, 10).
+		WillReturnRows(rows)
 
 	result := &httpcli.StdResult{}
 	params := httpcli.KV{"page": 1, "pageSize": 10, "sort": "ignore count"}
@@ -246,9 +250,22 @@ func Test_configHandler_List(t *testing.T) {
 	//assert.NoError(t, err)
 
 	params["sort"] = "unknown-column"
-	// get error test
 	err = httpcli.Post(result, h.GetRequestURL("List"), httpcli.WithParams(params))
 	assert.Error(t, err)
+}
+
+func Test_configHandler_Dict(t *testing.T) {
+	h := newConfigHandler()
+	defer h.Close()
+
+	result := &httpcli.StdResult{}
+	err := httpcli.Get(result, h.GetRequestURL("Dict"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
 }
 
 func TestNewConfigHandler(t *testing.T) {

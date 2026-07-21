@@ -31,9 +31,9 @@ type PlatformLogic interface {
 }
 
 type platformLogic struct {
-	iDao       dao.PlatformDao
-	iRoleDao   dao.RoleDao
-	iConfigDao dao.ConfigDao
+	iDao        dao.PlatformDao
+	iRoleDao    dao.RoleDao
+	configLogic ConfigLogic
 }
 
 func NewPlatformLogic() PlatformLogic {
@@ -46,18 +46,15 @@ func NewPlatformLogic() PlatformLogic {
 			database.GetDB(),
 			cache.NewRoleCache(database.GetCacheType()),
 		),
-		dao.NewConfigDao(
-			database.GetDB(),
-			cache.NewConfigCache(database.GetCacheType()),
-		),
+		NewConfigLogic(),
 	)
 }
 
-func NewPlatformLogicByDAO(iDao dao.PlatformDao, iRoleDao dao.RoleDao, iConfigDao dao.ConfigDao) PlatformLogic {
+func NewPlatformLogicByDAO(iDao dao.PlatformDao, iRoleDao dao.RoleDao, configLogic ConfigLogic) PlatformLogic {
 	return &platformLogic{
-		iDao:       iDao,
-		iRoleDao:   iRoleDao,
-		iConfigDao: iConfigDao,
+		iDao:        iDao,
+		iRoleDao:    iRoleDao,
+		configLogic: configLogic,
 	}
 }
 
@@ -99,7 +96,7 @@ func (p platformLogic) GetByID(ctx context.Context, id uint64) (*types.PlatformO
 		}
 		return nil, err
 	}
-	result.Avatar = p.iConfigDao.MakePathByConfig(ctx, result.Avatar, constant.ConfigKeyImageDomain)
+	result.Avatar = p.configLogic.MakePathByConfig(ctx, result.Avatar, constant.ConfigKeyImageDomain)
 
 	roleCodes := make(map[uint64]string)
 	roles, _ := p.iRoleDao.GetByIDs(ctx, result.RoleID)

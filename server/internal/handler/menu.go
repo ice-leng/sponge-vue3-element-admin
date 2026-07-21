@@ -1,24 +1,16 @@
 package handler
 
 import (
-	"admin/internal/database"
-	"errors"
-	"github.com/huandu/xstrings"
-	"strings"
+	"admin/internal/ecode"
+	"admin/internal/logic"
+	"admin/internal/types"
+	"admin/pkg/gin/handlerfunc"
+	"admin/pkg/gin/validator"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/copier"
-
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
 	"github.com/go-dev-frame/sponge/pkg/gin/response"
 	"github.com/go-dev-frame/sponge/pkg/logger"
-	"github.com/go-dev-frame/sponge/pkg/utils"
-
-	"admin/internal/cache"
-	"admin/internal/dao"
-	"admin/internal/ecode"
-	"admin/internal/model"
-	"admin/internal/types"
 )
 
 var _ MenuHandler = (*menuHandler)(nil)
@@ -35,16 +27,13 @@ type MenuHandler interface {
 }
 
 type menuHandler struct {
-	iDao dao.MenuDao
+	logic logic.MenuLogic
 }
 
 // NewMenuHandler creating the handler interface
 func NewMenuHandler() MenuHandler {
 	return &menuHandler{
-		iDao: dao.NewMenuDao(
-			database.GetDB(),
-			cache.NewMenuCache(database.GetCacheType()),
-		),
+		logic: logic.NewMenuLogic(),
 	}
 }
 
@@ -62,28 +51,23 @@ func (h *menuHandler) Create(c *gin.Context) {
 	form := &types.CreateMenuRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
-
-	menu := &model.Menu{}
-	err = copier.Copy(menu, form)
-	if err != nil {
-		response.Error(c, ecode.ErrCreateMenu)
-		return
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
 
 	ctx := middleware.WrapCtx(c)
-	err = h.iDao.Create(ctx, menu)
+	id, err := h.logic.Create(ctx, form)
 	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
 		logger.Error("Create error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
 
-	response.Success(c, gin.H{"id": menu.ID})
+	response.Success(c, gin.H{"id": id})
 }
 
 // DeleteByID delete a record by id
@@ -97,21 +81,20 @@ func (h *menuHandler) Create(c *gin.Context) {
 // @Router /api/v1/menu/{id} [delete]
 // @Security BearerAuth
 func (h *menuHandler) DeleteByID(c *gin.Context) {
-	idStr := c.Param("id")
-	if idStr == "" {
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
+	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
-	var ids []uint64
-	for _, v := range strings.Split(idStr, ",") {
-		ids = append(ids, utils.StrToUint64(v))
-	}
-
 	ctx := middleware.WrapCtx(c)
-	err := h.iDao.DeleteByIDs(ctx, ids)
+	err := h.logic.DeleteByID(ctx, id)
 	if err != nil {
-		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", idStr), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("DeleteByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
@@ -131,7 +114,7 @@ func (h *menuHandler) DeleteByID(c *gin.Context) {
 // @Router /api/v1/menu/{id} [put]
 // @Security BearerAuth
 func (h *menuHandler) UpdateByID(c *gin.Context) {
-	_, id, isAbort := getMenuIDFromPath(c)
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
 	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
@@ -140,23 +123,18 @@ func (h *menuHandler) UpdateByID(c *gin.Context) {
 	form := &types.UpdateMenuByIDRequest{}
 	err := c.ShouldBindJSON(form)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 	form.ID = id
 
-	menu := &model.Menu{}
-	err = copier.Copy(menu, form)
-	if err != nil {
-		response.Error(c, ecode.ErrUpdateByIDMenu)
-		return
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
-
 	ctx := middleware.WrapCtx(c)
-	err = h.iDao.UpdateByID(ctx, menu)
+	err = h.logic.UpdateByID(ctx, form)
 	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
 		logger.Error("UpdateByID error", logger.Err(err), logger.Any("form", form), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
@@ -176,33 +154,23 @@ func (h *menuHandler) UpdateByID(c *gin.Context) {
 // @Router /api/v1/menu/{id} [get]
 // @Security BearerAuth
 func (h *menuHandler) GetByID(c *gin.Context) {
-	_, id, isAbort := getMenuIDFromPath(c)
+	_, id, isAbort := handlerfunc.GetIdFromPath(c)
 	if isAbort {
 		response.Error(c, ecode.InvalidParams)
 		return
 	}
 
 	ctx := middleware.WrapCtx(c)
-	menu, err := h.iDao.GetByID(ctx, id)
+	data, err := h.logic.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, database.ErrRecordNotFound) {
-			logger.Warn("GetByID not found", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Error(c, ecode.NotFound)
-		} else {
-			logger.Error("GetByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
-			response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
 		}
+		logger.Error("GetByID error", logger.Err(err), logger.Any("id", id), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
-
-	data := &types.MenuObjDetail{}
-	err = copier.Copy(data, menu)
-	if err != nil {
-		response.Error(c, ecode.ErrGetByIDMenu)
-		return
-	}
-	data.RouteName = xstrings.FirstRuneToUpper(data.Path)
-	// Note: if copier.Copy cannot assign a value to a field, add it here
 
 	response.Success(c, data)
 }
@@ -221,31 +189,26 @@ func (h *menuHandler) List(c *gin.Context) {
 	request := &types.ListMenusRequest{}
 	err := c.ShouldBindQuery(request)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 
 	ctx := middleware.WrapCtx(c)
-	var pid uint64 = 0
-	request.Sort = "id"
-	if request.ParentID == nil {
-		request.ParentID = &pid
-	}
-	menus, _, err := h.iDao.GetByParams(ctx, request)
+	data, total, err := h.logic.List(ctx, request)
 	if err != nil {
-		logger.Error("GetByParams error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
+		logger.Error("List error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
 	}
 
-	data, err := h.convertMenus(c, request, menus)
-	if err != nil {
-		response.Error(c, ecode.ErrListMenu)
-		return
-	}
-
-	response.Success(c, data)
+	response.Success(c, gin.H{
+		"list":  data,
+		"total": total,
+	})
 }
 
 // Routes of records routes
@@ -260,8 +223,12 @@ func (h *menuHandler) List(c *gin.Context) {
 func (h *menuHandler) Routes(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)
 	roleIds, _ := c.Get("roleId")
-	result, err := h.iDao.Routes(ctx, roleIds.(types.LocalIntArray))
+	result, err := h.logic.Routes(ctx, roleIds.(types.LocalIntArray))
 	if err != nil {
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
+		}
 		logger.Error("Routes error", logger.Err(err), logger.Any("roleIds", roleIds), middleware.GCtxRequestIDField(c))
 		response.Output(c, ecode.InternalServerError.ToHTTPCode())
 		return
@@ -283,59 +250,20 @@ func (h *menuHandler) Options(c *gin.Context) {
 	request := &types.OptionMenusRequest{}
 	err := c.ShouldBindQuery(request)
 	if err != nil {
-		logger.Warn("ShouldBindJSON error: ", logger.Err(err), middleware.GCtxRequestIDField(c))
-		response.Error(c, ecode.InvalidParams)
+		response.Error(c, ecode.InvalidParams.RewriteMsg(validator.GetValidatorErrorMsg(err)))
 		return
 	}
 
 	ctx := middleware.WrapCtx(c)
-	options, _ := h.iDao.Options(ctx, request)
-	response.Success(c, options)
-}
-
-func getMenuIDFromPath(c *gin.Context) (string, uint64, bool) {
-	idStr := c.Param("id")
-	id, err := utils.StrToUint64E(idStr)
-	if err != nil || id == 0 {
-		logger.Warn("StrToUint64E error: ", logger.String("idStr", idStr), middleware.GCtxRequestIDField(c))
-		return "", 0, true
-	}
-
-	return idStr, id, false
-}
-
-func (h *menuHandler) convertMenu(c *gin.Context, request *types.ListMenusRequest, menu *model.Menu) (*types.MenuObjPage, error) {
-	data := &types.MenuObjPage{}
-	err := copier.Copy(data, menu)
+	options, err := h.logic.Options(ctx, request)
 	if err != nil {
-		return nil, err
-	}
-	// Note: if copier.Copy cannot assign a value to a field, add it here
-	data.RouteName = menu.Name
-	ctx := middleware.WrapCtx(c)
-
-	request.ParentID = &menu.ID
-	menus, _, err2 := h.iDao.GetByParams(ctx, request)
-	if err2 != nil {
-		return nil, err2
-	}
-	children, err3 := h.convertMenus(c, request, menus)
-	if err3 != nil {
-		return nil, err3
-	}
-	data.Children = children
-	return data, nil
-}
-
-func (h *menuHandler) convertMenus(c *gin.Context, request *types.ListMenusRequest, fromValues []*model.Menu) ([]*types.MenuObjPage, error) {
-	toValues := []*types.MenuObjPage{}
-	for _, v := range fromValues {
-		data, err := h.convertMenu(c, request, v)
-		if err != nil {
-			return nil, err
+		if ec, ok := handlerfunc.IsErrcode(err); ok {
+			response.Error(c, ec)
+			return
 		}
-		toValues = append(toValues, data)
+		logger.Error("Options error", logger.Err(err), logger.Any("request", request), middleware.GCtxRequestIDField(c))
+		response.Output(c, ecode.InternalServerError.ToHTTPCode())
+		return
 	}
-
-	return toValues, nil
+	response.Success(c, options)
 }

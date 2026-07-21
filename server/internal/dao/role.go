@@ -2,7 +2,6 @@ package dao
 
 import (
 	"admin/internal/database"
-	"admin/internal/types"
 	"context"
 	"errors"
 
@@ -28,7 +27,6 @@ type RoleDao interface {
 	GetByID(ctx context.Context, id uint64) (*model.Role, error)
 	GetByIDs(ctx context.Context, ids []uint64) (map[uint64]*model.Role, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Role, int64, error)
-	GetByParams(ctx context.Context, params *types.ListRolesRequest) ([]*model.Role, int64, error)
 	GetPermissionsByIds(ctx context.Context, ids []uint64) ([]string, error)
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Role) (uint64, error)
@@ -326,37 +324,6 @@ func (d *roleDao) GetByColumns(ctx context.Context, params *query.Params) ([]*mo
 		return nil, 0, err
 	}
 
-	return records, total, err
-}
-
-func (d *roleDao) GetByParams(ctx context.Context, request *types.ListRolesRequest) ([]*model.Role, int64, error) {
-	page := query.NewPage(request.Page-1, request.PageSize, request.Sort)
-
-	db := d.db.WithContext(ctx).Model(&model.Role{}).Order(page.Sort())
-	if request.Status != nil {
-		db = db.Where("status = ?", request.Status)
-	}
-
-	var total int64 = 0
-	if request.Sort != "ignore count" { // determine if count is required
-		err := db.Count(&total).Error
-		if err != nil {
-			return nil, 0, err
-		}
-		if total == 0 {
-			return nil, total, nil
-		}
-	}
-
-	if request.PageSize > 0 {
-		db = db.Limit(page.Limit()).Offset(page.Page() * page.Limit())
-	}
-
-	records := []*model.Role{}
-	err := db.Find(&records).Error
-	if err != nil {
-		return nil, 0, err
-	}
 	return records, total, err
 }
 

@@ -1,21 +1,17 @@
 package dao
 
 import (
+	"admin/internal/cache"
 	"admin/internal/database"
-	"admin/internal/types"
-	"admin/pkg/util/imagex"
+	"admin/internal/model"
 	"context"
 	"errors"
 
 	"github.com/go-dev-frame/sponge/pkg/logger"
 	"github.com/go-dev-frame/sponge/pkg/sgorm/query"
 	"github.com/go-dev-frame/sponge/pkg/utils"
-
 	"golang.org/x/sync/singleflight"
 	"gorm.io/gorm"
-
-	"admin/internal/cache"
-	"admin/internal/model"
 )
 
 var _ ConfigDao = (*configDao)(nil)
@@ -27,14 +23,12 @@ type ConfigDao interface {
 	DeleteByIDs(ctx context.Context, ids []uint64) error
 	UpdateByID(ctx context.Context, table *model.Config) error
 	GetByID(ctx context.Context, id uint64) (*model.Config, error)
+	GetByKey(ctx context.Context, key string) (*model.Config, error)
 	GetByColumns(ctx context.Context, params *query.Params) ([]*model.Config, int64, error)
-	GetByParams(ctx context.Context, params *types.ListConfigsRequest) ([]*model.Config, int64, error)
 
 	CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Config) (uint64, error)
 	DeleteByTx(ctx context.Context, tx *gorm.DB, id uint64) error
 	UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.Config) error
-
-	MakePathByConfig(ctx context.Context, path, key string) string
 }
 
 type configDao struct {
@@ -135,14 +129,14 @@ func (d *configDao) updateDataByID(ctx context.Context, db *gorm.DB, table *mode
 	if table.Name != "" {
 		update["name"] = table.Name
 	}
-	if table.Description != "" {
-		update["description"] = table.Description
-	}
 	if table.Key != "" {
 		update["key"] = table.Key
 	}
 	if table.Value != "" {
 		update["value"] = table.Value
+	}
+	if table.Description != "" {
+		update["description"] = table.Description
 	}
 
 	return db.WithContext(ctx).Model(table).Updates(update).Error
@@ -163,6 +157,7 @@ func (d *configDao) GetByID(ctx context.Context, id uint64) (*model.Config, erro
 		return record, nil
 	}
 
+	// get from database
 	if errors.Is(err, database.ErrCacheNotFound) {
 		// for the same id, prevent high concurrent simultaneous access to database
 		val, err, _ := d.sfg.Do(utils.Uint64ToStr(id), func() (interface{}, error) { //nolint
@@ -315,42 +310,6 @@ func (d *configDao) GetByColumns(ctx context.Context, params *query.Params) ([]*
 	return records, total, err
 }
 
-func (d *configDao) GetByParams(ctx context.Context, request *types.ListConfigsRequest) ([]*model.Config, int64, error) {
-	page := query.NewPage(request.Page-1, request.PageSize, request.Sort)
-
-	db := d.db.WithContext(ctx).Model(&model.Config{}).Order(page.Sort())
-	if request.StartTime != "" && request.EndTime != "" {
-		db = db.Where("created_at BETWEEN ? AND ?", request.StartTime, request.EndTime)
-	}
-
-	if request.Name != "" {
-		db = db.Where("name LIKE ?", "%"+request.Name+"%").
-			Or("`key` LIKE ?", "%"+request.Name+"%")
-	}
-
-	var total int64 = 0
-	if request.Sort != "ignore count" { // determine if count is required
-		err := db.Count(&total).Error
-		if err != nil {
-			return nil, 0, err
-		}
-		if total == 0 {
-			return nil, total, nil
-		}
-	}
-
-	if request.PageSize > 0 {
-		db = db.Limit(page.Limit()).Offset(page.Page() * page.Limit())
-	}
-
-	records := []*model.Config{}
-	err := db.Find(&records).Error
-	if err != nil {
-		return nil, 0, err
-	}
-	return records, total, err
-}
-
 // CreateByTx create a record in the database using the provided transaction
 func (d *configDao) CreateByTx(ctx context.Context, tx *gorm.DB, table *model.Config) (uint64, error) {
 	err := tx.WithContext(ctx).Create(table).Error
@@ -383,13 +342,4 @@ func (d *configDao) UpdateByTx(ctx context.Context, tx *gorm.DB, table *model.Co
 	_ = d.deleteCache(ctx, table)
 
 	return err
-}
-
-func (d *configDao) MakePathByConfig(ctx context.Context, path, key string) string {
-	host := ""
-	config, _ := d.GetByKey(ctx, key)
-	if config != nil {
-		host = config.Value
-	}
-	return imagex.ImageMakePath(path, host)
 }

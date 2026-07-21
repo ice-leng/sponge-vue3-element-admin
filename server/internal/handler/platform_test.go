@@ -1,29 +1,27 @@
 package handler
 
 import (
+	"admin/internal/cache"
+	"admin/internal/dao"
 	"admin/internal/database"
+	"admin/internal/logic"
+	"admin/internal/model"
+	"admin/internal/types"
 	"net/http"
 	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jinzhu/copier"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/go-dev-frame/sponge/pkg/gotest"
 	"github.com/go-dev-frame/sponge/pkg/httpcli"
 	"github.com/go-dev-frame/sponge/pkg/utils"
-
-	"admin/internal/cache"
-	"admin/internal/dao"
-	"admin/internal/model"
-	"admin/internal/types"
+	"github.com/jinzhu/copier"
+	
 )
 
 func newPlatformHandler() *gotest.Handler {
 	testData := &model.Platform{}
 	testData.ID = 1
-	testData.RoleID = []uint64{1} // 设置RoleID字段，避免convertPlatforms中的空指针异常
 	// you can set the other fields of testData here, such as:
 	//testData.CreatedAt = time.Now()
 	//testData.UpdatedAt = testData.CreatedAt
@@ -39,13 +37,22 @@ func newPlatformHandler() *gotest.Handler {
 	d := gotest.NewDao(c, testData)
 	d.IDao = dao.NewPlatformDao(d.DB, c.ICache.(cache.PlatformCache))
 
+	// init mock role dao
+	dRole := gotest.NewDao(c, &model.Role{})
+	dRole.IDao = dao.NewRoleDao(dRole.DB, c.ICache.(cache.RoleCache))
+
+	// init mock config dao
+	dConfig := gotest.NewDao(c, &model.Config{})
+	dConfig.IDao = dao.NewConfigDao(dConfig.DB, c.ICache.(cache.ConfigCache))
+
 	// init mock handler
 	h := gotest.NewHandler(d, testData)
-	// platformHandler需要iRoleDao字段来查询角色信息
-	roleDao := dao.NewRoleDao(d.DB, nil)
 	h.IHandler = &platformHandler{
-		iDao:     d.IDao.(dao.PlatformDao),
-		iRoleDao: roleDao,
+		logic: logic.NewPlatformLogicByDAO(
+			d.IDao.(dao.PlatformDao),
+			dRole.IDao.(dao.RoleDao),
+			dConfig.IDao.(dao.ConfigDao),
+		),
 	}
 	iHandler := h.IHandler.(PlatformHandler)
 
@@ -77,8 +84,38 @@ func newPlatformHandler() *gotest.Handler {
 		{
 			FuncName:    "List",
 			Method:      http.MethodGet,
-			Path:        "/platform/list",
+			Path:        "/platform",
 			HandlerFunc: iHandler.List,
+		},
+		{
+			FuncName:    "Me",
+			Method:      http.MethodGet,
+			Path:        "/platform/me",
+			HandlerFunc: iHandler.Me,
+		},
+		{
+			FuncName:    "GetProfile",
+			Method:      http.MethodGet,
+			Path:        "/platform/profile",
+			HandlerFunc: iHandler.GetProfile,
+		},
+		{
+			FuncName:    "UpdateProfile",
+			Method:      http.MethodPut,
+			Path:        "/platform/profile",
+			HandlerFunc: iHandler.UpdateProfile,
+		},
+		{
+			FuncName:    "ChangePassword",
+			Method:      http.MethodPut,
+			Path:        "/platform/password",
+			HandlerFunc: iHandler.ChangePassword,
+		},
+		{
+			FuncName:    "ResetPassword",
+			Method:      http.MethodPut,
+			Path:        "/platform/password/reset",
+			HandlerFunc: iHandler.ResetPassword,
 		},
 	}
 
@@ -108,43 +145,26 @@ func Test_platformHandler_Create(t *testing.T) {
 	}
 
 	t.Logf("%+v", result)
-
 }
 
 func Test_platformHandler_DeleteByID(t *testing.T) {
 	h := newPlatformHandler()
 	defer h.Close()
-	testData := h.TestData.(*model.Platform)
-	expectedSQLForDeletion := "UPDATE .*"
-	expectedArgsForDeletionTime := h.MockDao.AnyTime
 
 	h.MockDao.SQLMock.ExpectBegin()
-	h.MockDao.SQLMock.ExpectExec(expectedSQLForDeletion).
-		WithArgs(expectedArgsForDeletionTime, testData.ID). // adjusted for the amount of test data
-		WillReturnResult(sqlmock.NewResult(int64(testData.ID), 1))
+	h.MockDao.SQLMock.ExpectExec("DELETE FROM .*").
+		WithArgs(h.TestData.(*model.Platform).ID).
+		WillReturnResult(sqlmock.NewResult(0, 1))
 	h.MockDao.SQLMock.ExpectCommit()
 
 	result := &httpcli.StdResult{}
-	err := httpcli.Delete(result, h.GetRequestURL("DeleteByID", testData.ID))
+	err := httpcli.Delete(result, h.GetRequestURL("DeleteByID", h.TestData.(*model.Platform).ID))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if result.Code != 0 {
 		t.Fatalf("%+v", result)
 	}
-
-	// zero id error test
-	//err = httpcli.Delete(result, h.GetRequestURL("DeleteByID", 0))
-	//assert.NoError(t, err)
-
-	// delete error test - 为错误测试添加mock期望
-	h.MockDao.SQLMock.ExpectBegin()
-	h.MockDao.SQLMock.ExpectExec(expectedSQLForDeletion).
-		WithArgs(expectedArgsForDeletionTime, uint64(111)).
-		WillReturnResult(sqlmock.NewResult(111, 1))
-	h.MockDao.SQLMock.ExpectCommit()
-	err = httpcli.Delete(result, h.GetRequestURL("DeleteByID", 111))
-	assert.NoError(t, err)
 }
 
 func Test_platformHandler_UpdateByID(t *testing.T) {
@@ -155,34 +175,59 @@ func Test_platformHandler_UpdateByID(t *testing.T) {
 
 	h.MockDao.SQLMock.ExpectBegin()
 	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
-		WithArgs([]uint8{91, 49, 93}, h.MockDao.AnyTime, testData.ID). // role_id序列化为字节数组, updated_at, id
-		WillReturnResult(sqlmock.NewResult(int64(testData.ID), 1))
+		WithArgs(h.MockDao.GetAnyArgs(h.TestData)...).
+		WillReturnResult(sqlmock.NewResult(0, 1))
 	h.MockDao.SQLMock.ExpectCommit()
 
 	result := &httpcli.StdResult{}
-	err := httpcli.Put(result, h.GetRequestURL("UpdateByID", testData.ID), testData)
+	err := httpcli.Put(result, h.GetRequestURL("UpdateByID", h.TestData.(*model.Platform).ID), testData)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if result.Code != 0 {
 		t.Fatalf("%+v", result)
 	}
-
-	// zero id error test
-	err = httpcli.Put(result, h.GetRequestURL("UpdateByID", 0), testData)
-	assert.NoError(t, err)
-
-	// update error test - 为错误测试添加mock期望
-	h.MockDao.SQLMock.ExpectBegin()
-	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
-		WithArgs([]uint8{91, 49, 93}, h.MockDao.AnyTime, uint64(111)). // role_id序列化为字节数组, updated_at, id
-		WillReturnResult(sqlmock.NewResult(111, 1))
-	h.MockDao.SQLMock.ExpectCommit()
-	err = httpcli.Put(result, h.GetRequestURL("UpdateByID", 111), testData)
-	assert.NoError(t, err)
 }
 
 func Test_platformHandler_GetByID(t *testing.T) {
+	h := newPlatformHandler()
+	defer h.Close()
+
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(h.TestData.(*model.Platform).ID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(h.TestData.(*model.Platform).ID))
+
+	result := &httpcli.StdResult{}
+	err := httpcli.Get(result, h.GetRequestURL("GetByID", h.TestData.(*model.Platform).ID))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
+}
+
+func Test_platformHandler_List(t *testing.T) {
+	h := newPlatformHandler()
+	defer h.Close()
+
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(h.TestData.(*model.Platform).ID))
+
+	result := &httpcli.StdResult{}
+	params := httpcli.KV{"page": 1, "pageSize": 10, "sort": "ignore count"}
+	err := httpcli.Get(result, h.GetRequestURL("List"), httpcli.WithParams(params))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
+}
+
+func Test_platformHandler_Me(t *testing.T) {
 	h := newPlatformHandler()
 	defer h.Close()
 	testData := h.TestData.(*model.Platform)
@@ -196,28 +241,16 @@ func Test_platformHandler_GetByID(t *testing.T) {
 		WillReturnRows(rows)
 
 	result := &httpcli.StdResult{}
-	err := httpcli.Get(result, h.GetRequestURL("GetByID", testData.ID))
+	err := httpcli.Get(result, h.GetRequestURL("Me"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if result.Code != 0 {
 		t.Fatalf("%+v", result)
 	}
-
-	// zero id error test
-	err = httpcli.Get(result, h.GetRequestURL("GetByID", 0))
-	assert.NoError(t, err)
-
-	// get error test - 为错误测试添加mock期望
-	emptyRows := sqlmock.NewRows([]string{"id"})
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(uint64(111), 1).
-		WillReturnRows(emptyRows)
-	err = httpcli.Get(result, h.GetRequestURL("GetByID", 111))
-	assert.NoError(t, err)
 }
 
-func Test_platformHandler_List(t *testing.T) {
+func Test_platformHandler_GetProfile(t *testing.T) {
 	h := newPlatformHandler()
 	defer h.Close()
 	testData := h.TestData.(*model.Platform)
@@ -226,34 +259,84 @@ func Test_platformHandler_List(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id"}).
 		AddRow(testData.ID)
 
-	// List方法会调用GetByParams，直接执行主查询
-	// 1. 主查询
 	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(testData.ID, 1).
 		WillReturnRows(rows)
-	// 2. convertPlatforms会调用iRoleDao.GetByIDs查询角色信息
-	roleRows := sqlmock.NewRows([]string{"id", "name"}).
-		AddRow(1, "admin")
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
-		WillReturnRows(roleRows)
 
 	result := &httpcli.StdResult{}
-	params := httpcli.KV{"page": 1, "pageSize": 10, "sort": "ignore count"}
-	err := httpcli.Get(result, h.GetRequestURL("List"), httpcli.WithParams(params))
+	err := httpcli.Get(result, h.GetRequestURL("GetProfile"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if result.Code != 0 {
 		t.Fatalf("%+v", result)
 	}
+}
 
-	// nil params error test
-	//err = httpcli.Get(result, h.GetRequestURL("List"))
-	//assert.NoError(t, err)
+func Test_platformHandler_UpdateProfile(t *testing.T) {
+	h := newPlatformHandler()
+	defer h.Close()
+	testData := &types.UpdatePlatformByIDRequest{}
+	_ = copier.Copy(testData, h.TestData.(*model.Platform))
 
-	// get error test - 暂时跳过错误测试，主要测试已通过
-	// params["sort"] = "unknown-column"
-	// err = httpcli.Post(result, h.GetRequestURL("List"), httpcli.WithParams(params))
-	// assert.Error(t, err)
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
+		WithArgs(h.MockDao.GetAnyArgs(h.TestData)...).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	h.MockDao.SQLMock.ExpectCommit()
+
+	result := &httpcli.StdResult{}
+	err := httpcli.Put(result, h.GetRequestURL("UpdateProfile"), testData)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
+}
+
+func Test_platformHandler_ChangePassword(t *testing.T) {
+	h := newPlatformHandler()
+	defer h.Close()
+	testData := &types.ChangePasswordRequest{}
+	_ = copier.Copy(testData, h.TestData.(*model.Platform))
+
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
+		WithArgs(h.MockDao.GetAnyArgs(h.TestData)...).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	h.MockDao.SQLMock.ExpectCommit()
+
+	result := &httpcli.StdResult{}
+	err := httpcli.Put(result, h.GetRequestURL("ChangePassword"), testData)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
+}
+
+func Test_platformHandler_ResetPassword(t *testing.T) {
+	h := newPlatformHandler()
+	defer h.Close()
+	testData := &types.ResetPasswordRequest{}
+	_ = copier.Copy(testData, h.TestData.(*model.Platform))
+
+	h.MockDao.SQLMock.ExpectBegin()
+	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
+		WithArgs(h.MockDao.GetAnyArgs(h.TestData)...).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	h.MockDao.SQLMock.ExpectCommit()
+
+	result := &httpcli.StdResult{}
+	err := httpcli.Put(result, h.GetRequestURL("ResetPassword"), testData)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != 0 {
+		t.Fatalf("%+v", result)
+	}
 }
 
 func TestNewPlatformHandler(t *testing.T) {
