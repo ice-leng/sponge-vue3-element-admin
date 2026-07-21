@@ -20,7 +20,7 @@ type MenuLogic interface {
 	DeleteByID(ctx context.Context, id uint64) error
 	UpdateByID(ctx context.Context, request *types.UpdateMenuByIDRequest) error
 	GetByID(ctx context.Context, id uint64) (*types.MenuObjDetail, error)
-	List(ctx context.Context, request *types.ListMenusRequest) ([]*types.MenuObjPage, int64, error)
+	List(ctx context.Context, request *types.ListMenusRequest) ([]*types.MenuObjPage, error)
 	Routes(ctx context.Context, roleIds types.LocalIntArray) ([]model.MenuItem, error)
 	Options(ctx context.Context, request *types.OptionMenusRequest) ([]types.Options, error)
 }
@@ -91,7 +91,7 @@ func (l menuLogic) GetByID(ctx context.Context, id uint64) (*types.MenuObjDetail
 	return data, nil
 }
 
-func (l menuLogic) List(ctx context.Context, request *types.ListMenusRequest) ([]*types.MenuObjPage, int64, error) {
+func (l menuLogic) List(ctx context.Context, request *types.ListMenusRequest) ([]*types.MenuObjPage, error) {
 	params := &query.Params{
 		Page:    request.Page - 1,
 		Limit:   request.PageSize,
@@ -125,17 +125,17 @@ func (l menuLogic) List(ctx context.Context, request *types.ListMenusRequest) ([
 		})
 	}
 
-	menus, total, err := l.iDao.GetByColumns(ctx, params)
+	menus, _, err := l.iDao.GetByColumns(ctx, params)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	data, err := l.convertMenus(ctx, menus)
+	data, err := l.convertMenus(ctx, request, menus)
 	if err != nil {
-		return nil, 0, ecode.ErrListMenu.Err()
+		return nil, ecode.ErrListMenu.Err()
 	}
 
-	return data, total, nil
+	return data, nil
 }
 
 func (l menuLogic) Routes(ctx context.Context, roleIds types.LocalIntArray) ([]model.MenuItem, error) {
@@ -186,7 +186,7 @@ func (l menuLogic) Options(ctx context.Context, request *types.OptionMenusReques
 	return items, nil
 }
 
-func (l menuLogic) convertMenu(ctx context.Context, menu *model.Menu) (*types.MenuObjPage, error) {
+func (l *menuLogic) convertMenu(ctx context.Context, request *types.ListMenusRequest, menu *model.Menu) (*types.MenuObjPage, error) {
 	data := &types.MenuObjPage{}
 	err := copier.Copy(data, menu)
 	if err != nil {
@@ -195,27 +195,54 @@ func (l menuLogic) convertMenu(ctx context.Context, menu *model.Menu) (*types.Me
 	// Note: if copier.Copy cannot assign a value to a field, add it here
 	data.RouteName = menu.Name
 
-	menus, _, err := l.iDao.GetByColumns(ctx, &query.Params{
-		Page:    0,
-		Limit:   -1,
-		Sort:    "id",
-		Columns: []query.Column{{Name: "parent_id", Exp: "=", Value: menu.ID}},
-	})
-	if err != nil {
-		return nil, err
+	params := &query.Params{
+		Page:  request.Page - 1,
+		Limit: request.PageSize,
+		Sort:  request.Sort,
+		Columns: []query.Column{
+			{
+				Name:  "parent_id",
+				Exp:   "=",
+				Value: menu.ID,
+			},
+		},
 	}
-	children, err := l.convertMenus(ctx, menus)
-	if err != nil {
-		return nil, err
+	if request.StartTime != "" && request.EndTime != "" {
+		params.Columns = append(params.Columns, query.Column{
+			Name:  "created_at",
+			Exp:   ">=",
+			Value: request.StartTime,
+		})
+		params.Columns = append(params.Columns, query.Column{
+			Name:  "created_at",
+			Exp:   "<",
+			Value: request.EndTime + " 23:59:59",
+		})
+	}
+	if request.Keywords != "" {
+		params.Columns = append(params.Columns, query.Column{
+			Name:  "name",
+			Exp:   "like",
+			Value: "%" + request.Keywords + "%",
+		})
+	}
+
+	menus, _, err2 := l.iDao.GetByColumns(ctx, params)
+	if err2 != nil {
+		return nil, err2
+	}
+	children, err3 := l.convertMenus(ctx, request, menus)
+	if err3 != nil {
+		return nil, err3
 	}
 	data.Children = children
 	return data, nil
 }
 
-func (l menuLogic) convertMenus(ctx context.Context, fromValues []*model.Menu) ([]*types.MenuObjPage, error) {
+func (l *menuLogic) convertMenus(ctx context.Context, request *types.ListMenusRequest, fromValues []*model.Menu) ([]*types.MenuObjPage, error) {
 	toValues := []*types.MenuObjPage{}
 	for _, v := range fromValues {
-		data, err := l.convertMenu(ctx, v)
+		data, err := l.convertMenu(ctx, request, v)
 		if err != nil {
 			return nil, err
 		}

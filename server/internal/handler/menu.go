@@ -193,8 +193,14 @@ func (h *menuHandler) List(c *gin.Context) {
 		return
 	}
 
+	var pid uint64 = 0
+	request.Sort = "id"
+	if request.ParentID == nil {
+		request.ParentID = &pid
+	}
+
 	ctx := middleware.WrapCtx(c)
-	data, total, err := h.logic.List(ctx, request)
+	data, err := h.logic.List(ctx, request)
 	if err != nil {
 		if ec, ok := handlerfunc.IsErrcode(err); ok {
 			response.Error(c, ec)
@@ -205,10 +211,7 @@ func (h *menuHandler) List(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, gin.H{
-		"list":  data,
-		"total": total,
-	})
+	response.Success(c, data)
 }
 
 // Routes of records routes
