@@ -4,12 +4,13 @@ package routers
 
 import (
 	"admin/internal/middlewares"
-	"github.com/go-dev-frame/sponge/pkg/gin/middleware/auth"
+	"admin/pkg/gin/validator"
 	"net/http"
 	"time"
 
+	"github.com/go-dev-frame/sponge/pkg/gin/middleware/auth"
+
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -18,7 +19,6 @@ import (
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware"
 	"github.com/go-dev-frame/sponge/pkg/gin/middleware/metrics"
 	"github.com/go-dev-frame/sponge/pkg/gin/prof"
-	"github.com/go-dev-frame/sponge/pkg/gin/validator"
 	"github.com/go-dev-frame/sponge/pkg/logger"
 
 	"admin/docs"
@@ -83,7 +83,7 @@ func NewRouter() *gin.Engine {
 	}
 
 	// validator
-	binding.Validator = validator.Init()
+	validator.InitTrans()
 
 	// jwt
 	auth.InitAuth([]byte(middlewares.JwtSignKey), time.Hour*2)

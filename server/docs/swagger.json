@@ -2794,6 +2794,12 @@
                         "type": "integer"
                     }
                 },
+                "roleNames": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "status": {
                     "description": "状态",
                     "type": "integer"
@@ -2868,9 +2874,6 @@
         },
         "types.ResetPasswordRequest": {
             "type": "object",
-            "required": [
-                "password"
-            ],
             "properties": {
                 "id": {
                     "description": "uint64 id",

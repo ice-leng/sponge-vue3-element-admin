@@ -1122,6 +1122,12 @@
             },
             "type": "array"
           },
+          "roleNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "status": {
             "description": "状态",
             "type": "integer"
@@ -1206,9 +1212,6 @@
             "type": "string"
           }
         },
-        "required": [
-          "password"
-        ],
         "type": "object"
       },
       "types.Result": {

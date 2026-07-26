@@ -2798,6 +2798,12 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
+                "roleNames": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "status": {
                     "description": "状态",
                     "type": "integer"
@@ -2872,9 +2878,6 @@ const docTemplate = `{
         },
         "types.ResetPasswordRequest": {
             "type": "object",
-            "required": [
-                "password"
-            ],
             "properties": {
                 "id": {
                     "description": "uint64 id",

@@ -774,6 +774,10 @@ definitions:
         items:
           type: integer
         type: array
+      roleNames:
+        items:
+          type: string
+        type: array
       status:
         description: 状态
         type: integer
@@ -832,8 +836,6 @@ definitions:
       password:
         description: 密码
         type: string
-    required:
-    - password
     type: object
   types.Result:
     properties:
