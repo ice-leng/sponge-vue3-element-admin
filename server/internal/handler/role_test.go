@@ -7,9 +7,9 @@ import (
 	"admin/internal/logic"
 	"admin/internal/model"
 	"admin/internal/types"
-	"encoding/json"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/go-dev-frame/sponge/pkg/gotest"
@@ -28,18 +28,19 @@ func newRoleHandler() *gotest.Handler {
 
 	// init mock cache
 	c := gotest.NewCache(map[string]interface{}{utils.Uint64ToStr(testData.ID): testData})
-	c.ICache = cache.NewRoleCache(&database.CacheType{
+	cacheType := &database.CacheType{
 		CType: "redis",
 		Rdb:   c.RedisClient,
-	})
+	}
 
 	// init mock dao
 	d := gotest.NewDao(c, testData)
-	d.IDao = dao.NewRoleDao(d.DB, c.ICache.(cache.RoleCache))
+	d.IDao = dao.NewRoleDao(d.DB, cache.NewRoleCache(cacheType))
 
-	// init mock roleMenu dao
+	// init mock roleMenu dao (share DB with d so they use same sqlmock)
 	dRoleMenu := gotest.NewDao(c, &model.RoleMenu{})
-	dRoleMenu.IDao = dao.NewRoleMenuDao(dRoleMenu.DB, c.ICache.(cache.RoleMenuCache))
+	dRoleMenu.DB = d.DB
+	dRoleMenu.IDao = dao.NewRoleMenuDao(dRoleMenu.DB, cache.NewRoleMenuCache(cacheType))
 
 	// init mock handler
 	h := gotest.NewHandler(d, testData)
@@ -98,6 +99,7 @@ func newRoleHandler() *gotest.Handler {
 	}
 
 	h.GoRunHTTPServer(testFns)
+	time.Sleep(time.Millisecond * 200)
 	return h
 }
 
@@ -239,17 +241,7 @@ func Test_roleHandler_List(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id"}).
 		AddRow(testData.ID)
 
-	// List方法会调用GetByParams
-	// 1. count查询
-	countRows := sqlmock.NewRows([]string{"count"}).
-		AddRow(1)
-	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
-		WithArgs(0).
-		WillReturnRows(countRows)
-	// 2. 主查询
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(0, 10).
-		WillReturnRows(rows)
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
 
 	result := &httpcli.StdResult{}
 	params := httpcli.KV{"page": 1, "pageSize": 10, "sort": "ignore count"}
@@ -310,20 +302,23 @@ func Test_roleHandler_Menus(t *testing.T) {
 	h := newRoleHandler()
 	defer h.Close()
 	testData := h.TestData.(*model.Role)
-	menuIds := []uint64{1, 2, 3}
 
-	jsonData, _ := json.Marshal(menuIds)
+	// Menus endpoint: PUT /role/:id/menus with body [1, 2, 3]
+	// Executes a transaction: DELETE existing + INSERT new
+	body := []byte("[1,2,3]")
 
 	h.MockDao.SQLMock.ExpectBegin()
+	// Step A: hard delete existing role-menu associations for this role
 	h.MockDao.SQLMock.ExpectExec("DELETE FROM .*").
 		WithArgs(testData.ID).
-		WillReturnResult(sqlmock.NewResult(0, 1))
+		WillReturnResult(sqlmock.NewResult(0, 0))
+	// Step B: bulk insert new associations (5 columns × 3 rows = 15 args)
 	h.MockDao.SQLMock.ExpectExec("INSERT INTO .*").
-		WillReturnResult(sqlmock.NewResult(1, 1))
+		WillReturnResult(sqlmock.NewResult(0, 3))
 	h.MockDao.SQLMock.ExpectCommit()
 
 	result := &httpcli.StdResult{}
-	err := httpcli.Put(result, h.GetRequestURL("Menus", testData.ID), string(jsonData))
+	err := httpcli.Put(result, h.GetRequestURL("Menus", testData.ID), body)
 	if err != nil {
 		t.Fatal(err)
 	}

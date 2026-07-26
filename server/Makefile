@@ -39,6 +39,10 @@ graph:
 # Generate swagger docs, only for ⓵ Web services created based on sql
 docs:
 	@bash scripts/swag-docs.sh $(HOST)
+
+.PHONY: mysql-dump
+# Dump mysql database to sql file
+mysql-dump:
 	@bash scripts/mysql-dump.sh
 
 .PHONY: build

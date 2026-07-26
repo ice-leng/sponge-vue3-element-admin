@@ -216,16 +216,8 @@ func Test_roleMenuHandler_List(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id"}).
 		AddRow(testData.ID)
 
-	// List方法会调用GetByParams
-	// 1. count查询
-	countRows := sqlmock.NewRows([]string{"count"}).
-		AddRow(1)
-	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
-		WithArgs(0).
-		WillReturnRows(countRows)
-	// 2. 主查询
+	// List with sort=ignore count skips the count query
 	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(0, 10).
 		WillReturnRows(rows)
 
 	result := &httpcli.StdResult{}

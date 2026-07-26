@@ -34,8 +34,8 @@ func NewDashboardHandler() DashboardHandler {
 // @Summary data statistics
 // @Description data statistics
 // @Tags dashboard
-// @accept JSON
-// @Produce JSON
+// @accept json
+// @Produce json
 // @Success 200 {object} types.DashboardStatisticsReply{}
 // @Router /api/v1/dashboard/statistics [get]
 // @Security BearerAuth
@@ -49,8 +49,8 @@ func (d *dashboardHandler) Statistics(c *gin.Context) {
 // @Summary data echarts
 // @Description data echarts
 // @Tags dashboard
-// @accept JSON
-// @Produce JSON
+// @accept json
+// @Produce json
 // @Param request query types.DashboardEchartsRequest true "query parameters"
 // @Success 200 {object} types.DashboardEchartsReply{}
 // @Router /api/v1/dashboard/echarts [get]

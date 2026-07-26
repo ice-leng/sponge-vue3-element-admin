@@ -12,12 +12,21 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/gin-gonic/gin"
+	"github.com/go-dev-frame/sponge/pkg/gocrypto"
 	"github.com/go-dev-frame/sponge/pkg/gotest"
 	"github.com/go-dev-frame/sponge/pkg/httpcli"
 	"github.com/go-dev-frame/sponge/pkg/utils"
 	"github.com/jinzhu/copier"
-	
 )
+
+// withAuth wraps a handler to inject auth context (simulates JWT middleware)
+func withAuth(uid uint64, fn gin.HandlerFunc) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Set("id", uid)
+		fn(c)
+	}
+}
 
 func newPlatformHandler() *gotest.Handler {
 	testData := &model.Platform{}
@@ -26,7 +35,7 @@ func newPlatformHandler() *gotest.Handler {
 	//testData.CreatedAt = time.Now()
 	//testData.UpdatedAt = testData.CreatedAt
 
-	// init mock cache
+	// init mock cache for platform
 	c := gotest.NewCache(map[string]interface{}{utils.Uint64ToStr(testData.ID): testData})
 	c.ICache = cache.NewPlatformCache(&database.CacheType{
 		CType: "redis",
@@ -37,13 +46,23 @@ func newPlatformHandler() *gotest.Handler {
 	d := gotest.NewDao(c, testData)
 	d.IDao = dao.NewPlatformDao(d.DB, c.ICache.(cache.PlatformCache))
 
-	// init mock role dao
-	dRole := gotest.NewDao(c, &model.Role{})
-	dRole.IDao = dao.NewRoleDao(dRole.DB, c.ICache.(cache.RoleCache))
+	// init mock role dao (separate cache)
+	cRole := gotest.NewCache(map[string]interface{}{})
+	cRole.ICache = cache.NewRoleCache(&database.CacheType{
+		CType: "redis",
+		Rdb:   cRole.RedisClient,
+	})
+	dRole := gotest.NewDao(cRole, &model.Role{})
+	dRole.IDao = dao.NewRoleDao(dRole.DB, cRole.ICache.(cache.RoleCache))
 
-	// init mock config dao
-	dConfig := gotest.NewDao(c, &model.Config{})
-	dConfig.IDao = dao.NewConfigDao(dConfig.DB, c.ICache.(cache.ConfigCache))
+	// init mock config dao (separate cache)
+	cConfig := gotest.NewCache(map[string]interface{}{})
+	cConfig.ICache = cache.NewConfigCache(&database.CacheType{
+		CType: "redis",
+		Rdb:   cConfig.RedisClient,
+	})
+	dConfig := gotest.NewDao(cConfig, &model.Config{})
+	dConfig.IDao = dao.NewConfigDao(dConfig.DB, cConfig.ICache.(cache.ConfigCache))
 
 	// init mock handler
 	h := gotest.NewHandler(d, testData)
@@ -51,7 +70,7 @@ func newPlatformHandler() *gotest.Handler {
 		logic: logic.NewPlatformLogicByDAO(
 			d.IDao.(dao.PlatformDao),
 			dRole.IDao.(dao.RoleDao),
-			dConfig.IDao.(dao.ConfigDao),
+			logic.NewConfigLogicByDAO(dConfig.IDao.(dao.ConfigDao), nil),
 		),
 	}
 	iHandler := h.IHandler.(PlatformHandler)
@@ -91,31 +110,31 @@ func newPlatformHandler() *gotest.Handler {
 			FuncName:    "Me",
 			Method:      http.MethodGet,
 			Path:        "/platform/me",
-			HandlerFunc: iHandler.Me,
+			HandlerFunc: withAuth(testData.ID, iHandler.Me),
 		},
 		{
 			FuncName:    "GetProfile",
 			Method:      http.MethodGet,
 			Path:        "/platform/profile",
-			HandlerFunc: iHandler.GetProfile,
+			HandlerFunc: withAuth(testData.ID, iHandler.GetProfile),
 		},
 		{
 			FuncName:    "UpdateProfile",
 			Method:      http.MethodPut,
 			Path:        "/platform/profile",
-			HandlerFunc: iHandler.UpdateProfile,
+			HandlerFunc: withAuth(testData.ID, iHandler.UpdateProfile),
 		},
 		{
 			FuncName:    "ChangePassword",
 			Method:      http.MethodPut,
 			Path:        "/platform/password",
-			HandlerFunc: iHandler.ChangePassword,
+			HandlerFunc: withAuth(testData.ID, iHandler.ChangePassword),
 		},
 		{
 			FuncName:    "ResetPassword",
 			Method:      http.MethodPut,
 			Path:        "/platform/password/reset",
-			HandlerFunc: iHandler.ResetPassword,
+			HandlerFunc: withAuth(testData.ID, iHandler.ResetPassword),
 		},
 	}
 
@@ -152,8 +171,8 @@ func Test_platformHandler_DeleteByID(t *testing.T) {
 	defer h.Close()
 
 	h.MockDao.SQLMock.ExpectBegin()
-	h.MockDao.SQLMock.ExpectExec("DELETE FROM .*").
-		WithArgs(h.TestData.(*model.Platform).ID).
+	h.MockDao.SQLMock.ExpectExec("UPDATE .*deleted_at").
+		WithArgs(sqlmock.AnyArg(), h.TestData.(*model.Platform).ID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	h.MockDao.SQLMock.ExpectCommit()
 
@@ -175,7 +194,7 @@ func Test_platformHandler_UpdateByID(t *testing.T) {
 
 	h.MockDao.SQLMock.ExpectBegin()
 	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
-		WithArgs(h.MockDao.GetAnyArgs(h.TestData)...).
+		WithArgs(sqlmock.AnyArg(), h.TestData.(*model.Platform).ID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	h.MockDao.SQLMock.ExpectCommit()
 
@@ -194,7 +213,6 @@ func Test_platformHandler_GetByID(t *testing.T) {
 	defer h.Close()
 
 	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(h.TestData.(*model.Platform).ID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(h.TestData.(*model.Platform).ID))
 
 	result := &httpcli.StdResult{}
@@ -211,8 +229,6 @@ func Test_platformHandler_List(t *testing.T) {
 	h := newPlatformHandler()
 	defer h.Close()
 
-	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
-		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(h.TestData.(*model.Platform).ID))
 
@@ -281,7 +297,7 @@ func Test_platformHandler_UpdateProfile(t *testing.T) {
 
 	h.MockDao.SQLMock.ExpectBegin()
 	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
-		WithArgs(h.MockDao.GetAnyArgs(h.TestData)...).
+		WithArgs(sqlmock.AnyArg(), h.TestData.(*model.Platform).ID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	h.MockDao.SQLMock.ExpectCommit()
 
@@ -298,12 +314,20 @@ func Test_platformHandler_UpdateProfile(t *testing.T) {
 func Test_platformHandler_ChangePassword(t *testing.T) {
 	h := newPlatformHandler()
 	defer h.Close()
-	testData := &types.ChangePasswordRequest{}
-	_ = copier.Copy(testData, h.TestData.(*model.Platform))
+	testData := &types.ChangePasswordRequest{
+		OldPassword:     "old123456",
+		NewPassword:     "new123456",
+		ConfirmPassword: "new123456",
+	}
+	testData.ID = h.TestData.(*model.Platform).ID
 
+	// ChangePassword calls GetByID first - must include password hash for verification
+	oldPasswordHash, _ := gocrypto.HashAndSaltPassword("old123456")
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WillReturnRows(sqlmock.NewRows([]string{"id", "password"}).AddRow(h.TestData.(*model.Platform).ID, oldPasswordHash))
 	h.MockDao.SQLMock.ExpectBegin()
 	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
-		WithArgs(h.MockDao.GetAnyArgs(h.TestData)...).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), h.TestData.(*model.Platform).ID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	h.MockDao.SQLMock.ExpectCommit()
 
@@ -323,9 +347,12 @@ func Test_platformHandler_ResetPassword(t *testing.T) {
 	testData := &types.ResetPasswordRequest{}
 	_ = copier.Copy(testData, h.TestData.(*model.Platform))
 
+	// ResetPassword calls GetByID first
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(h.TestData.(*model.Platform).ID))
 	h.MockDao.SQLMock.ExpectBegin()
 	h.MockDao.SQLMock.ExpectExec("UPDATE .*").
-		WithArgs(h.MockDao.GetAnyArgs(h.TestData)...).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), h.TestData.(*model.Platform).ID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	h.MockDao.SQLMock.ExpectCommit()
 

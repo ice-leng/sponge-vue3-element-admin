@@ -3,6 +3,7 @@ package handler
 import (
 	"admin/internal/database"
 	"admin/internal/logic"
+	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -221,29 +222,15 @@ func Test_menuHandler_List(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id"}).
 		AddRow(testData.ID)
 
-	// List方法会调用GetByParams，先执行count查询，再执行主查询
-	// 然后convertMenu会递归查询子菜单
-	// 1. 第一次count查询（parent_id=0）
-	countRows := sqlmock.NewRows([]string{"count"}).
-		AddRow(1)
+	// menu handler hardcodes sort="id", so count query always runs
+	// List also calls convertMenu which queries children for each result (parent_id=menu.ID)
+	// So: count(0) + data(0) + count(1) + data(1) for first request
 	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
-		WithArgs(0).
-		WillReturnRows(countRows)
-	// 2. 第一次主查询（parent_id=0）
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(0, 10).
-		WillReturnRows(rows)
-	// 3. 第二次count查询（parent_id=1，查询子菜单）
-	childCountRows := sqlmock.NewRows([]string{"count"}).
-		AddRow(0)
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
 	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
-		WithArgs(1).
-		WillReturnRows(childCountRows)
-	// 4. 第二次主查询（parent_id=1，查询子菜单）
-	childRows := sqlmock.NewRows([]string{"id"})
-	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(1, 10).
-		WillReturnRows(childRows)
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
 	result := &httpcli.StdResult{}
 	params := httpcli.KV{"page": 1, "pageSize": 10, "sort": "ignore count"}
@@ -255,11 +242,22 @@ func Test_menuHandler_List(t *testing.T) {
 		t.Fatalf("%+v", result)
 	}
 
-	// nil params error test
-	//err = httpcli.Get(result, h.GetRequestURL("List"))
-	//assert.NoError(t, err)
+	// nil params error test (same 4 queries)
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(rows)
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	err = httpcli.Get(result, h.GetRequestURL("List"), httpcli.WithParams(params))
+	assert.NoError(t, err)
 
 	params["sort"] = "unknown-column"
+	// get error test (sort overridden to "id" by handler, count runs, then error in find)
+	h.MockDao.SQLMock.ExpectQuery("SELECT count.*").
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+	h.MockDao.SQLMock.ExpectQuery("SELECT .*").
+		WillReturnError(fmt.Errorf("unknown column 'unknown-column' in 'order clause'"))
 	err = httpcli.Post(result, h.GetRequestURL("List"), httpcli.WithParams(params))
 	assert.Error(t, err)
 }

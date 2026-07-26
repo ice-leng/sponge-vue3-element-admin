@@ -80,6 +80,9 @@ func Test_configDao_DeleteByID(t *testing.T) {
 	}
 
 	// zero id error
+	d.SQLMock.ExpectQuery("SELECT .*").
+		WithArgs(0, 1).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 	err = d.IDao.(ConfigDao).DeleteByID(d.Ctx, 0)
 	assert.Error(t, err)
 }
@@ -131,14 +134,14 @@ func Test_configDao_GetByID(t *testing.T) {
 
 	// notfound error
 	d.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(2).
-		WillReturnRows(rows)
+		WithArgs(2, 1).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 	_, err = d.IDao.(ConfigDao).GetByID(d.Ctx, 2)
 	assert.Error(t, err)
 
 	d.SQLMock.ExpectQuery("SELECT .*").
-		WithArgs(3, 4).
-		WillReturnRows(rows)
+		WithArgs(4, 1).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 	_, err = d.IDao.(ConfigDao).GetByID(d.Ctx, 4)
 	assert.Error(t, err)
 }
