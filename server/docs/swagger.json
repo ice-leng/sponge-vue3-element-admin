@@ -12,7 +12,7 @@
     },
     "host": "localhost:8080",
     "paths": {
-        "/api/v1/auth/captcha": {
+        "/admin/v1/auth/captcha": {
             "get": {
                 "description": "get a captcha",
                 "consumes": [
@@ -29,47 +29,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.CaptchaReply"
+                            "$ref": "#/definitions/admin.CaptchaReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/auth/login": {
-            "post": {
-                "description": "with username and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "with username and password",
-                "parameters": [
-                    {
-                        "description": "login information",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.LoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.LoginReply"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/auth/logout": {
+        "/admin/v1/auth/logout": {
             "delete": {
                 "security": [
                     {
@@ -91,13 +57,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/admin.Result"
                         }
                     }
                 }
             }
         },
-        "/api/v1/config": {
+        "/admin/v1/config": {
             "get": {
                 "security": [
                     {
@@ -157,7 +123,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ListConfigsReply"
+                            "$ref": "#/definitions/admin.ListConfigsReply"
                         }
                     }
                 }
@@ -186,7 +152,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.CreateConfigRequest"
+                            "$ref": "#/definitions/admin.CreateConfigRequest"
                         }
                     }
                 ],
@@ -194,13 +160,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.CreateConfigReply"
+                            "$ref": "#/definitions/admin.CreateConfigReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/config/dict": {
+        "/admin/v1/config/dict": {
             "get": {
                 "security": [
                     {
@@ -222,13 +188,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetConfigByIDReply"
+                            "$ref": "#/definitions/admin.GetConfigByIDReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/config/{id}": {
+        "/admin/v1/config/{id}": {
             "get": {
                 "security": [
                     {
@@ -259,7 +225,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetConfigByIDReply"
+                            "$ref": "#/definitions/admin.GetConfigByIDReply"
                         }
                     }
                 }
@@ -295,7 +261,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateConfigByIDRequest"
+                            "$ref": "#/definitions/admin.UpdateConfigByIDRequest"
                         }
                     }
                 ],
@@ -303,7 +269,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateConfigByIDReply"
+                            "$ref": "#/definitions/admin.UpdateConfigByIDReply"
                         }
                     }
                 }
@@ -338,13 +304,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DeleteConfigByIDReply"
+                            "$ref": "#/definitions/admin.DeleteConfigByIDReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/dashboard/echarts": {
+        "/admin/v1/dashboard/echarts": {
             "get": {
                 "security": [
                     {
@@ -380,13 +346,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DashboardEchartsReply"
+                            "$ref": "#/definitions/admin.DashboardEchartsReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/dashboard/statistics": {
+        "/admin/v1/dashboard/statistics": {
             "get": {
                 "security": [
                     {
@@ -408,13 +374,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DashboardStatisticsReply"
+                            "$ref": "#/definitions/admin.DashboardStatisticsReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/menu": {
+        "/admin/v1/menu": {
             "get": {
                 "security": [
                     {
@@ -478,7 +444,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ListMenusReply"
+                            "$ref": "#/definitions/admin.ListMenusReply"
                         }
                     }
                 }
@@ -507,7 +473,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.CreateMenuRequest"
+                            "$ref": "#/definitions/admin.CreateMenuRequest"
                         }
                     }
                 ],
@@ -515,13 +481,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.CreateMenuReply"
+                            "$ref": "#/definitions/admin.CreateMenuReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/menu/options": {
+        "/admin/v1/menu/options": {
             "get": {
                 "security": [
                     {
@@ -550,13 +516,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.OptionsReply"
+                            "$ref": "#/definitions/admin.OptionsReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/menu/routes": {
+        "/admin/v1/menu/routes": {
             "get": {
                 "security": [
                     {
@@ -578,13 +544,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/admin.Result"
                         }
                     }
                 }
             }
         },
-        "/api/v1/menu/{id}": {
+        "/admin/v1/menu/{id}": {
             "get": {
                 "security": [
                     {
@@ -615,7 +581,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetMenuByIDReply"
+                            "$ref": "#/definitions/admin.GetMenuByIDReply"
                         }
                     }
                 }
@@ -651,7 +617,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateMenuByIDRequest"
+                            "$ref": "#/definitions/admin.UpdateMenuByIDRequest"
                         }
                     }
                 ],
@@ -659,7 +625,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateMenuByIDReply"
+                            "$ref": "#/definitions/admin.UpdateMenuByIDReply"
                         }
                     }
                 }
@@ -694,13 +660,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DeleteMenuByIDReply"
+                            "$ref": "#/definitions/admin.DeleteMenuByIDReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/platform": {
+        "/admin/v1/platform": {
             "get": {
                 "security": [
                     {
@@ -772,7 +738,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ListPlatformsReply"
+                            "$ref": "#/definitions/admin.ListPlatformsReply"
                         }
                     }
                 }
@@ -801,7 +767,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.CreatePlatformRequest"
+                            "$ref": "#/definitions/admin.CreatePlatformRequest"
                         }
                     }
                 ],
@@ -809,13 +775,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.CreatePlatformReply"
+                            "$ref": "#/definitions/admin.CreatePlatformReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/platform/me": {
+        "/admin/v1/platform/me": {
             "get": {
                 "security": [
                     {
@@ -837,13 +803,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.MeReply"
+                            "$ref": "#/definitions/admin.MeReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/platform/password": {
+        "/admin/v1/platform/password": {
             "put": {
                 "security": [
                     {
@@ -868,7 +834,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.ChangePasswordRequest"
+                            "$ref": "#/definitions/admin.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -876,13 +842,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/admin.Result"
                         }
                     }
                 }
             }
         },
-        "/api/v1/platform/password/reset": {
+        "/admin/v1/platform/password/reset": {
             "put": {
                 "security": [
                     {
@@ -907,7 +873,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.ResetPasswordRequest"
+                            "$ref": "#/definitions/admin.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -915,13 +881,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/admin.Result"
                         }
                     }
                 }
             }
         },
-        "/api/v1/platform/profile": {
+        "/admin/v1/platform/profile": {
             "get": {
                 "security": [
                     {
@@ -943,7 +909,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ProfileReply"
+                            "$ref": "#/definitions/admin.ProfileReply"
                         }
                     }
                 }
@@ -972,7 +938,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.UpdatePlatformByIDRequest"
+                            "$ref": "#/definitions/admin.UpdatePlatformByIDRequest"
                         }
                     }
                 ],
@@ -980,13 +946,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/admin.Result"
                         }
                     }
                 }
             }
         },
-        "/api/v1/platform/{id}": {
+        "/admin/v1/platform/{id}": {
             "get": {
                 "security": [
                     {
@@ -1017,7 +983,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetPlatformByIDReply"
+                            "$ref": "#/definitions/admin.GetPlatformByIDReply"
                         }
                     }
                 }
@@ -1053,7 +1019,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.UpdatePlatformByIDRequest"
+                            "$ref": "#/definitions/admin.UpdatePlatformByIDRequest"
                         }
                     }
                 ],
@@ -1061,7 +1027,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.UpdatePlatformByIDReply"
+                            "$ref": "#/definitions/admin.UpdatePlatformByIDReply"
                         }
                     }
                 }
@@ -1096,13 +1062,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DeletePlatformByIDReply"
+                            "$ref": "#/definitions/admin.DeletePlatformByIDReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/role": {
+        "/admin/v1/role": {
             "get": {
                 "security": [
                     {
@@ -1162,7 +1128,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ListRolesReply"
+                            "$ref": "#/definitions/admin.ListRolesReply"
                         }
                     }
                 }
@@ -1191,7 +1157,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.CreateRoleRequest"
+                            "$ref": "#/definitions/admin.CreateRoleRequest"
                         }
                     }
                 ],
@@ -1199,13 +1165,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.CreateRoleReply"
+                            "$ref": "#/definitions/admin.CreateRoleReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/role/options": {
+        "/admin/v1/role/options": {
             "get": {
                 "security": [
                     {
@@ -1227,13 +1193,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.OptionsReply"
+                            "$ref": "#/definitions/admin.OptionsReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/role/{id}": {
+        "/admin/v1/role/{id}": {
             "get": {
                 "security": [
                     {
@@ -1264,7 +1230,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetRoleByIDReply"
+                            "$ref": "#/definitions/admin.GetRoleByIDReply"
                         }
                     }
                 }
@@ -1300,7 +1266,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateRoleByIDRequest"
+                            "$ref": "#/definitions/admin.UpdateRoleByIDRequest"
                         }
                     }
                 ],
@@ -1308,7 +1274,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateRoleByIDReply"
+                            "$ref": "#/definitions/admin.UpdateRoleByIDReply"
                         }
                     }
                 }
@@ -1343,13 +1309,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DeleteRoleByIDReply"
+                            "$ref": "#/definitions/admin.DeleteRoleByIDReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/role/{id}/menus": {
+        "/admin/v1/role/{id}/menus": {
             "put": {
                 "security": [
                     {
@@ -1380,13 +1346,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateRoleByIDReply"
+                            "$ref": "#/definitions/admin.UpdateRoleByIDReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/roleMenu": {
+        "/admin/v1/roleMenu": {
             "get": {
                 "security": [
                     {
@@ -1446,7 +1412,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ListRoleMenusReply"
+                            "$ref": "#/definitions/admin.ListRoleMenusReply"
                         }
                     }
                 }
@@ -1475,7 +1441,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.CreateRoleMenuRequest"
+                            "$ref": "#/definitions/admin.CreateRoleMenuRequest"
                         }
                     }
                 ],
@@ -1483,13 +1449,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.CreateRoleMenuReply"
+                            "$ref": "#/definitions/admin.CreateRoleMenuReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/roleMenu/{id}": {
+        "/admin/v1/roleMenu/{id}": {
             "get": {
                 "security": [
                     {
@@ -1520,7 +1486,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetRoleMenuByIDReply"
+                            "$ref": "#/definitions/admin.GetRoleMenuByIDReply"
                         }
                     }
                 }
@@ -1556,7 +1522,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateRoleMenuByIDRequest"
+                            "$ref": "#/definitions/admin.UpdateRoleMenuByIDRequest"
                         }
                     }
                 ],
@@ -1564,7 +1530,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.UpdateRoleMenuByIDReply"
+                            "$ref": "#/definitions/admin.UpdateRoleMenuByIDReply"
                         }
                     }
                 }
@@ -1599,13 +1565,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DeleteRoleMenuByIDReply"
+                            "$ref": "#/definitions/admin.DeleteRoleMenuByIDReply"
                         }
                     }
                 }
             }
         },
-        "/api/v1/roles/{id}/menuIds": {
+        "/admin/v1/roles/{id}/menuIds": {
             "get": {
                 "security": [
                     {
@@ -1627,13 +1593,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Result"
+                            "$ref": "#/definitions/admin.Result"
                         }
                     }
                 }
             }
         },
-        "/api/v1/upload/local": {
+        "/admin/v1/upload/local": {
             "post": {
                 "security": [
                     {
@@ -1664,7 +1630,41 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.UploadLocalReply"
+                            "$ref": "#/definitions/admin.UploadLocalReply"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "description": "with username and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "with username and password",
+                "parameters": [
+                    {
+                        "description": "login information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.LoginReply"
                         }
                     }
                 }
@@ -1672,7 +1672,7 @@
         }
     },
     "definitions": {
-        "types.CaptchaItem": {
+        "admin.CaptchaItem": {
             "type": "object",
             "properties": {
                 "captchaBase64": {
@@ -1683,7 +1683,7 @@
                 }
             }
         },
-        "types.CaptchaReply": {
+        "admin.CaptchaReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -1694,7 +1694,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.CaptchaItem"
+                            "$ref": "#/definitions/admin.CaptchaItem"
                         }
                     ]
                 },
@@ -1704,7 +1704,7 @@
                 }
             }
         },
-        "types.ChangePasswordRequest": {
+        "admin.ChangePasswordRequest": {
             "type": "object",
             "required": [
                 "confirmPassword",
@@ -1730,7 +1730,7 @@
                 }
             }
         },
-        "types.ConfigObjDetail": {
+        "admin.ConfigObjDetail": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -1763,7 +1763,7 @@
                 }
             }
         },
-        "types.CreateConfigReply": {
+        "admin.CreateConfigReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -1786,7 +1786,7 @@
                 }
             }
         },
-        "types.CreateConfigRequest": {
+        "admin.CreateConfigRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1807,7 +1807,7 @@
                 }
             }
         },
-        "types.CreateMenuReply": {
+        "admin.CreateMenuReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -1830,7 +1830,7 @@
                 }
             }
         },
-        "types.CreateMenuRequest": {
+        "admin.CreateMenuRequest": {
             "type": "object",
             "properties": {
                 "alwaysShow": {
@@ -1891,7 +1891,7 @@
                 }
             }
         },
-        "types.CreatePlatformReply": {
+        "admin.CreatePlatformReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -1914,7 +1914,7 @@
                 }
             }
         },
-        "types.CreatePlatformRequest": {
+        "admin.CreatePlatformRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -1954,7 +1954,7 @@
                 }
             }
         },
-        "types.CreateRoleMenuReply": {
+        "admin.CreateRoleMenuReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -1977,7 +1977,7 @@
                 }
             }
         },
-        "types.CreateRoleMenuRequest": {
+        "admin.CreateRoleMenuRequest": {
             "type": "object",
             "properties": {
                 "menuID": {
@@ -1990,7 +1990,7 @@
                 }
             }
         },
-        "types.CreateRoleReply": {
+        "admin.CreateRoleReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2013,7 +2013,7 @@
                 }
             }
         },
-        "types.CreateRoleRequest": {
+        "admin.CreateRoleRequest": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2034,7 +2034,7 @@
                 }
             }
         },
-        "types.DashboardEchartsReply": {
+        "admin.DashboardEchartsReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2045,7 +2045,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.Echarts"
+                            "$ref": "#/definitions/admin.Echarts"
                         }
                     ]
                 },
@@ -2055,7 +2055,7 @@
                 }
             }
         },
-        "types.DashboardStatisticsItem": {
+        "admin.DashboardStatisticsItem": {
             "type": "object",
             "properties": {
                 "granularityLabel": {
@@ -2081,7 +2081,7 @@
                 }
             }
         },
-        "types.DashboardStatisticsReply": {
+        "admin.DashboardStatisticsReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2092,7 +2092,7 @@
                     "description": "return data",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/types.DashboardStatisticsItem"
+                        "$ref": "#/definitions/admin.DashboardStatisticsItem"
                     }
                 },
                 "msg": {
@@ -2101,7 +2101,7 @@
                 }
             }
         },
-        "types.DeleteConfigByIDReply": {
+        "admin.DeleteConfigByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2117,7 +2117,7 @@
                 }
             }
         },
-        "types.DeleteMenuByIDReply": {
+        "admin.DeleteMenuByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2133,7 +2133,7 @@
                 }
             }
         },
-        "types.DeletePlatformByIDReply": {
+        "admin.DeletePlatformByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2149,7 +2149,7 @@
                 }
             }
         },
-        "types.DeleteRoleByIDReply": {
+        "admin.DeleteRoleByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2165,7 +2165,7 @@
                 }
             }
         },
-        "types.DeleteRoleMenuByIDReply": {
+        "admin.DeleteRoleMenuByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2181,7 +2181,7 @@
                 }
             }
         },
-        "types.Echarts": {
+        "admin.Echarts": {
             "type": "object",
             "properties": {
                 "dates": {
@@ -2200,12 +2200,12 @@
                 "series": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/types.EchartsSeries"
+                        "$ref": "#/definitions/admin.EchartsSeries"
                     }
                 }
             }
         },
-        "types.EchartsSeries": {
+        "admin.EchartsSeries": {
             "type": "object",
             "properties": {
                 "areaStyle": {
@@ -2228,7 +2228,7 @@
                 }
             }
         },
-        "types.GetConfigByIDReply": {
+        "admin.GetConfigByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2239,7 +2239,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.ConfigObjDetail"
+                            "$ref": "#/definitions/admin.ConfigObjDetail"
                         }
                     ]
                 },
@@ -2249,7 +2249,7 @@
                 }
             }
         },
-        "types.GetMenuByIDReply": {
+        "admin.GetMenuByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2260,7 +2260,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.MenuObjDetail"
+                            "$ref": "#/definitions/admin.MenuObjDetail"
                         }
                     ]
                 },
@@ -2270,7 +2270,7 @@
                 }
             }
         },
-        "types.GetPlatformByIDReply": {
+        "admin.GetPlatformByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2281,7 +2281,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.PlatformObjDetail"
+                            "$ref": "#/definitions/admin.PlatformObjDetail"
                         }
                     ]
                 },
@@ -2291,7 +2291,7 @@
                 }
             }
         },
-        "types.GetRoleByIDReply": {
+        "admin.GetRoleByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2302,7 +2302,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.RoleObjDetail"
+                            "$ref": "#/definitions/admin.RoleObjDetail"
                         }
                     ]
                 },
@@ -2312,7 +2312,7 @@
                 }
             }
         },
-        "types.GetRoleMenuByIDReply": {
+        "admin.GetRoleMenuByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2323,7 +2323,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.RoleMenuObjDetail"
+                            "$ref": "#/definitions/admin.RoleMenuObjDetail"
                         }
                     ]
                 },
@@ -2333,7 +2333,7 @@
                 }
             }
         },
-        "types.ListConfigsReply": {
+        "admin.ListConfigsReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2347,7 +2347,7 @@
                         "configs": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.ConfigObjDetail"
+                                "$ref": "#/definitions/admin.ConfigObjDetail"
                             }
                         }
                     }
@@ -2358,7 +2358,7 @@
                 }
             }
         },
-        "types.ListMenusReply": {
+        "admin.ListMenusReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2372,7 +2372,7 @@
                         "list": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.MenuObjPage"
+                                "$ref": "#/definitions/admin.MenuObjPage"
                             }
                         },
                         "total": {
@@ -2386,7 +2386,7 @@
                 }
             }
         },
-        "types.ListPlatformsReply": {
+        "admin.ListPlatformsReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2400,7 +2400,7 @@
                         "list": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.PlatformObjDetail"
+                                "$ref": "#/definitions/admin.PlatformObjDetail"
                             }
                         },
                         "total": {
@@ -2414,7 +2414,7 @@
                 }
             }
         },
-        "types.ListRoleMenusReply": {
+        "admin.ListRoleMenusReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2428,7 +2428,7 @@
                         "roleMenus": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.RoleMenuObjDetail"
+                                "$ref": "#/definitions/admin.RoleMenuObjDetail"
                             }
                         }
                     }
@@ -2439,7 +2439,7 @@
                 }
             }
         },
-        "types.ListRolesReply": {
+        "admin.ListRolesReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2453,7 +2453,7 @@
                         "roles": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.RoleObjDetail"
+                                "$ref": "#/definitions/admin.RoleObjDetail"
                             }
                         },
                         "total": {
@@ -2467,7 +2467,7 @@
                 }
             }
         },
-        "types.LoginItem": {
+        "admin.LoginItem": {
             "type": "object",
             "properties": {
                 "accessToken": {
@@ -2484,7 +2484,7 @@
                 }
             }
         },
-        "types.LoginReply": {
+        "admin.LoginReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2495,7 +2495,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.LoginItem"
+                            "$ref": "#/definitions/admin.LoginItem"
                         }
                     ]
                 },
@@ -2505,7 +2505,7 @@
                 }
             }
         },
-        "types.LoginRequest": {
+        "admin.LoginRequest": {
             "type": "object",
             "properties": {
                 "captchaCode": {
@@ -2526,7 +2526,7 @@
                 }
             }
         },
-        "types.MeItem": {
+        "admin.MeItem": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2561,7 +2561,7 @@
                 }
             }
         },
-        "types.MeReply": {
+        "admin.MeReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2572,7 +2572,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.MeItem"
+                            "$ref": "#/definitions/admin.MeItem"
                         }
                     ]
                 },
@@ -2582,7 +2582,7 @@
                 }
             }
         },
-        "types.MenuObjDetail": {
+        "admin.MenuObjDetail": {
             "type": "object",
             "properties": {
                 "alwaysShow": {
@@ -2658,13 +2658,13 @@
                 }
             }
         },
-        "types.MenuObjPage": {
+        "admin.MenuObjPage": {
             "type": "object",
             "properties": {
                 "children": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/types.MenuObjPage"
+                        "$ref": "#/definitions/admin.MenuObjPage"
                     }
                 },
                 "component": {
@@ -2717,26 +2717,7 @@
                 }
             }
         },
-        "types.Options": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/types.Options"
-                    }
-                },
-                "label": {
-                    "description": "标签",
-                    "type": "string"
-                },
-                "other": {},
-                "value": {
-                    "description": "值"
-                }
-            }
-        },
-        "types.OptionsReply": {
+        "admin.OptionsReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2747,7 +2728,7 @@
                     "description": "return data",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/types.Options"
+                        "$ref": "#/definitions/common.Options"
                     }
                 },
                 "msg": {
@@ -2756,7 +2737,7 @@
                 }
             }
         },
-        "types.PlatformObjDetail": {
+        "admin.PlatformObjDetail": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2814,7 +2795,7 @@
                 }
             }
         },
-        "types.ProfileItem": {
+        "admin.ProfileItem": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2851,7 +2832,7 @@
                 }
             }
         },
-        "types.ProfileReply": {
+        "admin.ProfileReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2862,7 +2843,7 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.ProfileItem"
+                            "$ref": "#/definitions/admin.ProfileItem"
                         }
                     ]
                 },
@@ -2872,7 +2853,7 @@
                 }
             }
         },
-        "types.ResetPasswordRequest": {
+        "admin.ResetPasswordRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -2885,7 +2866,7 @@
                 }
             }
         },
-        "types.Result": {
+        "admin.Result": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2901,7 +2882,7 @@
                 }
             }
         },
-        "types.RoleMenuObjDetail": {
+        "admin.RoleMenuObjDetail": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -2926,7 +2907,7 @@
                 }
             }
         },
-        "types.RoleObjDetail": {
+        "admin.RoleObjDetail": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2959,7 +2940,7 @@
                 }
             }
         },
-        "types.UpdateConfigByIDReply": {
+        "admin.UpdateConfigByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2975,7 +2956,7 @@
                 }
             }
         },
-        "types.UpdateConfigByIDRequest": {
+        "admin.UpdateConfigByIDRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -3000,7 +2981,7 @@
                 }
             }
         },
-        "types.UpdateMenuByIDReply": {
+        "admin.UpdateMenuByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3016,7 +2997,7 @@
                 }
             }
         },
-        "types.UpdateMenuByIDRequest": {
+        "admin.UpdateMenuByIDRequest": {
             "type": "object",
             "properties": {
                 "alwaysShow": {
@@ -3081,7 +3062,7 @@
                 }
             }
         },
-        "types.UpdatePlatformByIDReply": {
+        "admin.UpdatePlatformByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3097,7 +3078,7 @@
                 }
             }
         },
-        "types.UpdatePlatformByIDRequest": {
+        "admin.UpdatePlatformByIDRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -3141,7 +3122,7 @@
                 }
             }
         },
-        "types.UpdateRoleByIDReply": {
+        "admin.UpdateRoleByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3157,7 +3138,7 @@
                 }
             }
         },
-        "types.UpdateRoleByIDRequest": {
+        "admin.UpdateRoleByIDRequest": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3182,7 +3163,7 @@
                 }
             }
         },
-        "types.UpdateRoleMenuByIDReply": {
+        "admin.UpdateRoleMenuByIDReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3198,7 +3179,7 @@
                 }
             }
         },
-        "types.UpdateRoleMenuByIDRequest": {
+        "admin.UpdateRoleMenuByIDRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -3215,7 +3196,7 @@
                 }
             }
         },
-        "types.UploadItem": {
+        "admin.UploadItem": {
             "type": "object",
             "properties": {
                 "name": {
@@ -3232,7 +3213,7 @@
                 }
             }
         },
-        "types.UploadLocalReply": {
+        "admin.UploadLocalReply": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3243,13 +3224,32 @@
                     "description": "return data",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/types.UploadItem"
+                            "$ref": "#/definitions/admin.UploadItem"
                         }
                     ]
                 },
                 "msg": {
                     "description": "return information description",
                     "type": "string"
+                }
+            }
+        },
+        "common.Options": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/common.Options"
+                    }
+                },
+                "label": {
+                    "description": "标签",
+                    "type": "string"
+                },
+                "other": {},
+                "value": {
+                    "description": "值"
                 }
             }
         }

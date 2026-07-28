@@ -1,25 +1,25 @@
 definitions:
-  types.CaptchaItem:
+  admin.CaptchaItem:
     properties:
       captchaBase64:
         type: string
       captchaKey:
         type: string
     type: object
-  types.CaptchaReply:
+  admin.CaptchaReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.CaptchaItem'
+        - $ref: '#/definitions/admin.CaptchaItem'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.ChangePasswordRequest:
+  admin.ChangePasswordRequest:
     properties:
       confirmPassword:
         description: 密码
@@ -38,7 +38,7 @@ definitions:
     - newPassword
     - oldPassword
     type: object
-  types.ConfigObjDetail:
+  admin.ConfigObjDetail:
     properties:
       createdAt:
         description: 创建时间
@@ -62,7 +62,7 @@ definitions:
         description: 配置值
         type: string
     type: object
-  types.CreateConfigReply:
+  admin.CreateConfigReply:
     properties:
       code:
         description: return code
@@ -78,7 +78,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.CreateConfigRequest:
+  admin.CreateConfigRequest:
     properties:
       description:
         description: 描述
@@ -93,7 +93,7 @@ definitions:
         description: 配置值
         type: string
     type: object
-  types.CreateMenuReply:
+  admin.CreateMenuReply:
     properties:
       code:
         description: return code
@@ -109,7 +109,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.CreateMenuRequest:
+  admin.CreateMenuRequest:
     properties:
       alwaysShow:
         description: 始终显示
@@ -154,7 +154,7 @@ definitions:
         description: 显示状态
         type: integer
     type: object
-  types.CreatePlatformReply:
+  admin.CreatePlatformReply:
     properties:
       code:
         description: return code
@@ -170,7 +170,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.CreatePlatformRequest:
+  admin.CreatePlatformRequest:
     properties:
       avatar:
         description: 头像
@@ -199,7 +199,7 @@ definitions:
         description: 账号
         type: string
     type: object
-  types.CreateRoleMenuReply:
+  admin.CreateRoleMenuReply:
     properties:
       code:
         description: return code
@@ -215,7 +215,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.CreateRoleMenuRequest:
+  admin.CreateRoleMenuRequest:
     properties:
       menuID:
         description: 菜单ID
@@ -224,7 +224,7 @@ definitions:
         description: 角色ID
         type: integer
     type: object
-  types.CreateRoleReply:
+  admin.CreateRoleReply:
     properties:
       code:
         description: return code
@@ -240,7 +240,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.CreateRoleRequest:
+  admin.CreateRoleRequest:
     properties:
       code:
         description: 角色编码
@@ -255,20 +255,20 @@ definitions:
         description: 状态
         type: integer
     type: object
-  types.DashboardEchartsReply:
+  admin.DashboardEchartsReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.Echarts'
+        - $ref: '#/definitions/admin.Echarts'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.DashboardStatisticsItem:
+  admin.DashboardStatisticsItem:
     properties:
       granularityLabel:
         description: 粒度标签
@@ -286,7 +286,7 @@ definitions:
         description: 类型 "pv" | "uv" | "ip"
         type: string
     type: object
-  types.DashboardStatisticsReply:
+  admin.DashboardStatisticsReply:
     properties:
       code:
         description: return code
@@ -294,13 +294,13 @@ definitions:
       data:
         description: return data
         items:
-          $ref: '#/definitions/types.DashboardStatisticsItem'
+          $ref: '#/definitions/admin.DashboardStatisticsItem'
         type: array
       msg:
         description: return information description
         type: string
     type: object
-  types.DeleteConfigByIDReply:
+  admin.DeleteConfigByIDReply:
     properties:
       code:
         description: return code
@@ -311,7 +311,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.DeleteMenuByIDReply:
+  admin.DeleteMenuByIDReply:
     properties:
       code:
         description: return code
@@ -322,7 +322,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.DeletePlatformByIDReply:
+  admin.DeletePlatformByIDReply:
     properties:
       code:
         description: return code
@@ -333,7 +333,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.DeleteRoleByIDReply:
+  admin.DeleteRoleByIDReply:
     properties:
       code:
         description: return code
@@ -344,7 +344,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.DeleteRoleMenuByIDReply:
+  admin.DeleteRoleMenuByIDReply:
     properties:
       code:
         description: return code
@@ -355,7 +355,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.Echarts:
+  admin.Echarts:
     properties:
       dates:
         description: 日期
@@ -368,10 +368,10 @@ definitions:
         type: array
       series:
         items:
-          $ref: '#/definitions/types.EchartsSeries'
+          $ref: '#/definitions/admin.EchartsSeries'
         type: array
     type: object
-  types.EchartsSeries:
+  admin.EchartsSeries:
     properties:
       areaStyle:
         type: string
@@ -386,72 +386,72 @@ definitions:
       name:
         type: string
     type: object
-  types.GetConfigByIDReply:
+  admin.GetConfigByIDReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.ConfigObjDetail'
+        - $ref: '#/definitions/admin.ConfigObjDetail'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.GetMenuByIDReply:
+  admin.GetMenuByIDReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.MenuObjDetail'
+        - $ref: '#/definitions/admin.MenuObjDetail'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.GetPlatformByIDReply:
+  admin.GetPlatformByIDReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.PlatformObjDetail'
+        - $ref: '#/definitions/admin.PlatformObjDetail'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.GetRoleByIDReply:
+  admin.GetRoleByIDReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.RoleObjDetail'
+        - $ref: '#/definitions/admin.RoleObjDetail'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.GetRoleMenuByIDReply:
+  admin.GetRoleMenuByIDReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.RoleMenuObjDetail'
+        - $ref: '#/definitions/admin.RoleMenuObjDetail'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.ListConfigsReply:
+  admin.ListConfigsReply:
     properties:
       code:
         description: return code
@@ -461,14 +461,14 @@ definitions:
         properties:
           configs:
             items:
-              $ref: '#/definitions/types.ConfigObjDetail'
+              $ref: '#/definitions/admin.ConfigObjDetail'
             type: array
         type: object
       msg:
         description: return information description
         type: string
     type: object
-  types.ListMenusReply:
+  admin.ListMenusReply:
     properties:
       code:
         description: return code
@@ -478,7 +478,7 @@ definitions:
         properties:
           list:
             items:
-              $ref: '#/definitions/types.MenuObjPage'
+              $ref: '#/definitions/admin.MenuObjPage'
             type: array
           total:
             type: integer
@@ -487,7 +487,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.ListPlatformsReply:
+  admin.ListPlatformsReply:
     properties:
       code:
         description: return code
@@ -497,7 +497,7 @@ definitions:
         properties:
           list:
             items:
-              $ref: '#/definitions/types.PlatformObjDetail'
+              $ref: '#/definitions/admin.PlatformObjDetail'
             type: array
           total:
             type: integer
@@ -506,7 +506,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.ListRoleMenusReply:
+  admin.ListRoleMenusReply:
     properties:
       code:
         description: return code
@@ -516,14 +516,14 @@ definitions:
         properties:
           roleMenus:
             items:
-              $ref: '#/definitions/types.RoleMenuObjDetail'
+              $ref: '#/definitions/admin.RoleMenuObjDetail'
             type: array
         type: object
       msg:
         description: return information description
         type: string
     type: object
-  types.ListRolesReply:
+  admin.ListRolesReply:
     properties:
       code:
         description: return code
@@ -533,7 +533,7 @@ definitions:
         properties:
           roles:
             items:
-              $ref: '#/definitions/types.RoleObjDetail'
+              $ref: '#/definitions/admin.RoleObjDetail'
             type: array
           total:
             type: integer
@@ -542,7 +542,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.LoginItem:
+  admin.LoginItem:
     properties:
       accessToken:
         description: access token
@@ -554,20 +554,20 @@ definitions:
         description: token type
         type: string
     type: object
-  types.LoginReply:
+  admin.LoginReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.LoginItem'
+        - $ref: '#/definitions/admin.LoginItem'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.LoginRequest:
+  admin.LoginRequest:
     properties:
       captchaCode:
         description: 验证码code
@@ -582,7 +582,7 @@ definitions:
         description: 账号
         type: string
     type: object
-  types.MeItem:
+  admin.MeItem:
     properties:
       avatar:
         description: 头像
@@ -607,20 +607,20 @@ definitions:
         description: 账号
         type: string
     type: object
-  types.MeReply:
+  admin.MeReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.MeItem'
+        - $ref: '#/definitions/admin.MeItem'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.MenuObjDetail:
+  admin.MenuObjDetail:
     properties:
       alwaysShow:
         description: 始终显示
@@ -676,11 +676,11 @@ definitions:
         description: 显示状态
         type: integer
     type: object
-  types.MenuObjPage:
+  admin.MenuObjPage:
     properties:
       children:
         items:
-          $ref: '#/definitions/types.MenuObjPage'
+          $ref: '#/definitions/admin.MenuObjPage'
         type: array
       component:
         description: 组件路径(vue页面完整路径，省略.vue后缀)
@@ -719,20 +719,7 @@ definitions:
         description: 显示状态
         type: integer
     type: object
-  types.Options:
-    properties:
-      children:
-        items:
-          $ref: '#/definitions/types.Options'
-        type: array
-      label:
-        description: 标签
-        type: string
-      other: {}
-      value:
-        description: 值
-    type: object
-  types.OptionsReply:
+  admin.OptionsReply:
     properties:
       code:
         description: return code
@@ -740,13 +727,13 @@ definitions:
       data:
         description: return data
         items:
-          $ref: '#/definitions/types.Options'
+          $ref: '#/definitions/common.Options'
         type: array
       msg:
         description: return information description
         type: string
     type: object
-  types.PlatformObjDetail:
+  admin.PlatformObjDetail:
     properties:
       avatar:
         description: 头像
@@ -788,7 +775,7 @@ definitions:
         description: 账号
         type: string
     type: object
-  types.ProfileItem:
+  admin.ProfileItem:
     properties:
       avatar:
         description: 头像
@@ -815,20 +802,20 @@ definitions:
         description: 账号
         type: string
     type: object
-  types.ProfileReply:
+  admin.ProfileReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.ProfileItem'
+        - $ref: '#/definitions/admin.ProfileItem'
         description: return data
       msg:
         description: return information description
         type: string
     type: object
-  types.ResetPasswordRequest:
+  admin.ResetPasswordRequest:
     properties:
       id:
         description: uint64 id
@@ -837,7 +824,7 @@ definitions:
         description: 密码
         type: string
     type: object
-  types.Result:
+  admin.Result:
     properties:
       code:
         description: return code
@@ -848,7 +835,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.RoleMenuObjDetail:
+  admin.RoleMenuObjDetail:
     properties:
       createdAt:
         description: 创建时间
@@ -866,7 +853,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-  types.RoleObjDetail:
+  admin.RoleObjDetail:
     properties:
       code:
         description: 角色编码
@@ -890,7 +877,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-  types.UpdateConfigByIDReply:
+  admin.UpdateConfigByIDReply:
     properties:
       code:
         description: return code
@@ -901,7 +888,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.UpdateConfigByIDRequest:
+  admin.UpdateConfigByIDRequest:
     properties:
       description:
         description: 描述
@@ -919,7 +906,7 @@ definitions:
         description: 配置值
         type: string
     type: object
-  types.UpdateMenuByIDReply:
+  admin.UpdateMenuByIDReply:
     properties:
       code:
         description: return code
@@ -930,7 +917,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.UpdateMenuByIDRequest:
+  admin.UpdateMenuByIDRequest:
     properties:
       alwaysShow:
         description: 始终显示
@@ -978,7 +965,7 @@ definitions:
         description: 显示状态
         type: integer
     type: object
-  types.UpdatePlatformByIDReply:
+  admin.UpdatePlatformByIDReply:
     properties:
       code:
         description: return code
@@ -989,7 +976,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.UpdatePlatformByIDRequest:
+  admin.UpdatePlatformByIDRequest:
     properties:
       avatar:
         description: 头像
@@ -1021,7 +1008,7 @@ definitions:
         description: 账号
         type: string
     type: object
-  types.UpdateRoleByIDReply:
+  admin.UpdateRoleByIDReply:
     properties:
       code:
         description: return code
@@ -1032,7 +1019,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.UpdateRoleByIDRequest:
+  admin.UpdateRoleByIDRequest:
     properties:
       code:
         description: 角色编码
@@ -1050,7 +1037,7 @@ definitions:
         description: 状态
         type: integer
     type: object
-  types.UpdateRoleMenuByIDReply:
+  admin.UpdateRoleMenuByIDReply:
     properties:
       code:
         description: return code
@@ -1061,7 +1048,7 @@ definitions:
         description: return information description
         type: string
     type: object
-  types.UpdateRoleMenuByIDRequest:
+  admin.UpdateRoleMenuByIDRequest:
     properties:
       id:
         description: uint64 id
@@ -1073,7 +1060,7 @@ definitions:
         description: 角色ID
         type: integer
     type: object
-  types.UploadItem:
+  admin.UploadItem:
     properties:
       name:
         description: 文件名称
@@ -1085,18 +1072,31 @@ definitions:
         description: url
         type: string
     type: object
-  types.UploadLocalReply:
+  admin.UploadLocalReply:
     properties:
       code:
         description: return code
         type: integer
       data:
         allOf:
-        - $ref: '#/definitions/types.UploadItem'
+        - $ref: '#/definitions/admin.UploadItem'
         description: return data
       msg:
         description: return information description
         type: string
+    type: object
+  common.Options:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/common.Options'
+        type: array
+      label:
+        description: 标签
+        type: string
+      other: {}
+      value:
+        description: 值
     type: object
 host: localhost:8080
 info:
@@ -1105,7 +1105,7 @@ info:
   title: admin api docs
   version: "2.0"
 paths:
-  /api/v1/auth/captcha:
+  /admin/v1/auth/captcha:
     get:
       consumes:
       - application/json
@@ -1116,33 +1116,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.CaptchaReply'
+            $ref: '#/definitions/admin.CaptchaReply'
       summary: get a captcha
       tags:
       - auth
-  /api/v1/auth/login:
-    post:
-      consumes:
-      - application/json
-      description: with username and password
-      parameters:
-      - description: login information
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/types.LoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.LoginReply'
-      summary: with username and password
-      tags:
-      - auth
-  /api/v1/auth/logout:
+  /admin/v1/auth/logout:
     delete:
       consumes:
       - application/json
@@ -1153,13 +1131,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/admin.Result'
       security:
       - BearerAuth: []
       summary: logout
       tags:
       - auth
-  /api/v1/config:
+  /admin/v1/config:
     get:
       consumes:
       - application/json
@@ -1195,7 +1173,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListConfigsReply'
+            $ref: '#/definitions/admin.ListConfigsReply'
       security:
       - BearerAuth: []
       summary: list of configs by query parameters
@@ -1211,20 +1189,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.CreateConfigRequest'
+          $ref: '#/definitions/admin.CreateConfigRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.CreateConfigReply'
+            $ref: '#/definitions/admin.CreateConfigReply'
       security:
       - BearerAuth: []
       summary: create config
       tags:
       - config
-  /api/v1/config/{id}:
+  /admin/v1/config/{id}:
     delete:
       consumes:
       - application/json
@@ -1241,7 +1219,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.DeleteConfigByIDReply'
+            $ref: '#/definitions/admin.DeleteConfigByIDReply'
       security:
       - BearerAuth: []
       summary: delete config
@@ -1263,7 +1241,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetConfigByIDReply'
+            $ref: '#/definitions/admin.GetConfigByIDReply'
       security:
       - BearerAuth: []
       summary: get config detail
@@ -1284,20 +1262,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdateConfigByIDRequest'
+          $ref: '#/definitions/admin.UpdateConfigByIDRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.UpdateConfigByIDReply'
+            $ref: '#/definitions/admin.UpdateConfigByIDReply'
       security:
       - BearerAuth: []
       summary: update config
       tags:
       - config
-  /api/v1/config/dict:
+  /admin/v1/config/dict:
     get:
       consumes:
       - application/json
@@ -1308,13 +1286,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetConfigByIDReply'
+            $ref: '#/definitions/admin.GetConfigByIDReply'
       security:
       - BearerAuth: []
       summary: get dict
       tags:
       - config
-  /api/v1/dashboard/echarts:
+  /admin/v1/dashboard/echarts:
     get:
       consumes:
       - application/json
@@ -1334,13 +1312,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.DashboardEchartsReply'
+            $ref: '#/definitions/admin.DashboardEchartsReply'
       security:
       - BearerAuth: []
       summary: data echarts
       tags:
       - dashboard
-  /api/v1/dashboard/statistics:
+  /admin/v1/dashboard/statistics:
     get:
       consumes:
       - application/json
@@ -1351,13 +1329,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.DashboardStatisticsReply'
+            $ref: '#/definitions/admin.DashboardStatisticsReply'
       security:
       - BearerAuth: []
       summary: data statistics
       tags:
       - dashboard
-  /api/v1/menu:
+  /admin/v1/menu:
     get:
       consumes:
       - application/json
@@ -1395,7 +1373,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListMenusReply'
+            $ref: '#/definitions/admin.ListMenusReply'
       security:
       - BearerAuth: []
       summary: list of menus by query parameters
@@ -1411,20 +1389,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.CreateMenuRequest'
+          $ref: '#/definitions/admin.CreateMenuRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.CreateMenuReply'
+            $ref: '#/definitions/admin.CreateMenuReply'
       security:
       - BearerAuth: []
       summary: create menu
       tags:
       - menu
-  /api/v1/menu/{id}:
+  /admin/v1/menu/{id}:
     delete:
       consumes:
       - application/json
@@ -1441,7 +1419,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.DeleteMenuByIDReply'
+            $ref: '#/definitions/admin.DeleteMenuByIDReply'
       security:
       - BearerAuth: []
       summary: delete menu
@@ -1463,7 +1441,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetMenuByIDReply'
+            $ref: '#/definitions/admin.GetMenuByIDReply'
       security:
       - BearerAuth: []
       summary: get menu detail
@@ -1484,20 +1462,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdateMenuByIDRequest'
+          $ref: '#/definitions/admin.UpdateMenuByIDRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.UpdateMenuByIDReply'
+            $ref: '#/definitions/admin.UpdateMenuByIDReply'
       security:
       - BearerAuth: []
       summary: update menu
       tags:
       - menu
-  /api/v1/menu/options:
+  /admin/v1/menu/options:
     get:
       consumes:
       - application/json
@@ -1512,13 +1490,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.OptionsReply'
+            $ref: '#/definitions/admin.OptionsReply'
       security:
       - BearerAuth: []
       summary: get role options
       tags:
       - role
-  /api/v1/menu/routes:
+  /admin/v1/menu/routes:
     get:
       consumes:
       - application/json
@@ -1529,13 +1507,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/admin.Result'
       security:
       - BearerAuth: []
       summary: list of routes
       tags:
       - menu
-  /api/v1/platform:
+  /admin/v1/platform:
     get:
       consumes:
       - application/json
@@ -1579,7 +1557,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListPlatformsReply'
+            $ref: '#/definitions/admin.ListPlatformsReply'
       security:
       - BearerAuth: []
       summary: list of platforms by query parameters
@@ -1595,20 +1573,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.CreatePlatformRequest'
+          $ref: '#/definitions/admin.CreatePlatformRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.CreatePlatformReply'
+            $ref: '#/definitions/admin.CreatePlatformReply'
       security:
       - BearerAuth: []
       summary: create platform
       tags:
       - platform
-  /api/v1/platform/{id}:
+  /admin/v1/platform/{id}:
     delete:
       consumes:
       - application/json
@@ -1625,7 +1603,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.DeletePlatformByIDReply'
+            $ref: '#/definitions/admin.DeletePlatformByIDReply'
       security:
       - BearerAuth: []
       summary: delete platform
@@ -1647,7 +1625,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetPlatformByIDReply'
+            $ref: '#/definitions/admin.GetPlatformByIDReply'
       security:
       - BearerAuth: []
       summary: get platform detail
@@ -1668,20 +1646,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdatePlatformByIDRequest'
+          $ref: '#/definitions/admin.UpdatePlatformByIDRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.UpdatePlatformByIDReply'
+            $ref: '#/definitions/admin.UpdatePlatformByIDReply'
       security:
       - BearerAuth: []
       summary: update platform
       tags:
       - platform
-  /api/v1/platform/me:
+  /admin/v1/platform/me:
     get:
       consumes:
       - application/json
@@ -1692,13 +1670,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.MeReply'
+            $ref: '#/definitions/admin.MeReply'
       security:
       - BearerAuth: []
       summary: current information
       tags:
       - platform
-  /api/v1/platform/password:
+  /admin/v1/platform/password:
     put:
       consumes:
       - application/json
@@ -1709,20 +1687,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.ChangePasswordRequest'
+          $ref: '#/definitions/admin.ChangePasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/admin.Result'
       security:
       - BearerAuth: []
       summary: change password by self
       tags:
       - platform
-  /api/v1/platform/password/reset:
+  /admin/v1/platform/password/reset:
     put:
       consumes:
       - application/json
@@ -1733,20 +1711,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.ResetPasswordRequest'
+          $ref: '#/definitions/admin.ResetPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/admin.Result'
       security:
       - BearerAuth: []
       summary: reset password by self
       tags:
       - platform
-  /api/v1/platform/profile:
+  /admin/v1/platform/profile:
     get:
       consumes:
       - application/json
@@ -1757,7 +1735,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ProfileReply'
+            $ref: '#/definitions/admin.ProfileReply'
       security:
       - BearerAuth: []
       summary: current information
@@ -1773,20 +1751,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdatePlatformByIDRequest'
+          $ref: '#/definitions/admin.UpdatePlatformByIDRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/admin.Result'
       security:
       - BearerAuth: []
       summary: update platform
       tags:
       - platform
-  /api/v1/role:
+  /admin/v1/role:
     get:
       consumes:
       - application/json
@@ -1822,7 +1800,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListRolesReply'
+            $ref: '#/definitions/admin.ListRolesReply'
       security:
       - BearerAuth: []
       summary: list of roles by query parameters
@@ -1838,20 +1816,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.CreateRoleRequest'
+          $ref: '#/definitions/admin.CreateRoleRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.CreateRoleReply'
+            $ref: '#/definitions/admin.CreateRoleReply'
       security:
       - BearerAuth: []
       summary: create role
       tags:
       - role
-  /api/v1/role/{id}:
+  /admin/v1/role/{id}:
     delete:
       consumes:
       - application/json
@@ -1868,7 +1846,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.DeleteRoleByIDReply'
+            $ref: '#/definitions/admin.DeleteRoleByIDReply'
       security:
       - BearerAuth: []
       summary: delete role
@@ -1890,7 +1868,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetRoleByIDReply'
+            $ref: '#/definitions/admin.GetRoleByIDReply'
       security:
       - BearerAuth: []
       summary: get role detail
@@ -1911,20 +1889,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdateRoleByIDRequest'
+          $ref: '#/definitions/admin.UpdateRoleByIDRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.UpdateRoleByIDReply'
+            $ref: '#/definitions/admin.UpdateRoleByIDReply'
       security:
       - BearerAuth: []
       summary: update role
       tags:
       - role
-  /api/v1/role/{id}/menus:
+  /admin/v1/role/{id}/menus:
     put:
       consumes:
       - application/json
@@ -1941,13 +1919,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.UpdateRoleByIDReply'
+            $ref: '#/definitions/admin.UpdateRoleByIDReply'
       security:
       - BearerAuth: []
       summary: update permission
       tags:
       - role
-  /api/v1/role/options:
+  /admin/v1/role/options:
     get:
       consumes:
       - application/json
@@ -1958,13 +1936,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.OptionsReply'
+            $ref: '#/definitions/admin.OptionsReply'
       security:
       - BearerAuth: []
       summary: get role options
       tags:
       - role
-  /api/v1/roleMenu:
+  /admin/v1/roleMenu:
     get:
       consumes:
       - application/json
@@ -2000,7 +1978,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ListRoleMenusReply'
+            $ref: '#/definitions/admin.ListRoleMenusReply'
       security:
       - BearerAuth: []
       summary: list of roleMenus by query parameters
@@ -2016,20 +1994,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.CreateRoleMenuRequest'
+          $ref: '#/definitions/admin.CreateRoleMenuRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.CreateRoleMenuReply'
+            $ref: '#/definitions/admin.CreateRoleMenuReply'
       security:
       - BearerAuth: []
       summary: create roleMenu
       tags:
       - roleMenu
-  /api/v1/roleMenu/{id}:
+  /admin/v1/roleMenu/{id}:
     delete:
       consumes:
       - application/json
@@ -2046,7 +2024,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.DeleteRoleMenuByIDReply'
+            $ref: '#/definitions/admin.DeleteRoleMenuByIDReply'
       security:
       - BearerAuth: []
       summary: delete roleMenu
@@ -2068,7 +2046,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetRoleMenuByIDReply'
+            $ref: '#/definitions/admin.GetRoleMenuByIDReply'
       security:
       - BearerAuth: []
       summary: get roleMenu detail
@@ -2089,20 +2067,20 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdateRoleMenuByIDRequest'
+          $ref: '#/definitions/admin.UpdateRoleMenuByIDRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.UpdateRoleMenuByIDReply'
+            $ref: '#/definitions/admin.UpdateRoleMenuByIDReply'
       security:
       - BearerAuth: []
       summary: update roleMenu
       tags:
       - roleMenu
-  /api/v1/roles/{id}/menuIds:
+  /admin/v1/roles/{id}/menuIds:
     get:
       consumes:
       - application/json
@@ -2113,13 +2091,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Result'
+            $ref: '#/definitions/admin.Result'
       security:
       - BearerAuth: []
       summary: get role menuIds
       tags:
       - role
-  /api/v1/upload/local:
+  /admin/v1/upload/local:
     post:
       consumes:
       - application/json
@@ -2136,12 +2114,34 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.UploadLocalReply'
+            $ref: '#/definitions/admin.UploadLocalReply'
       security:
       - BearerAuth: []
       summary: upload local file
       tags:
       - upload
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: with username and password
+      parameters:
+      - description: login information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.LoginReply'
+      summary: with username and password
+      tags:
+      - auth
 schemes:
 - http
 - https

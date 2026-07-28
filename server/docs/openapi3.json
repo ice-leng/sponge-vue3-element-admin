@@ -1,7 +1,7 @@
 {
   "components": {
     "schemas": {
-      "types.CaptchaItem": {
+      "admin.CaptchaItem": {
         "properties": {
           "captchaBase64": {
             "type": "string"
@@ -12,7 +12,7 @@
         },
         "type": "object"
       },
-      "types.CaptchaReply": {
+      "admin.CaptchaReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -21,7 +21,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.CaptchaItem"
+                "$ref": "#/components/schemas/admin.CaptchaItem"
               }
             ],
             "description": "return data"
@@ -33,7 +33,7 @@
         },
         "type": "object"
       },
-      "types.ChangePasswordRequest": {
+      "admin.ChangePasswordRequest": {
         "properties": {
           "confirmPassword": {
             "description": "密码",
@@ -59,7 +59,7 @@
         ],
         "type": "object"
       },
-      "types.ConfigObjDetail": {
+      "admin.ConfigObjDetail": {
         "properties": {
           "createdAt": {
             "description": "创建时间",
@@ -92,7 +92,7 @@
         },
         "type": "object"
       },
-      "types.CreateConfigReply": {
+      "admin.CreateConfigReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -115,7 +115,7 @@
         },
         "type": "object"
       },
-      "types.CreateConfigRequest": {
+      "admin.CreateConfigRequest": {
         "properties": {
           "description": {
             "description": "描述",
@@ -136,7 +136,7 @@
         },
         "type": "object"
       },
-      "types.CreateMenuReply": {
+      "admin.CreateMenuReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -159,7 +159,7 @@
         },
         "type": "object"
       },
-      "types.CreateMenuRequest": {
+      "admin.CreateMenuRequest": {
         "properties": {
           "alwaysShow": {
             "description": "始终显示",
@@ -220,7 +220,7 @@
         },
         "type": "object"
       },
-      "types.CreatePlatformReply": {
+      "admin.CreatePlatformReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -243,7 +243,7 @@
         },
         "type": "object"
       },
-      "types.CreatePlatformRequest": {
+      "admin.CreatePlatformRequest": {
         "properties": {
           "avatar": {
             "description": "头像",
@@ -283,7 +283,7 @@
         },
         "type": "object"
       },
-      "types.CreateRoleMenuReply": {
+      "admin.CreateRoleMenuReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -306,7 +306,7 @@
         },
         "type": "object"
       },
-      "types.CreateRoleMenuRequest": {
+      "admin.CreateRoleMenuRequest": {
         "properties": {
           "menuID": {
             "description": "菜单ID",
@@ -319,7 +319,7 @@
         },
         "type": "object"
       },
-      "types.CreateRoleReply": {
+      "admin.CreateRoleReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -342,7 +342,7 @@
         },
         "type": "object"
       },
-      "types.CreateRoleRequest": {
+      "admin.CreateRoleRequest": {
         "properties": {
           "code": {
             "description": "角色编码",
@@ -363,7 +363,7 @@
         },
         "type": "object"
       },
-      "types.DashboardEchartsReply": {
+      "admin.DashboardEchartsReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -372,7 +372,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.Echarts"
+                "$ref": "#/components/schemas/admin.Echarts"
               }
             ],
             "description": "return data"
@@ -384,7 +384,7 @@
         },
         "type": "object"
       },
-      "types.DashboardStatisticsItem": {
+      "admin.DashboardStatisticsItem": {
         "properties": {
           "granularityLabel": {
             "description": "粒度标签",
@@ -410,7 +410,7 @@
         },
         "type": "object"
       },
-      "types.DashboardStatisticsReply": {
+      "admin.DashboardStatisticsReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -419,7 +419,7 @@
           "data": {
             "description": "return data",
             "items": {
-              "$ref": "#/components/schemas/types.DashboardStatisticsItem"
+              "$ref": "#/components/schemas/admin.DashboardStatisticsItem"
             },
             "type": "array"
           },
@@ -430,7 +430,7 @@
         },
         "type": "object"
       },
-      "types.DeleteConfigByIDReply": {
+      "admin.DeleteConfigByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -446,7 +446,7 @@
         },
         "type": "object"
       },
-      "types.DeleteMenuByIDReply": {
+      "admin.DeleteMenuByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -462,7 +462,7 @@
         },
         "type": "object"
       },
-      "types.DeletePlatformByIDReply": {
+      "admin.DeletePlatformByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -478,7 +478,7 @@
         },
         "type": "object"
       },
-      "types.DeleteRoleByIDReply": {
+      "admin.DeleteRoleByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -494,7 +494,7 @@
         },
         "type": "object"
       },
-      "types.DeleteRoleMenuByIDReply": {
+      "admin.DeleteRoleMenuByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -510,7 +510,7 @@
         },
         "type": "object"
       },
-      "types.Echarts": {
+      "admin.Echarts": {
         "properties": {
           "dates": {
             "description": "日期",
@@ -527,14 +527,14 @@
           },
           "series": {
             "items": {
-              "$ref": "#/components/schemas/types.EchartsSeries"
+              "$ref": "#/components/schemas/admin.EchartsSeries"
             },
             "type": "array"
           }
         },
         "type": "object"
       },
-      "types.EchartsSeries": {
+      "admin.EchartsSeries": {
         "properties": {
           "areaStyle": {
             "type": "string"
@@ -557,7 +557,7 @@
         },
         "type": "object"
       },
-      "types.GetConfigByIDReply": {
+      "admin.GetConfigByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -566,7 +566,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.ConfigObjDetail"
+                "$ref": "#/components/schemas/admin.ConfigObjDetail"
               }
             ],
             "description": "return data"
@@ -578,7 +578,7 @@
         },
         "type": "object"
       },
-      "types.GetMenuByIDReply": {
+      "admin.GetMenuByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -587,7 +587,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.MenuObjDetail"
+                "$ref": "#/components/schemas/admin.MenuObjDetail"
               }
             ],
             "description": "return data"
@@ -599,7 +599,7 @@
         },
         "type": "object"
       },
-      "types.GetPlatformByIDReply": {
+      "admin.GetPlatformByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -608,7 +608,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.PlatformObjDetail"
+                "$ref": "#/components/schemas/admin.PlatformObjDetail"
               }
             ],
             "description": "return data"
@@ -620,7 +620,7 @@
         },
         "type": "object"
       },
-      "types.GetRoleByIDReply": {
+      "admin.GetRoleByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -629,7 +629,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.RoleObjDetail"
+                "$ref": "#/components/schemas/admin.RoleObjDetail"
               }
             ],
             "description": "return data"
@@ -641,7 +641,7 @@
         },
         "type": "object"
       },
-      "types.GetRoleMenuByIDReply": {
+      "admin.GetRoleMenuByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -650,7 +650,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.RoleMenuObjDetail"
+                "$ref": "#/components/schemas/admin.RoleMenuObjDetail"
               }
             ],
             "description": "return data"
@@ -662,7 +662,7 @@
         },
         "type": "object"
       },
-      "types.ListConfigsReply": {
+      "admin.ListConfigsReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -673,7 +673,7 @@
             "properties": {
               "configs": {
                 "items": {
-                  "$ref": "#/components/schemas/types.ConfigObjDetail"
+                  "$ref": "#/components/schemas/admin.ConfigObjDetail"
                 },
                 "type": "array"
               }
@@ -687,7 +687,7 @@
         },
         "type": "object"
       },
-      "types.ListMenusReply": {
+      "admin.ListMenusReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -698,7 +698,7 @@
             "properties": {
               "list": {
                 "items": {
-                  "$ref": "#/components/schemas/types.MenuObjPage"
+                  "$ref": "#/components/schemas/admin.MenuObjPage"
                 },
                 "type": "array"
               },
@@ -715,7 +715,7 @@
         },
         "type": "object"
       },
-      "types.ListPlatformsReply": {
+      "admin.ListPlatformsReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -726,7 +726,7 @@
             "properties": {
               "list": {
                 "items": {
-                  "$ref": "#/components/schemas/types.PlatformObjDetail"
+                  "$ref": "#/components/schemas/admin.PlatformObjDetail"
                 },
                 "type": "array"
               },
@@ -743,7 +743,7 @@
         },
         "type": "object"
       },
-      "types.ListRoleMenusReply": {
+      "admin.ListRoleMenusReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -754,7 +754,7 @@
             "properties": {
               "roleMenus": {
                 "items": {
-                  "$ref": "#/components/schemas/types.RoleMenuObjDetail"
+                  "$ref": "#/components/schemas/admin.RoleMenuObjDetail"
                 },
                 "type": "array"
               }
@@ -768,7 +768,7 @@
         },
         "type": "object"
       },
-      "types.ListRolesReply": {
+      "admin.ListRolesReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -779,7 +779,7 @@
             "properties": {
               "roles": {
                 "items": {
-                  "$ref": "#/components/schemas/types.RoleObjDetail"
+                  "$ref": "#/components/schemas/admin.RoleObjDetail"
                 },
                 "type": "array"
               },
@@ -796,7 +796,7 @@
         },
         "type": "object"
       },
-      "types.LoginItem": {
+      "admin.LoginItem": {
         "properties": {
           "accessToken": {
             "description": "access token",
@@ -813,7 +813,7 @@
         },
         "type": "object"
       },
-      "types.LoginReply": {
+      "admin.LoginReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -822,7 +822,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.LoginItem"
+                "$ref": "#/components/schemas/admin.LoginItem"
               }
             ],
             "description": "return data"
@@ -834,7 +834,7 @@
         },
         "type": "object"
       },
-      "types.LoginRequest": {
+      "admin.LoginRequest": {
         "properties": {
           "captchaCode": {
             "description": "验证码code",
@@ -855,7 +855,7 @@
         },
         "type": "object"
       },
-      "types.MeItem": {
+      "admin.MeItem": {
         "properties": {
           "avatar": {
             "description": "头像",
@@ -890,7 +890,7 @@
         },
         "type": "object"
       },
-      "types.MeReply": {
+      "admin.MeReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -899,7 +899,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.MeItem"
+                "$ref": "#/components/schemas/admin.MeItem"
               }
             ],
             "description": "return data"
@@ -911,7 +911,7 @@
         },
         "type": "object"
       },
-      "types.MenuObjDetail": {
+      "admin.MenuObjDetail": {
         "properties": {
           "alwaysShow": {
             "description": "始终显示",
@@ -987,11 +987,11 @@
         },
         "type": "object"
       },
-      "types.MenuObjPage": {
+      "admin.MenuObjPage": {
         "properties": {
           "children": {
             "items": {
-              "$ref": "#/components/schemas/types.MenuObjPage"
+              "$ref": "#/components/schemas/admin.MenuObjPage"
             },
             "type": "array"
           },
@@ -1046,26 +1046,7 @@
         },
         "type": "object"
       },
-      "types.Options": {
-        "properties": {
-          "children": {
-            "items": {
-              "$ref": "#/components/schemas/types.Options"
-            },
-            "type": "array"
-          },
-          "label": {
-            "description": "标签",
-            "type": "string"
-          },
-          "other": {},
-          "value": {
-            "description": "值"
-          }
-        },
-        "type": "object"
-      },
-      "types.OptionsReply": {
+      "admin.OptionsReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1074,7 +1055,7 @@
           "data": {
             "description": "return data",
             "items": {
-              "$ref": "#/components/schemas/types.Options"
+              "$ref": "#/components/schemas/common.Options"
             },
             "type": "array"
           },
@@ -1085,7 +1066,7 @@
         },
         "type": "object"
       },
-      "types.PlatformObjDetail": {
+      "admin.PlatformObjDetail": {
         "properties": {
           "avatar": {
             "description": "头像",
@@ -1143,7 +1124,7 @@
         },
         "type": "object"
       },
-      "types.ProfileItem": {
+      "admin.ProfileItem": {
         "properties": {
           "avatar": {
             "description": "头像",
@@ -1180,7 +1161,7 @@
         },
         "type": "object"
       },
-      "types.ProfileReply": {
+      "admin.ProfileReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1189,7 +1170,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.ProfileItem"
+                "$ref": "#/components/schemas/admin.ProfileItem"
               }
             ],
             "description": "return data"
@@ -1201,7 +1182,7 @@
         },
         "type": "object"
       },
-      "types.ResetPasswordRequest": {
+      "admin.ResetPasswordRequest": {
         "properties": {
           "id": {
             "description": "uint64 id",
@@ -1214,7 +1195,7 @@
         },
         "type": "object"
       },
-      "types.Result": {
+      "admin.Result": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1230,7 +1211,7 @@
         },
         "type": "object"
       },
-      "types.RoleMenuObjDetail": {
+      "admin.RoleMenuObjDetail": {
         "properties": {
           "createdAt": {
             "description": "创建时间",
@@ -1255,7 +1236,7 @@
         },
         "type": "object"
       },
-      "types.RoleObjDetail": {
+      "admin.RoleObjDetail": {
         "properties": {
           "code": {
             "description": "角色编码",
@@ -1288,7 +1269,7 @@
         },
         "type": "object"
       },
-      "types.UpdateConfigByIDReply": {
+      "admin.UpdateConfigByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1304,7 +1285,7 @@
         },
         "type": "object"
       },
-      "types.UpdateConfigByIDRequest": {
+      "admin.UpdateConfigByIDRequest": {
         "properties": {
           "description": {
             "description": "描述",
@@ -1329,7 +1310,7 @@
         },
         "type": "object"
       },
-      "types.UpdateMenuByIDReply": {
+      "admin.UpdateMenuByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1345,7 +1326,7 @@
         },
         "type": "object"
       },
-      "types.UpdateMenuByIDRequest": {
+      "admin.UpdateMenuByIDRequest": {
         "properties": {
           "alwaysShow": {
             "description": "始终显示",
@@ -1410,7 +1391,7 @@
         },
         "type": "object"
       },
-      "types.UpdatePlatformByIDReply": {
+      "admin.UpdatePlatformByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1426,7 +1407,7 @@
         },
         "type": "object"
       },
-      "types.UpdatePlatformByIDRequest": {
+      "admin.UpdatePlatformByIDRequest": {
         "properties": {
           "avatar": {
             "description": "头像",
@@ -1470,7 +1451,7 @@
         },
         "type": "object"
       },
-      "types.UpdateRoleByIDReply": {
+      "admin.UpdateRoleByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1486,7 +1467,7 @@
         },
         "type": "object"
       },
-      "types.UpdateRoleByIDRequest": {
+      "admin.UpdateRoleByIDRequest": {
         "properties": {
           "code": {
             "description": "角色编码",
@@ -1511,7 +1492,7 @@
         },
         "type": "object"
       },
-      "types.UpdateRoleMenuByIDReply": {
+      "admin.UpdateRoleMenuByIDReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1527,7 +1508,7 @@
         },
         "type": "object"
       },
-      "types.UpdateRoleMenuByIDRequest": {
+      "admin.UpdateRoleMenuByIDRequest": {
         "properties": {
           "id": {
             "description": "uint64 id",
@@ -1544,7 +1525,7 @@
         },
         "type": "object"
       },
-      "types.UploadItem": {
+      "admin.UploadItem": {
         "properties": {
           "name": {
             "description": "文件名称",
@@ -1561,7 +1542,7 @@
         },
         "type": "object"
       },
-      "types.UploadLocalReply": {
+      "admin.UploadLocalReply": {
         "properties": {
           "code": {
             "description": "return code",
@@ -1570,7 +1551,7 @@
           "data": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/types.UploadItem"
+                "$ref": "#/components/schemas/admin.UploadItem"
               }
             ],
             "description": "return data"
@@ -1578,6 +1559,25 @@
           "msg": {
             "description": "return information description",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "common.Options": {
+        "properties": {
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/common.Options"
+            },
+            "type": "array"
+          },
+          "label": {
+            "description": "标签",
+            "type": "string"
+          },
+          "other": {},
+          "value": {
+            "description": "值"
           }
         },
         "type": "object"
@@ -1600,7 +1600,7 @@
   },
   "openapi": "3.0.3",
   "paths": {
-    "/api/v1/auth/captcha": {
+    "/admin/v1/auth/captcha": {
       "get": {
         "description": "get a captcha",
         "responses": {
@@ -1608,7 +1608,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.CaptchaReply"
+                  "$ref": "#/components/schemas/admin.CaptchaReply"
                 }
               }
             },
@@ -1621,40 +1621,7 @@
         ]
       }
     },
-    "/api/v1/auth/login": {
-      "post": {
-        "description": "with username and password",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/types.LoginRequest"
-              }
-            }
-          },
-          "description": "login information",
-          "required": true,
-          "x-originalParamName": "data"
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/types.LoginReply"
-                }
-              }
-            },
-            "description": "OK"
-          }
-        },
-        "summary": "with username and password",
-        "tags": [
-          "auth"
-        ]
-      }
-    },
-    "/api/v1/auth/logout": {
+    "/admin/v1/auth/logout": {
       "delete": {
         "description": "logout",
         "responses": {
@@ -1662,7 +1629,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.Result"
+                  "$ref": "#/components/schemas/admin.Result"
                 }
               }
             },
@@ -1680,7 +1647,7 @@
         ]
       }
     },
-    "/api/v1/config": {
+    "/admin/v1/config": {
       "get": {
         "description": "list of configs by paging and conditions",
         "parameters": [
@@ -1738,7 +1705,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.ListConfigsReply"
+                  "$ref": "#/components/schemas/admin.ListConfigsReply"
                 }
               }
             },
@@ -1761,7 +1728,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.CreateConfigRequest"
+                "$ref": "#/components/schemas/admin.CreateConfigRequest"
               }
             }
           },
@@ -1774,7 +1741,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.CreateConfigReply"
+                  "$ref": "#/components/schemas/admin.CreateConfigReply"
                 }
               }
             },
@@ -1792,7 +1759,7 @@
         ]
       }
     },
-    "/api/v1/config/dict": {
+    "/admin/v1/config/dict": {
       "get": {
         "description": "get dict",
         "responses": {
@@ -1800,7 +1767,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.GetConfigByIDReply"
+                  "$ref": "#/components/schemas/admin.GetConfigByIDReply"
                 }
               }
             },
@@ -1818,7 +1785,7 @@
         ]
       }
     },
-    "/api/v1/config/{id}": {
+    "/admin/v1/config/{id}": {
       "delete": {
         "description": "delete config by id",
         "parameters": [
@@ -1837,7 +1804,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.DeleteConfigByIDReply"
+                  "$ref": "#/components/schemas/admin.DeleteConfigByIDReply"
                 }
               }
             },
@@ -1872,7 +1839,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.GetConfigByIDReply"
+                  "$ref": "#/components/schemas/admin.GetConfigByIDReply"
                 }
               }
             },
@@ -1906,7 +1873,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.UpdateConfigByIDRequest"
+                "$ref": "#/components/schemas/admin.UpdateConfigByIDRequest"
               }
             }
           },
@@ -1919,7 +1886,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.UpdateConfigByIDReply"
+                  "$ref": "#/components/schemas/admin.UpdateConfigByIDReply"
                 }
               }
             },
@@ -1937,7 +1904,7 @@
         ]
       }
     },
-    "/api/v1/dashboard/echarts": {
+    "/admin/v1/dashboard/echarts": {
       "get": {
         "description": "data echarts",
         "parameters": [
@@ -1963,7 +1930,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.DashboardEchartsReply"
+                  "$ref": "#/components/schemas/admin.DashboardEchartsReply"
                 }
               }
             },
@@ -1981,7 +1948,7 @@
         ]
       }
     },
-    "/api/v1/dashboard/statistics": {
+    "/admin/v1/dashboard/statistics": {
       "get": {
         "description": "data statistics",
         "responses": {
@@ -1989,7 +1956,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.DashboardStatisticsReply"
+                  "$ref": "#/components/schemas/admin.DashboardStatisticsReply"
                 }
               }
             },
@@ -2007,7 +1974,7 @@
         ]
       }
     },
-    "/api/v1/menu": {
+    "/admin/v1/menu": {
       "get": {
         "description": "list of menus by paging and conditions",
         "parameters": [
@@ -2071,7 +2038,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.ListMenusReply"
+                  "$ref": "#/components/schemas/admin.ListMenusReply"
                 }
               }
             },
@@ -2094,7 +2061,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.CreateMenuRequest"
+                "$ref": "#/components/schemas/admin.CreateMenuRequest"
               }
             }
           },
@@ -2107,7 +2074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.CreateMenuReply"
+                  "$ref": "#/components/schemas/admin.CreateMenuReply"
                 }
               }
             },
@@ -2125,7 +2092,7 @@
         ]
       }
     },
-    "/api/v1/menu/options": {
+    "/admin/v1/menu/options": {
       "get": {
         "description": "get role options",
         "parameters": [
@@ -2142,7 +2109,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.OptionsReply"
+                  "$ref": "#/components/schemas/admin.OptionsReply"
                 }
               }
             },
@@ -2160,7 +2127,7 @@
         ]
       }
     },
-    "/api/v1/menu/routes": {
+    "/admin/v1/menu/routes": {
       "get": {
         "description": "list routes",
         "responses": {
@@ -2168,7 +2135,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.Result"
+                  "$ref": "#/components/schemas/admin.Result"
                 }
               }
             },
@@ -2186,7 +2153,7 @@
         ]
       }
     },
-    "/api/v1/menu/{id}": {
+    "/admin/v1/menu/{id}": {
       "delete": {
         "description": "delete menu by id",
         "parameters": [
@@ -2205,7 +2172,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.DeleteMenuByIDReply"
+                  "$ref": "#/components/schemas/admin.DeleteMenuByIDReply"
                 }
               }
             },
@@ -2240,7 +2207,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.GetMenuByIDReply"
+                  "$ref": "#/components/schemas/admin.GetMenuByIDReply"
                 }
               }
             },
@@ -2274,7 +2241,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.UpdateMenuByIDRequest"
+                "$ref": "#/components/schemas/admin.UpdateMenuByIDRequest"
               }
             }
           },
@@ -2287,7 +2254,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.UpdateMenuByIDReply"
+                  "$ref": "#/components/schemas/admin.UpdateMenuByIDReply"
                 }
               }
             },
@@ -2305,7 +2272,7 @@
         ]
       }
     },
-    "/api/v1/platform": {
+    "/admin/v1/platform": {
       "get": {
         "description": "list of platforms by paging and conditions",
         "parameters": [
@@ -2379,7 +2346,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.ListPlatformsReply"
+                  "$ref": "#/components/schemas/admin.ListPlatformsReply"
                 }
               }
             },
@@ -2402,7 +2369,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.CreatePlatformRequest"
+                "$ref": "#/components/schemas/admin.CreatePlatformRequest"
               }
             }
           },
@@ -2415,7 +2382,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.CreatePlatformReply"
+                  "$ref": "#/components/schemas/admin.CreatePlatformReply"
                 }
               }
             },
@@ -2433,7 +2400,7 @@
         ]
       }
     },
-    "/api/v1/platform/me": {
+    "/admin/v1/platform/me": {
       "get": {
         "description": "current information",
         "responses": {
@@ -2441,7 +2408,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.MeReply"
+                  "$ref": "#/components/schemas/admin.MeReply"
                 }
               }
             },
@@ -2459,14 +2426,14 @@
         ]
       }
     },
-    "/api/v1/platform/password": {
+    "/admin/v1/platform/password": {
       "put": {
         "description": "change password by self",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.ChangePasswordRequest"
+                "$ref": "#/components/schemas/admin.ChangePasswordRequest"
               }
             }
           },
@@ -2479,7 +2446,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.Result"
+                  "$ref": "#/components/schemas/admin.Result"
                 }
               }
             },
@@ -2497,14 +2464,14 @@
         ]
       }
     },
-    "/api/v1/platform/password/reset": {
+    "/admin/v1/platform/password/reset": {
       "put": {
         "description": "reset password by self",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.ResetPasswordRequest"
+                "$ref": "#/components/schemas/admin.ResetPasswordRequest"
               }
             }
           },
@@ -2517,7 +2484,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.Result"
+                  "$ref": "#/components/schemas/admin.Result"
                 }
               }
             },
@@ -2535,7 +2502,7 @@
         ]
       }
     },
-    "/api/v1/platform/profile": {
+    "/admin/v1/platform/profile": {
       "get": {
         "description": "current information",
         "responses": {
@@ -2543,7 +2510,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.ProfileReply"
+                  "$ref": "#/components/schemas/admin.ProfileReply"
                 }
               }
             },
@@ -2566,7 +2533,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.UpdatePlatformByIDRequest"
+                "$ref": "#/components/schemas/admin.UpdatePlatformByIDRequest"
               }
             }
           },
@@ -2579,7 +2546,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.Result"
+                  "$ref": "#/components/schemas/admin.Result"
                 }
               }
             },
@@ -2597,7 +2564,7 @@
         ]
       }
     },
-    "/api/v1/platform/{id}": {
+    "/admin/v1/platform/{id}": {
       "delete": {
         "description": "delete platform by id",
         "parameters": [
@@ -2616,7 +2583,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.DeletePlatformByIDReply"
+                  "$ref": "#/components/schemas/admin.DeletePlatformByIDReply"
                 }
               }
             },
@@ -2651,7 +2618,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.GetPlatformByIDReply"
+                  "$ref": "#/components/schemas/admin.GetPlatformByIDReply"
                 }
               }
             },
@@ -2685,7 +2652,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.UpdatePlatformByIDRequest"
+                "$ref": "#/components/schemas/admin.UpdatePlatformByIDRequest"
               }
             }
           },
@@ -2698,7 +2665,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.UpdatePlatformByIDReply"
+                  "$ref": "#/components/schemas/admin.UpdatePlatformByIDReply"
                 }
               }
             },
@@ -2716,7 +2683,7 @@
         ]
       }
     },
-    "/api/v1/role": {
+    "/admin/v1/role": {
       "get": {
         "description": "list of roles by paging and conditions",
         "parameters": [
@@ -2774,7 +2741,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.ListRolesReply"
+                  "$ref": "#/components/schemas/admin.ListRolesReply"
                 }
               }
             },
@@ -2797,7 +2764,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.CreateRoleRequest"
+                "$ref": "#/components/schemas/admin.CreateRoleRequest"
               }
             }
           },
@@ -2810,7 +2777,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.CreateRoleReply"
+                  "$ref": "#/components/schemas/admin.CreateRoleReply"
                 }
               }
             },
@@ -2828,7 +2795,7 @@
         ]
       }
     },
-    "/api/v1/role/options": {
+    "/admin/v1/role/options": {
       "get": {
         "description": "get role options",
         "responses": {
@@ -2836,7 +2803,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.OptionsReply"
+                  "$ref": "#/components/schemas/admin.OptionsReply"
                 }
               }
             },
@@ -2854,7 +2821,7 @@
         ]
       }
     },
-    "/api/v1/role/{id}": {
+    "/admin/v1/role/{id}": {
       "delete": {
         "description": "delete role by id",
         "parameters": [
@@ -2873,7 +2840,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.DeleteRoleByIDReply"
+                  "$ref": "#/components/schemas/admin.DeleteRoleByIDReply"
                 }
               }
             },
@@ -2908,7 +2875,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.GetRoleByIDReply"
+                  "$ref": "#/components/schemas/admin.GetRoleByIDReply"
                 }
               }
             },
@@ -2942,7 +2909,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.UpdateRoleByIDRequest"
+                "$ref": "#/components/schemas/admin.UpdateRoleByIDRequest"
               }
             }
           },
@@ -2955,7 +2922,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.UpdateRoleByIDReply"
+                  "$ref": "#/components/schemas/admin.UpdateRoleByIDReply"
                 }
               }
             },
@@ -2973,7 +2940,7 @@
         ]
       }
     },
-    "/api/v1/role/{id}/menus": {
+    "/admin/v1/role/{id}/menus": {
       "put": {
         "description": "update permission",
         "parameters": [
@@ -2992,7 +2959,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.UpdateRoleByIDReply"
+                  "$ref": "#/components/schemas/admin.UpdateRoleByIDReply"
                 }
               }
             },
@@ -3010,7 +2977,7 @@
         ]
       }
     },
-    "/api/v1/roleMenu": {
+    "/admin/v1/roleMenu": {
       "get": {
         "description": "list of roleMenus by paging and conditions",
         "parameters": [
@@ -3068,7 +3035,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.ListRoleMenusReply"
+                  "$ref": "#/components/schemas/admin.ListRoleMenusReply"
                 }
               }
             },
@@ -3091,7 +3058,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.CreateRoleMenuRequest"
+                "$ref": "#/components/schemas/admin.CreateRoleMenuRequest"
               }
             }
           },
@@ -3104,7 +3071,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.CreateRoleMenuReply"
+                  "$ref": "#/components/schemas/admin.CreateRoleMenuReply"
                 }
               }
             },
@@ -3122,7 +3089,7 @@
         ]
       }
     },
-    "/api/v1/roleMenu/{id}": {
+    "/admin/v1/roleMenu/{id}": {
       "delete": {
         "description": "delete roleMenu by id",
         "parameters": [
@@ -3141,7 +3108,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.DeleteRoleMenuByIDReply"
+                  "$ref": "#/components/schemas/admin.DeleteRoleMenuByIDReply"
                 }
               }
             },
@@ -3176,7 +3143,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.GetRoleMenuByIDReply"
+                  "$ref": "#/components/schemas/admin.GetRoleMenuByIDReply"
                 }
               }
             },
@@ -3210,7 +3177,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/types.UpdateRoleMenuByIDRequest"
+                "$ref": "#/components/schemas/admin.UpdateRoleMenuByIDRequest"
               }
             }
           },
@@ -3223,7 +3190,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.UpdateRoleMenuByIDReply"
+                  "$ref": "#/components/schemas/admin.UpdateRoleMenuByIDReply"
                 }
               }
             },
@@ -3241,7 +3208,7 @@
         ]
       }
     },
-    "/api/v1/roles/{id}/menuIds": {
+    "/admin/v1/roles/{id}/menuIds": {
       "get": {
         "description": "get role menuIds",
         "responses": {
@@ -3249,7 +3216,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.Result"
+                  "$ref": "#/components/schemas/admin.Result"
                 }
               }
             },
@@ -3267,7 +3234,7 @@
         ]
       }
     },
-    "/api/v1/upload/local": {
+    "/admin/v1/upload/local": {
       "post": {
         "description": "upload local file",
         "requestBody": {
@@ -3295,7 +3262,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/types.UploadLocalReply"
+                  "$ref": "#/components/schemas/admin.UploadLocalReply"
                 }
               }
             },
@@ -3310,6 +3277,39 @@
         "summary": "upload local file",
         "tags": [
           "upload"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "description": "with username and password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/admin.LoginRequest"
+              }
+            }
+          },
+          "description": "login information",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/admin.LoginReply"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "with username and password",
+        "tags": [
+          "auth"
         ]
       }
     }
