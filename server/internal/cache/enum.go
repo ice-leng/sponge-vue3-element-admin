@@ -2,7 +2,7 @@ package cache
 
 import (
 	"admin/internal/config"
-	"admin/internal/types"
+	types "admin/internal/types/common"
 	"admin/pkg/util/enumx"
 	"context"
 	"os"

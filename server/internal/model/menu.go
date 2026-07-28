@@ -1,7 +1,8 @@
 package model
 
 import (
-	"admin/internal/types"
+	types "admin/internal/types/common"
+
 	"github.com/go-dev-frame/sponge/pkg/sgorm"
 )
 

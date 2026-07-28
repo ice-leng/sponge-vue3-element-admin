@@ -1,7 +1,7 @@
 package enumx
 
 import (
-	"admin/internal/types"
+	types "admin/internal/types/common"
 	"encoding/json"
 	"fmt"
 	"go/ast"

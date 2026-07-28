@@ -3,7 +3,7 @@ package dao
 import (
 	"admin/internal/constant/enum"
 	"admin/internal/database"
-	"admin/internal/types"
+	types "admin/internal/types/common"
 	"context"
 	"errors"
 	"fmt"

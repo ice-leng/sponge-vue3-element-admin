@@ -26,10 +26,10 @@ import (
 )
 
 var (
-	apiV1RouterFns []func(r *gin.RouterGroup) // group router functions
+	AdminV1RouterFns []func(r *gin.RouterGroup) // group router functions
 	// if you have other group routes you can define them here
 	// example:
-	//     apiV2RouterFns []func(r *gin.RouterGroup)
+	//     adminV2RouterFns []func(r *gin.RouterGroup)
 )
 
 // NewRouter create a new router
@@ -103,7 +103,7 @@ func NewRouter() *gin.Engine {
 	}
 
 	// register routers, middleware support
-	registerRouters(r, "/api/v1", apiV1RouterFns)
+	registerRouters(r, "/admin/v1", AdminV1RouterFns)
 	// if you have other group routes you can add them here
 	// example:
 	//    registerRouters(r, "/api/v2", apiV2RouteFns, middleware.Auth())
