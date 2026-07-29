@@ -41,7 +41,7 @@ func NewMenuHandler() MenuHandler {
 // Create a record
 // @Summary create menu
 // @Description submit information to create menu
-// @Tags menu
+// @Tags admin/menu
 // @accept json
 // @Produce json
 // @Param data body types.CreateMenuRequest true "menu information"
@@ -74,7 +74,7 @@ func (h *menuHandler) Create(c *gin.Context) {
 // DeleteByID delete a record by id
 // @Summary delete menu
 // @Description delete menu by id
-// @Tags menu
+// @Tags admin/menu
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -106,7 +106,7 @@ func (h *menuHandler) DeleteByID(c *gin.Context) {
 // UpdateByID update information by id
 // @Summary update menu
 // @Description update menu information by id
-// @Tags menu
+// @Tags admin/menu
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -147,7 +147,7 @@ func (h *menuHandler) UpdateByID(c *gin.Context) {
 // GetByID get a record by id
 // @Summary get menu detail
 // @Description get menu detail by id
-// @Tags menu
+// @Tags admin/menu
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
@@ -179,7 +179,7 @@ func (h *menuHandler) GetByID(c *gin.Context) {
 // List of records by query parameters
 // @Summary list of menus by query parameters
 // @Description list of menus by paging and conditions
-// @Tags menu
+// @Tags admin/menu
 // @accept json
 // @Produce json
 // @Param request query types.ListMenusRequest true "query parameters"
@@ -218,7 +218,7 @@ func (h *menuHandler) List(c *gin.Context) {
 // Routes of records routes
 // @Summary list of routes
 // @Description list routes
-// @Tags menu
+// @Tags admin/menu
 // @accept json
 // @Produce json
 // @Success 200 {object} common.Result{}
@@ -240,10 +240,10 @@ func (h *menuHandler) Routes(c *gin.Context) {
 	response.Success(c, result)
 }
 
-// Options get role options
-// @Summary get role options
-// @Description get role options
-// @Tags role
+// Options get menu options
+// @Summary get menu options
+// @Description get menu options
+// @Tags admin/menu
 // @Accept json
 // @Produce json
 // @Param request query types.OptionMenusRequest true "query parameters"

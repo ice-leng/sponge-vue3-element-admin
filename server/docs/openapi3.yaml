@@ -1108,7 +1108,7 @@ components:
 info:
     contact: {}
     description: http server api docs
-    title: admin api docs
+    title: docs
     version: "2.0"
 openapi: 3.0.3
 paths:
@@ -1124,7 +1124,7 @@ paths:
                     description: OK
             summary: get a captcha
             tags:
-                - auth
+                - admin/auth
     /admin/v1/auth/logout:
         delete:
             description: logout
@@ -1185,7 +1185,7 @@ paths:
                 - BearerAuth: []
             summary: list of configs by query parameters
             tags:
-                - config
+                - admin/config
         post:
             description: submit information to create config
             requestBody:
@@ -1207,7 +1207,7 @@ paths:
                 - BearerAuth: []
             summary: create config
             tags:
-                - config
+                - admin/config
     /admin/v1/config/{id}:
         delete:
             description: delete config by id
@@ -1229,7 +1229,7 @@ paths:
                 - BearerAuth: []
             summary: delete config
             tags:
-                - config
+                - admin/config
         get:
             description: get config detail by id
             parameters:
@@ -1250,7 +1250,7 @@ paths:
                 - BearerAuth: []
             summary: get config detail
             tags:
-                - config
+                - admin/config
         put:
             description: update config information by id
             parameters:
@@ -1279,7 +1279,7 @@ paths:
                 - BearerAuth: []
             summary: update config
             tags:
-                - config
+                - admin/config
     /admin/v1/config/dict:
         get:
             description: get dict
@@ -1294,7 +1294,7 @@ paths:
                 - BearerAuth: []
             summary: get dict
             tags:
-                - config
+                - admin/config
     /admin/v1/dashboard/echarts:
         get:
             description: data echarts
@@ -1320,7 +1320,7 @@ paths:
                 - BearerAuth: []
             summary: data echarts
             tags:
-                - dashboard
+                - admin/dashboard
     /admin/v1/dashboard/statistics:
         get:
             description: data statistics
@@ -1335,7 +1335,7 @@ paths:
                 - BearerAuth: []
             summary: data statistics
             tags:
-                - dashboard
+                - admin/dashboard
     /admin/v1/menu:
         get:
             description: list of menus by paging and conditions
@@ -1384,7 +1384,7 @@ paths:
                 - BearerAuth: []
             summary: list of menus by query parameters
             tags:
-                - menu
+                - admin/menu
         post:
             description: submit information to create menu
             requestBody:
@@ -1406,7 +1406,7 @@ paths:
                 - BearerAuth: []
             summary: create menu
             tags:
-                - menu
+                - admin/menu
     /admin/v1/menu/{id}:
         delete:
             description: delete menu by id
@@ -1428,7 +1428,7 @@ paths:
                 - BearerAuth: []
             summary: delete menu
             tags:
-                - menu
+                - admin/menu
         get:
             description: get menu detail by id
             parameters:
@@ -1449,7 +1449,7 @@ paths:
                 - BearerAuth: []
             summary: get menu detail
             tags:
-                - menu
+                - admin/menu
         put:
             description: update menu information by id
             parameters:
@@ -1478,10 +1478,10 @@ paths:
                 - BearerAuth: []
             summary: update menu
             tags:
-                - menu
+                - admin/menu
     /admin/v1/menu/options:
         get:
-            description: get role options
+            description: get menu options
             parameters:
                 - in: query
                   name: onlyParent
@@ -1496,9 +1496,9 @@ paths:
                     description: OK
             security:
                 - BearerAuth: []
-            summary: get role options
+            summary: get menu options
             tags:
-                - role
+                - admin/menu
     /admin/v1/menu/routes:
         get:
             description: list routes
@@ -1513,7 +1513,7 @@ paths:
                 - BearerAuth: []
             summary: list of routes
             tags:
-                - menu
+                - admin/menu
     /admin/v1/platform:
         get:
             description: list of platforms by paging and conditions
@@ -1569,7 +1569,7 @@ paths:
                 - BearerAuth: []
             summary: list of platforms by query parameters
             tags:
-                - platform
+                - admin/platform
         post:
             description: submit information to create platform
             requestBody:
@@ -1591,7 +1591,7 @@ paths:
                 - BearerAuth: []
             summary: create platform
             tags:
-                - platform
+                - admin/platform
     /admin/v1/platform/{id}:
         delete:
             description: delete platform by id
@@ -1613,7 +1613,7 @@ paths:
                 - BearerAuth: []
             summary: delete platform
             tags:
-                - platform
+                - admin/platform
         get:
             description: get platform detail by id
             parameters:
@@ -1634,7 +1634,7 @@ paths:
                 - BearerAuth: []
             summary: get platform detail
             tags:
-                - platform
+                - admin/platform
         put:
             description: update platform information by id
             parameters:
@@ -1663,7 +1663,7 @@ paths:
                 - BearerAuth: []
             summary: update platform
             tags:
-                - platform
+                - admin/platform
     /admin/v1/platform/me:
         get:
             description: current information
@@ -1678,7 +1678,7 @@ paths:
                 - BearerAuth: []
             summary: current information
             tags:
-                - platform
+                - admin/platform
     /admin/v1/platform/password:
         put:
             description: change password by self
@@ -1701,7 +1701,7 @@ paths:
                 - BearerAuth: []
             summary: change password by self
             tags:
-                - platform
+                - admin/platform
     /admin/v1/platform/password/reset:
         put:
             description: reset password by self
@@ -1724,7 +1724,7 @@ paths:
                 - BearerAuth: []
             summary: reset password by self
             tags:
-                - platform
+                - admin/platform
     /admin/v1/platform/profile:
         get:
             description: current information
@@ -1739,7 +1739,7 @@ paths:
                 - BearerAuth: []
             summary: current information
             tags:
-                - platform
+                - admin/platform
         put:
             description: update platform information by self
             requestBody:
@@ -1761,7 +1761,7 @@ paths:
                 - BearerAuth: []
             summary: update platform
             tags:
-                - platform
+                - admin/platform
     /admin/v1/role:
         get:
             description: list of roles by paging and conditions
@@ -1807,7 +1807,7 @@ paths:
                 - BearerAuth: []
             summary: list of roles by query parameters
             tags:
-                - role
+                - admin/role
         post:
             description: submit information to create role
             requestBody:
@@ -1829,7 +1829,7 @@ paths:
                 - BearerAuth: []
             summary: create role
             tags:
-                - role
+                - admin/role
     /admin/v1/role/{id}:
         delete:
             description: delete role by id
@@ -1851,7 +1851,7 @@ paths:
                 - BearerAuth: []
             summary: delete role
             tags:
-                - role
+                - admin/role
         get:
             description: get role detail by id
             parameters:
@@ -1872,7 +1872,7 @@ paths:
                 - BearerAuth: []
             summary: get role detail
             tags:
-                - role
+                - admin/role
         put:
             description: update role information by id
             parameters:
@@ -1901,7 +1901,7 @@ paths:
                 - BearerAuth: []
             summary: update role
             tags:
-                - role
+                - admin/role
     /admin/v1/role/{id}/menus:
         put:
             description: update permission
@@ -1923,7 +1923,7 @@ paths:
                 - BearerAuth: []
             summary: update permission
             tags:
-                - role
+                - admin/role
     /admin/v1/role/options:
         get:
             description: get role options
@@ -1938,7 +1938,7 @@ paths:
                 - BearerAuth: []
             summary: get role options
             tags:
-                - role
+                - admin/role
     /admin/v1/roleMenu:
         get:
             description: list of roleMenus by paging and conditions
@@ -1984,7 +1984,7 @@ paths:
                 - BearerAuth: []
             summary: list of roleMenus by query parameters
             tags:
-                - roleMenu
+                - admin/roleMenu
         post:
             description: submit information to create roleMenu
             requestBody:
@@ -2006,7 +2006,7 @@ paths:
                 - BearerAuth: []
             summary: create roleMenu
             tags:
-                - roleMenu
+                - admin/roleMenu
     /admin/v1/roleMenu/{id}:
         delete:
             description: delete roleMenu by id
@@ -2028,7 +2028,7 @@ paths:
                 - BearerAuth: []
             summary: delete roleMenu
             tags:
-                - roleMenu
+                - admin/roleMenu
         get:
             description: get roleMenu detail by id
             parameters:
@@ -2049,7 +2049,7 @@ paths:
                 - BearerAuth: []
             summary: get roleMenu detail
             tags:
-                - roleMenu
+                - admin/roleMenu
         put:
             description: update roleMenu information by id
             parameters:
@@ -2078,7 +2078,7 @@ paths:
                 - BearerAuth: []
             summary: update roleMenu
             tags:
-                - roleMenu
+                - admin/roleMenu
     /admin/v1/roles/{id}/menuIds:
         get:
             description: get role menuIds
@@ -2093,7 +2093,7 @@ paths:
                 - BearerAuth: []
             summary: get role menuIds
             tags:
-                - role
+                - admin/role
     /admin/v1/upload/local:
         post:
             description: upload local file
@@ -2121,7 +2121,7 @@ paths:
                 - BearerAuth: []
             summary: upload local file
             tags:
-                - upload
+                - admin/upload
     /api/v1/auth/login:
         post:
             description: with username and password

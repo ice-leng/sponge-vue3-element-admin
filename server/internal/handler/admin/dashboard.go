@@ -33,7 +33,7 @@ func NewDashboardHandler() DashboardHandler {
 // Statistics of data statistics
 // @Summary data statistics
 // @Description data statistics
-// @Tags dashboard
+// @Tags admin/dashboard
 // @accept json
 // @Produce json
 // @Success 200 {object} types.DashboardStatisticsReply{}
@@ -48,7 +48,7 @@ func (d *dashboardHandler) Statistics(c *gin.Context) {
 // Echarts of data echarts
 // @Summary data echarts
 // @Description data echarts
-// @Tags dashboard
+// @Tags admin/dashboard
 // @accept json
 // @Produce json
 // @Param request query types.DashboardEchartsRequest true "query parameters"

@@ -38,7 +38,7 @@ func NewRoleMenuHandler() RoleMenuHandler {
 // Create a record
 // @Summary create roleMenu
 // @Description submit information to create roleMenu
-// @Tags roleMenu
+// @Tags admin/roleMenu
 // @accept json
 // @Produce json
 // @Param data body types.CreateRoleMenuRequest true "roleMenu information"
@@ -71,7 +71,7 @@ func (h *roleMenuHandler) Create(c *gin.Context) {
 // DeleteByID delete a record by id
 // @Summary delete roleMenu
 // @Description delete roleMenu by id
-// @Tags roleMenu
+// @Tags admin/roleMenu
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -103,7 +103,7 @@ func (h *roleMenuHandler) DeleteByID(c *gin.Context) {
 // UpdateByID update information by id
 // @Summary update roleMenu
 // @Description update roleMenu information by id
-// @Tags roleMenu
+// @Tags admin/roleMenu
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -144,7 +144,7 @@ func (h *roleMenuHandler) UpdateByID(c *gin.Context) {
 // GetByID get a record by id
 // @Summary get roleMenu detail
 // @Description get roleMenu detail by id
-// @Tags roleMenu
+// @Tags admin/roleMenu
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
@@ -176,7 +176,7 @@ func (h *roleMenuHandler) GetByID(c *gin.Context) {
 // List of records by query parameters
 // @Summary list of roleMenus by query parameters
 // @Description list of roleMenus by paging and conditions
-// @Tags roleMenu
+// @Tags admin/roleMenu
 // @accept json
 // @Produce json
 // @Param request query types.ListRoleMenusRequest true "query parameters"

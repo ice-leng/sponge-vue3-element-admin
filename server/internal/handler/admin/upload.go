@@ -3,7 +3,6 @@ package admin
 import (
 	"admin/internal/ecode"
 	logic "admin/internal/logic/admin"
-	types "admin/internal/types/admin"
 	"admin/pkg/gin/handlerfunc"
 
 	"github.com/gin-gonic/gin"
@@ -33,11 +32,11 @@ func NewUploadHandler() UploadHandler {
 // Local upload local file
 // @Summary upload local file
 // @Description upload local file
-// @Tags upload
+// @Tags admin/upload
 // @accept json
 // @Produce json
 // @Param file formData file true "file"
-// @Success 200 {object} types.UploadLocalReply{}
+// @Success 200 {object} admin.UploadLocalReply{}
 // @Router /admin/v1/upload/local [post]
 // @Security BearerAuth
 func (h *uploadHandler) Local(c *gin.Context) {
@@ -47,9 +46,8 @@ func (h *uploadHandler) Local(c *gin.Context) {
 		return
 	}
 
-	data := &types.UploadItem{}
 	ctx := middleware.WrapCtx(c)
-	data, err = h.logic.Local(ctx, fileHeader)
+	data, err := h.logic.Local(ctx, fileHeader)
 	if err != nil {
 		if ec, ok := handlerfunc.IsErrcode(err); ok {
 			response.Error(c, ec)

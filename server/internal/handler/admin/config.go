@@ -39,7 +39,7 @@ func NewConfigHandler() ConfigHandler {
 // Create a record
 // @Summary create config
 // @Description submit information to create config
-// @Tags config
+// @Tags admin/config
 // @accept json
 // @Produce json
 // @Param data body types.CreateConfigRequest true "config information"
@@ -72,7 +72,7 @@ func (h *configHandler) Create(c *gin.Context) {
 // DeleteByID delete a record by id
 // @Summary delete config
 // @Description delete config by id
-// @Tags config
+// @Tags admin/config
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -104,7 +104,7 @@ func (h *configHandler) DeleteByID(c *gin.Context) {
 // UpdateByID update information by id
 // @Summary update config
 // @Description update config information by id
-// @Tags config
+// @Tags admin/config
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -145,7 +145,7 @@ func (h *configHandler) UpdateByID(c *gin.Context) {
 // GetByID get a record by id
 // @Summary get config detail
 // @Description get config detail by id
-// @Tags config
+// @Tags admin/config
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
@@ -177,7 +177,7 @@ func (h *configHandler) GetByID(c *gin.Context) {
 // List of records by query parameters
 // @Summary list of configs by query parameters
 // @Description list of configs by paging and conditions
-// @Tags config
+// @Tags admin/config
 // @accept json
 // @Produce json
 // @Param request query types.ListConfigsRequest true "query parameters"
@@ -213,7 +213,7 @@ func (h *configHandler) List(c *gin.Context) {
 // Dict 字典
 // @Summary get dict
 // @Description get dict
-// @Tags config
+// @Tags admin/config
 // @Accept json
 // @Produce json
 // @Success 200 {object} types.GetConfigByIDReply{}

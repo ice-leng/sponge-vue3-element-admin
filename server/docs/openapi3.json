@@ -1595,7 +1595,7 @@
   "info": {
     "contact": {},
     "description": "http server api docs",
-    "title": "admin api docs",
+    "title": "docs",
     "version": "2.0"
   },
   "openapi": "3.0.3",
@@ -1617,7 +1617,7 @@
         },
         "summary": "get a captcha",
         "tags": [
-          "auth"
+          "admin/auth"
         ]
       }
     },
@@ -1719,7 +1719,7 @@
         ],
         "summary": "list of configs by query parameters",
         "tags": [
-          "config"
+          "admin/config"
         ]
       },
       "post": {
@@ -1755,7 +1755,7 @@
         ],
         "summary": "create config",
         "tags": [
-          "config"
+          "admin/config"
         ]
       }
     },
@@ -1781,7 +1781,7 @@
         ],
         "summary": "get dict",
         "tags": [
-          "config"
+          "admin/config"
         ]
       }
     },
@@ -1818,7 +1818,7 @@
         ],
         "summary": "delete config",
         "tags": [
-          "config"
+          "admin/config"
         ]
       },
       "get": {
@@ -1853,7 +1853,7 @@
         ],
         "summary": "get config detail",
         "tags": [
-          "config"
+          "admin/config"
         ]
       },
       "put": {
@@ -1900,7 +1900,7 @@
         ],
         "summary": "update config",
         "tags": [
-          "config"
+          "admin/config"
         ]
       }
     },
@@ -1944,7 +1944,7 @@
         ],
         "summary": "data echarts",
         "tags": [
-          "dashboard"
+          "admin/dashboard"
         ]
       }
     },
@@ -1970,7 +1970,7 @@
         ],
         "summary": "data statistics",
         "tags": [
-          "dashboard"
+          "admin/dashboard"
         ]
       }
     },
@@ -2052,7 +2052,7 @@
         ],
         "summary": "list of menus by query parameters",
         "tags": [
-          "menu"
+          "admin/menu"
         ]
       },
       "post": {
@@ -2088,13 +2088,13 @@
         ],
         "summary": "create menu",
         "tags": [
-          "menu"
+          "admin/menu"
         ]
       }
     },
     "/admin/v1/menu/options": {
       "get": {
-        "description": "get role options",
+        "description": "get menu options",
         "parameters": [
           {
             "in": "query",
@@ -2121,9 +2121,9 @@
             "BearerAuth": []
           }
         ],
-        "summary": "get role options",
+        "summary": "get menu options",
         "tags": [
-          "role"
+          "admin/menu"
         ]
       }
     },
@@ -2149,7 +2149,7 @@
         ],
         "summary": "list of routes",
         "tags": [
-          "menu"
+          "admin/menu"
         ]
       }
     },
@@ -2186,7 +2186,7 @@
         ],
         "summary": "delete menu",
         "tags": [
-          "menu"
+          "admin/menu"
         ]
       },
       "get": {
@@ -2221,7 +2221,7 @@
         ],
         "summary": "get menu detail",
         "tags": [
-          "menu"
+          "admin/menu"
         ]
       },
       "put": {
@@ -2268,7 +2268,7 @@
         ],
         "summary": "update menu",
         "tags": [
-          "menu"
+          "admin/menu"
         ]
       }
     },
@@ -2360,7 +2360,7 @@
         ],
         "summary": "list of platforms by query parameters",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       },
       "post": {
@@ -2396,7 +2396,7 @@
         ],
         "summary": "create platform",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       }
     },
@@ -2422,7 +2422,7 @@
         ],
         "summary": "current information",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       }
     },
@@ -2460,7 +2460,7 @@
         ],
         "summary": "change password by self",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       }
     },
@@ -2498,7 +2498,7 @@
         ],
         "summary": "reset password by self",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       }
     },
@@ -2524,7 +2524,7 @@
         ],
         "summary": "current information",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       },
       "put": {
@@ -2560,7 +2560,7 @@
         ],
         "summary": "update platform",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       }
     },
@@ -2597,7 +2597,7 @@
         ],
         "summary": "delete platform",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       },
       "get": {
@@ -2632,7 +2632,7 @@
         ],
         "summary": "get platform detail",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       },
       "put": {
@@ -2679,7 +2679,7 @@
         ],
         "summary": "update platform",
         "tags": [
-          "platform"
+          "admin/platform"
         ]
       }
     },
@@ -2755,7 +2755,7 @@
         ],
         "summary": "list of roles by query parameters",
         "tags": [
-          "role"
+          "admin/role"
         ]
       },
       "post": {
@@ -2791,7 +2791,7 @@
         ],
         "summary": "create role",
         "tags": [
-          "role"
+          "admin/role"
         ]
       }
     },
@@ -2817,7 +2817,7 @@
         ],
         "summary": "get role options",
         "tags": [
-          "role"
+          "admin/role"
         ]
       }
     },
@@ -2854,7 +2854,7 @@
         ],
         "summary": "delete role",
         "tags": [
-          "role"
+          "admin/role"
         ]
       },
       "get": {
@@ -2889,7 +2889,7 @@
         ],
         "summary": "get role detail",
         "tags": [
-          "role"
+          "admin/role"
         ]
       },
       "put": {
@@ -2936,7 +2936,7 @@
         ],
         "summary": "update role",
         "tags": [
-          "role"
+          "admin/role"
         ]
       }
     },
@@ -2973,7 +2973,7 @@
         ],
         "summary": "update permission",
         "tags": [
-          "role"
+          "admin/role"
         ]
       }
     },
@@ -3049,7 +3049,7 @@
         ],
         "summary": "list of roleMenus by query parameters",
         "tags": [
-          "roleMenu"
+          "admin/roleMenu"
         ]
       },
       "post": {
@@ -3085,7 +3085,7 @@
         ],
         "summary": "create roleMenu",
         "tags": [
-          "roleMenu"
+          "admin/roleMenu"
         ]
       }
     },
@@ -3122,7 +3122,7 @@
         ],
         "summary": "delete roleMenu",
         "tags": [
-          "roleMenu"
+          "admin/roleMenu"
         ]
       },
       "get": {
@@ -3157,7 +3157,7 @@
         ],
         "summary": "get roleMenu detail",
         "tags": [
-          "roleMenu"
+          "admin/roleMenu"
         ]
       },
       "put": {
@@ -3204,7 +3204,7 @@
         ],
         "summary": "update roleMenu",
         "tags": [
-          "roleMenu"
+          "admin/roleMenu"
         ]
       }
     },
@@ -3230,7 +3230,7 @@
         ],
         "summary": "get role menuIds",
         "tags": [
-          "role"
+          "admin/role"
         ]
       }
     },
@@ -3276,7 +3276,7 @@
         ],
         "summary": "upload local file",
         "tags": [
-          "upload"
+          "admin/upload"
         ]
       }
     },

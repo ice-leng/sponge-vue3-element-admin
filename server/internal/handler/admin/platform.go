@@ -44,7 +44,7 @@ func NewPlatformHandler() PlatformHandler {
 // Create a record
 // @Summary create platform
 // @Description submit information to create platform
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Param data body types.CreatePlatformRequest true "platform information"
@@ -77,7 +77,7 @@ func (h *platformHandler) Create(c *gin.Context) {
 // DeleteByID delete a record by id
 // @Summary delete platform
 // @Description delete platform by id
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -109,7 +109,7 @@ func (h *platformHandler) DeleteByID(c *gin.Context) {
 // UpdateByID update information by id
 // @Summary update platform
 // @Description update platform information by id
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -150,7 +150,7 @@ func (h *platformHandler) UpdateByID(c *gin.Context) {
 // GetByID get a record by id
 // @Summary get platform detail
 // @Description get platform detail by id
-// @Tags platform
+// @Tags admin/platform
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
@@ -182,7 +182,7 @@ func (h *platformHandler) GetByID(c *gin.Context) {
 // List of records by query parameters
 // @Summary list of platforms by query parameters
 // @Description list of platforms by paging and conditions
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Param request query types.ListPlatformsRequest true "query parameters"
@@ -218,7 +218,7 @@ func (h *platformHandler) List(c *gin.Context) {
 // Me of records
 // @Summary current information
 // @Description current information
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Success 200 {object} types.MeReply{}
@@ -243,7 +243,7 @@ func (h *platformHandler) Me(c *gin.Context) {
 // GetProfile get me information
 // @Summary current information
 // @Description current information
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Success 200 {object} types.ProfileReply{}
@@ -268,7 +268,7 @@ func (h *platformHandler) GetProfile(c *gin.Context) {
 // UpdateProfile update information by self
 // @Summary update platform
 // @Description update platform information by self
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Param data body types.UpdatePlatformByIDRequest true "platform information"
@@ -301,7 +301,7 @@ func (h *platformHandler) UpdateProfile(c *gin.Context) {
 // ChangePassword change password by self
 // @Summary change password by self
 // @Description change password by self
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Param data body types.ChangePasswordRequest true "platform information"
@@ -334,7 +334,7 @@ func (h *platformHandler) ChangePassword(c *gin.Context) {
 // ResetPassword reset password by self
 // @Summary reset password by self
 // @Description reset password by self
-// @Tags platform
+// @Tags admin/platform
 // @accept json
 // @Produce json
 // @Param data body types.ResetPasswordRequest true "platform information"

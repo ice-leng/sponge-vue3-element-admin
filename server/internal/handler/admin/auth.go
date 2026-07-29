@@ -88,7 +88,7 @@ func (h *authHandler) Logout(c *gin.Context) {
 // Captcha get a captcha
 // @Summary get a captcha
 // @Description get a captcha
-// @Tags auth
+// @Tags admin/auth
 // @Accept json
 // @Produce json
 // @Success 200 {object} types.CaptchaReply{}

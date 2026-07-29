@@ -6,7 +6,7 @@
     "swagger": "2.0",
     "info": {
         "description": "http server api docs",
-        "title": "admin api docs",
+        "title": "docs",
         "contact": {},
         "version": "2.0"
     },
@@ -22,7 +22,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "admin/auth"
                 ],
                 "summary": "get a captcha",
                 "responses": {
@@ -78,7 +78,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "config"
+                    "admin/config"
                 ],
                 "summary": "list of configs by query parameters",
                 "parameters": [
@@ -142,7 +142,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "config"
+                    "admin/config"
                 ],
                 "summary": "create config",
                 "parameters": [
@@ -181,7 +181,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "config"
+                    "admin/config"
                 ],
                 "summary": "get dict",
                 "responses": {
@@ -209,7 +209,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "config"
+                    "admin/config"
                 ],
                 "summary": "get config detail",
                 "parameters": [
@@ -244,7 +244,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "config"
+                    "admin/config"
                 ],
                 "summary": "update config",
                 "parameters": [
@@ -288,7 +288,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "config"
+                    "admin/config"
                 ],
                 "summary": "delete config",
                 "parameters": [
@@ -325,7 +325,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "dashboard"
+                    "admin/dashboard"
                 ],
                 "summary": "data echarts",
                 "parameters": [
@@ -367,7 +367,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "dashboard"
+                    "admin/dashboard"
                 ],
                 "summary": "data statistics",
                 "responses": {
@@ -395,7 +395,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "menu"
+                    "admin/menu"
                 ],
                 "summary": "list of menus by query parameters",
                 "parameters": [
@@ -463,7 +463,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "menu"
+                    "admin/menu"
                 ],
                 "summary": "create menu",
                 "parameters": [
@@ -494,7 +494,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "get role options",
+                "description": "get menu options",
                 "consumes": [
                     "application/json"
                 ],
@@ -502,9 +502,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/menu"
                 ],
-                "summary": "get role options",
+                "summary": "get menu options",
                 "parameters": [
                     {
                         "type": "boolean",
@@ -537,7 +537,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "menu"
+                    "admin/menu"
                 ],
                 "summary": "list of routes",
                 "responses": {
@@ -565,7 +565,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "menu"
+                    "admin/menu"
                 ],
                 "summary": "get menu detail",
                 "parameters": [
@@ -600,7 +600,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "menu"
+                    "admin/menu"
                 ],
                 "summary": "update menu",
                 "parameters": [
@@ -644,7 +644,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "menu"
+                    "admin/menu"
                 ],
                 "summary": "delete menu",
                 "parameters": [
@@ -681,7 +681,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "list of platforms by query parameters",
                 "parameters": [
@@ -757,7 +757,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "create platform",
                 "parameters": [
@@ -796,7 +796,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "current information",
                 "responses": {
@@ -824,7 +824,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "change password by self",
                 "parameters": [
@@ -863,7 +863,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "reset password by self",
                 "parameters": [
@@ -902,7 +902,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "current information",
                 "responses": {
@@ -928,7 +928,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "update platform",
                 "parameters": [
@@ -967,7 +967,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "get platform detail",
                 "parameters": [
@@ -1002,7 +1002,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "update platform",
                 "parameters": [
@@ -1046,7 +1046,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform"
+                    "admin/platform"
                 ],
                 "summary": "delete platform",
                 "parameters": [
@@ -1083,7 +1083,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/role"
                 ],
                 "summary": "list of roles by query parameters",
                 "parameters": [
@@ -1147,7 +1147,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/role"
                 ],
                 "summary": "create role",
                 "parameters": [
@@ -1186,7 +1186,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/role"
                 ],
                 "summary": "get role options",
                 "responses": {
@@ -1214,7 +1214,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/role"
                 ],
                 "summary": "get role detail",
                 "parameters": [
@@ -1249,7 +1249,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/role"
                 ],
                 "summary": "update role",
                 "parameters": [
@@ -1293,7 +1293,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/role"
                 ],
                 "summary": "delete role",
                 "parameters": [
@@ -1330,7 +1330,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/role"
                 ],
                 "summary": "update permission",
                 "parameters": [
@@ -1367,7 +1367,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "roleMenu"
+                    "admin/roleMenu"
                 ],
                 "summary": "list of roleMenus by query parameters",
                 "parameters": [
@@ -1431,7 +1431,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "roleMenu"
+                    "admin/roleMenu"
                 ],
                 "summary": "create roleMenu",
                 "parameters": [
@@ -1470,7 +1470,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "roleMenu"
+                    "admin/roleMenu"
                 ],
                 "summary": "get roleMenu detail",
                 "parameters": [
@@ -1505,7 +1505,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "roleMenu"
+                    "admin/roleMenu"
                 ],
                 "summary": "update roleMenu",
                 "parameters": [
@@ -1549,7 +1549,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "roleMenu"
+                    "admin/roleMenu"
                 ],
                 "summary": "delete roleMenu",
                 "parameters": [
@@ -1586,7 +1586,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "admin/role"
                 ],
                 "summary": "get role menuIds",
                 "responses": {
@@ -1614,7 +1614,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "upload"
+                    "admin/upload"
                 ],
                 "summary": "upload local file",
                 "parameters": [

@@ -42,7 +42,7 @@ func NewRoleHandler() RoleHandler {
 // Create a record
 // @Summary create role
 // @Description submit information to create role
-// @Tags role
+// @Tags admin/role
 // @accept json
 // @Produce json
 // @Param data body types.CreateRoleRequest true "role information"
@@ -75,7 +75,7 @@ func (h *roleHandler) Create(c *gin.Context) {
 // DeleteByID delete a record by id
 // @Summary delete role
 // @Description delete role by id
-// @Tags role
+// @Tags admin/role
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -107,7 +107,7 @@ func (h *roleHandler) DeleteByID(c *gin.Context) {
 // UpdateByID update information by id
 // @Summary update role
 // @Description update role information by id
-// @Tags role
+// @Tags admin/role
 // @accept json
 // @Produce json
 // @Param id path string true "id"
@@ -148,7 +148,7 @@ func (h *roleHandler) UpdateByID(c *gin.Context) {
 // GetByID get a record by id
 // @Summary get role detail
 // @Description get role detail by id
-// @Tags role
+// @Tags admin/role
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
@@ -180,7 +180,7 @@ func (h *roleHandler) GetByID(c *gin.Context) {
 // List of records by query parameters
 // @Summary list of roles by query parameters
 // @Description list of roles by paging and conditions
-// @Tags role
+// @Tags admin/role
 // @accept json
 // @Produce json
 // @Param request query types.ListRolesRequest true "query parameters"
@@ -216,7 +216,7 @@ func (h *roleHandler) List(c *gin.Context) {
 // Options get role options
 // @Summary get role options
 // @Description get role options
-// @Tags role
+// @Tags admin/role
 // @Accept json
 // @Produce json
 // @Success 200 {object} common.OptionsReply{}
@@ -240,7 +240,7 @@ func (h *roleHandler) Options(c *gin.Context) {
 // MenuIds get role menuIds
 // @Summary get role menuIds
 // @Description get role menuIds
-// @Tags role
+// @Tags admin/role
 // @Accept json
 // @Produce json
 // @Success 200 {object} common.Result{}
@@ -271,7 +271,7 @@ func (h *roleHandler) MenuIds(c *gin.Context) {
 // Menus update permission
 // @Summary update permission
 // @Description update permission
-// @Tags role
+// @Tags admin/role
 // @accept json
 // @Produce json
 // @Param id path string true "id"

@@ -7,7 +7,7 @@ import (
 	"admin/cmd/admin/initial"
 )
 
-// @title admin api docs
+// @title docs
 // @description http server api docs
 // @schemes http https
 // @version 2.0
