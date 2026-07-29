@@ -720,20 +720,6 @@ components:
                     description: 显示状态
                     type: integer
             type: object
-        admin.OptionsReply:
-            properties:
-                code:
-                    description: return code
-                    type: integer
-                data:
-                    description: return data
-                    items:
-                        $ref: '#/components/schemas/common.Options'
-                    type: array
-                msg:
-                    description: return information description
-                    type: string
-            type: object
         admin.PlatformObjDetail:
             properties:
                 avatar:
@@ -823,17 +809,6 @@ components:
                     type: integer
                 password:
                     description: 密码
-                    type: string
-            type: object
-        admin.Result:
-            properties:
-                code:
-                    description: return code
-                    type: integer
-                data:
-                    description: return data
-                msg:
-                    description: return information description
                     type: string
             type: object
         admin.RoleMenuObjDetail:
@@ -1099,6 +1074,31 @@ components:
                 value:
                     description: 值
             type: object
+        common.OptionsReply:
+            properties:
+                code:
+                    description: return code
+                    type: integer
+                data:
+                    description: return data
+                    items:
+                        $ref: '#/components/schemas/common.Options'
+                    type: array
+                msg:
+                    description: return information description
+                    type: string
+            type: object
+        common.Result:
+            properties:
+                code:
+                    description: return code
+                    type: integer
+                data:
+                    description: return data
+                msg:
+                    description: return information description
+                    type: string
+            type: object
     securitySchemes:
         BearerAuth:
             description: Type Bearer your-jwt-token to Value
@@ -1133,13 +1133,13 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/admin.Result'
+                                $ref: '#/components/schemas/common.Result'
                     description: OK
             security:
                 - BearerAuth: []
             summary: logout
             tags:
-                - auth
+                - admin/auth
     /admin/v1/config:
         get:
             description: list of configs by paging and conditions
@@ -1492,7 +1492,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/admin.OptionsReply'
+                                $ref: '#/components/schemas/common.OptionsReply'
                     description: OK
             security:
                 - BearerAuth: []
@@ -1507,7 +1507,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/admin.Result'
+                                $ref: '#/components/schemas/common.Result'
                     description: OK
             security:
                 - BearerAuth: []
@@ -1695,7 +1695,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/admin.Result'
+                                $ref: '#/components/schemas/common.Result'
                     description: OK
             security:
                 - BearerAuth: []
@@ -1718,7 +1718,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/admin.Result'
+                                $ref: '#/components/schemas/common.Result'
                     description: OK
             security:
                 - BearerAuth: []
@@ -1755,7 +1755,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/admin.Result'
+                                $ref: '#/components/schemas/common.Result'
                     description: OK
             security:
                 - BearerAuth: []
@@ -1932,7 +1932,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/admin.OptionsReply'
+                                $ref: '#/components/schemas/common.OptionsReply'
                     description: OK
             security:
                 - BearerAuth: []
@@ -2087,7 +2087,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/admin.Result'
+                                $ref: '#/components/schemas/common.Result'
                     description: OK
             security:
                 - BearerAuth: []
@@ -2142,7 +2142,7 @@ paths:
                     description: OK
             summary: with username and password
             tags:
-                - auth
+                - admin/auth
 servers:
     - url: http://localhost:8080/
     - url: https://localhost:8080/

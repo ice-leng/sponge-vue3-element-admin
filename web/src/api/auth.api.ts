@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 
-const AUTH_BASE_URL = "/api/v1/auth";
+const AUTH_BASE_URL = "/admin/v1/auth";
 
 const AuthAPI = {
   /** 登录 接口*/

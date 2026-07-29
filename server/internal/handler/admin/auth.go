@@ -36,7 +36,7 @@ func NewAuthHandler() AuthHandler {
 // Login
 // @Summary with username and password
 // @Description with username and password
-// @Tags auth
+// @Tags admin/auth
 // @Accept json
 // @Produce json
 // @Param data body types.LoginRequest true "login information"
@@ -68,10 +68,10 @@ func (h *authHandler) Login(c *gin.Context) {
 // Logout of logout
 // @Summary logout
 // @Description logout
-// @Tags auth
+// @Tags admin/auth
 // @accept json
 // @Produce json
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} common.Result{}
 // @Router /admin/v1/auth/logout [delete]
 // @Security BearerAuth
 func (h *authHandler) Logout(c *gin.Context) {

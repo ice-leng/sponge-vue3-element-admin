@@ -272,7 +272,7 @@ func (h *platformHandler) GetProfile(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param data body types.UpdatePlatformByIDRequest true "platform information"
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} common.Result{}
 // @Router /admin/v1/platform/profile [put]
 // @Security BearerAuth
 func (h *platformHandler) UpdateProfile(c *gin.Context) {
@@ -305,7 +305,7 @@ func (h *platformHandler) UpdateProfile(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param data body types.ChangePasswordRequest true "platform information"
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} common.Result{}
 // @Router /admin/v1/platform/password [put]
 // @Security BearerAuth
 func (h *platformHandler) ChangePassword(c *gin.Context) {
@@ -338,7 +338,7 @@ func (h *platformHandler) ChangePassword(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param data body types.ResetPasswordRequest true "platform information"
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} common.Result{}
 // @Router /admin/v1/platform/password/reset [put]
 // @Security BearerAuth
 func (h *platformHandler) ResetPassword(c *gin.Context) {

@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 
-const FILE_BASE_URL = "/api/v1/upload";
+const FILE_BASE_URL = "/admin/v1/upload";
 
 const FileAPI = {
   /**

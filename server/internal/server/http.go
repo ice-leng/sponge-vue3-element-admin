@@ -11,6 +11,8 @@ import (
 	"github.com/go-dev-frame/sponge/pkg/app"
 
 	"admin/internal/routers"
+	// register admin v1 routes
+	_ "admin/internal/routers/admin"
 )
 
 var _ app.IServer = (*httpServer)(nil)

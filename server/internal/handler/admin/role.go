@@ -219,7 +219,7 @@ func (h *roleHandler) List(c *gin.Context) {
 // @Tags role
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.OptionsReply{}
+// @Success 200 {object} common.OptionsReply{}
 // @Router /admin/v1/role/options [get]
 // @Security BearerAuth
 func (h *roleHandler) Options(c *gin.Context) {
@@ -243,7 +243,7 @@ func (h *roleHandler) Options(c *gin.Context) {
 // @Tags role
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} common.Result{}
 // @Router /admin/v1/roles/{id}/menuIds [get]
 // @Security BearerAuth
 func (h *roleHandler) MenuIds(c *gin.Context) {

@@ -719,20 +719,6 @@ definitions:
         description: 显示状态
         type: integer
     type: object
-  admin.OptionsReply:
-    properties:
-      code:
-        description: return code
-        type: integer
-      data:
-        description: return data
-        items:
-          $ref: '#/definitions/common.Options'
-        type: array
-      msg:
-        description: return information description
-        type: string
-    type: object
   admin.PlatformObjDetail:
     properties:
       avatar:
@@ -822,17 +808,6 @@ definitions:
         type: integer
       password:
         description: 密码
-        type: string
-    type: object
-  admin.Result:
-    properties:
-      code:
-        description: return code
-        type: integer
-      data:
-        description: return data
-      msg:
-        description: return information description
         type: string
     type: object
   admin.RoleMenuObjDetail:
@@ -1098,6 +1073,31 @@ definitions:
       value:
         description: 值
     type: object
+  common.OptionsReply:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+        items:
+          $ref: '#/definitions/common.Options'
+        type: array
+      msg:
+        description: return information description
+        type: string
+    type: object
+  common.Result:
+    properties:
+      code:
+        description: return code
+        type: integer
+      data:
+        description: return data
+      msg:
+        description: return information description
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -1131,12 +1131,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.Result'
+            $ref: '#/definitions/common.Result'
       security:
       - BearerAuth: []
       summary: logout
       tags:
-      - auth
+      - admin/auth
   /admin/v1/config:
     get:
       consumes:
@@ -1490,7 +1490,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.OptionsReply'
+            $ref: '#/definitions/common.OptionsReply'
       security:
       - BearerAuth: []
       summary: get role options
@@ -1507,7 +1507,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.Result'
+            $ref: '#/definitions/common.Result'
       security:
       - BearerAuth: []
       summary: list of routes
@@ -1694,7 +1694,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.Result'
+            $ref: '#/definitions/common.Result'
       security:
       - BearerAuth: []
       summary: change password by self
@@ -1718,7 +1718,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.Result'
+            $ref: '#/definitions/common.Result'
       security:
       - BearerAuth: []
       summary: reset password by self
@@ -1758,7 +1758,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.Result'
+            $ref: '#/definitions/common.Result'
       security:
       - BearerAuth: []
       summary: update platform
@@ -1936,7 +1936,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.OptionsReply'
+            $ref: '#/definitions/common.OptionsReply'
       security:
       - BearerAuth: []
       summary: get role options
@@ -2091,7 +2091,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/admin.Result'
+            $ref: '#/definitions/common.Result'
       security:
       - BearerAuth: []
       summary: get role menuIds
@@ -2141,7 +2141,7 @@ paths:
             $ref: '#/definitions/admin.LoginReply'
       summary: with username and password
       tags:
-      - auth
+      - admin/auth
 schemes:
 - http
 - https

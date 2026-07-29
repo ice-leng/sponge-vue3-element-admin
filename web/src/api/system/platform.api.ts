@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 
-const PLATFORM_BASE_URL = "/api/v1/platform";
+const PLATFORM_BASE_URL = "/admin/v1/platform";
 
 const PlatformAPI = {
   /**

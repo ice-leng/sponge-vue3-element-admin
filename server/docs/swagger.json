@@ -50,14 +50,14 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "admin/auth"
                 ],
                 "summary": "logout",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.Result"
+                            "$ref": "#/definitions/common.Result"
                         }
                     }
                 }
@@ -516,7 +516,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.OptionsReply"
+                            "$ref": "#/definitions/common.OptionsReply"
                         }
                     }
                 }
@@ -544,7 +544,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.Result"
+                            "$ref": "#/definitions/common.Result"
                         }
                     }
                 }
@@ -842,7 +842,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.Result"
+                            "$ref": "#/definitions/common.Result"
                         }
                     }
                 }
@@ -881,7 +881,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.Result"
+                            "$ref": "#/definitions/common.Result"
                         }
                     }
                 }
@@ -946,7 +946,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.Result"
+                            "$ref": "#/definitions/common.Result"
                         }
                     }
                 }
@@ -1193,7 +1193,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.OptionsReply"
+                            "$ref": "#/definitions/common.OptionsReply"
                         }
                     }
                 }
@@ -1593,7 +1593,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/admin.Result"
+                            "$ref": "#/definitions/common.Result"
                         }
                     }
                 }
@@ -1646,7 +1646,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "admin/auth"
                 ],
                 "summary": "with username and password",
                 "parameters": [
@@ -2717,26 +2717,6 @@
                 }
             }
         },
-        "admin.OptionsReply": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "return code",
-                    "type": "integer"
-                },
-                "data": {
-                    "description": "return data",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/common.Options"
-                    }
-                },
-                "msg": {
-                    "description": "return information description",
-                    "type": "string"
-                }
-            }
-        },
         "admin.PlatformObjDetail": {
             "type": "object",
             "properties": {
@@ -2862,22 +2842,6 @@
                 },
                 "password": {
                     "description": "密码",
-                    "type": "string"
-                }
-            }
-        },
-        "admin.Result": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "return code",
-                    "type": "integer"
-                },
-                "data": {
-                    "description": "return data"
-                },
-                "msg": {
-                    "description": "return information description",
                     "type": "string"
                 }
             }
@@ -3250,6 +3214,42 @@
                 "other": {},
                 "value": {
                     "description": "值"
+                }
+            }
+        },
+        "common.OptionsReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/common.Options"
+                    }
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
+                }
+            }
+        },
+        "common.Result": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "return code",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "return data"
+                },
+                "msg": {
+                    "description": "return information description",
+                    "type": "string"
                 }
             }
         }

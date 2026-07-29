@@ -1,6 +1,6 @@
 import request from "@/utils/request";
 
-const DASHBOARD_BASE_URL = "/api/v1/dashboard";
+const DASHBOARD_BASE_URL = "/admin/v1/dashboard";
 
 const DashboardAPI = {
   getStatistics() {

@@ -221,7 +221,7 @@ func (h *menuHandler) List(c *gin.Context) {
 // @Tags menu
 // @accept json
 // @Produce json
-// @Success 200 {object} types.Result{}
+// @Success 200 {object} common.Result{}
 // @Router /admin/v1/menu/routes [get]
 // @Security BearerAuth
 func (h *menuHandler) Routes(c *gin.Context) {
@@ -247,7 +247,7 @@ func (h *menuHandler) Routes(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request query types.OptionMenusRequest true "query parameters"
-// @Success 200 {object} types.OptionsReply{}
+// @Success 200 {object} common.OptionsReply{}
 // @Router /admin/v1/menu/options [get]
 // @Security BearerAuth
 func (h *menuHandler) Options(c *gin.Context) {
