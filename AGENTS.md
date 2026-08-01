@@ -18,21 +18,28 @@
 
 ---
 
-## 2. 项目结构（单体双端）
+## 2. 项目结构（单体多服务）
 
 ```
 sponge-vue3-element-admin/
 ├── server/                 # Go 后端（Sponge + Gin + GORM）
-│   ├── cmd/admin/          # 服务入口与初始化
+│   ├── cmd/
+│   │   └── admin/          # 服务入口与初始化（可扩展多个服务）
+│   │       ├── main.go     # 主入口
+│   │       └── initial/    # 服务初始化
 │   ├── internal/
 │   │   ├── handler/        # HTTP 绑定/解析 → 调用 logic → 统一响应
+│   │   │   └── admin/      # admin 服务的 handler
 │   │   ├── logic/          # 业务编排、错误转换、唯一索引预查重
 │   │   ├── dao/            # 数据访问细节、唯一键冲突转业务错误
 │   │   ├── model/          # GORM 模型（dao 专用，禁止跨层直连）
 │   │   ├── types/          # DTO/请求/响应定义
-│   │   ├── routers/        # 路由注册
+│   │   ├── routers/        # 路由注册（按服务分目录）
+│   │   │   ├── routers.go  # 路由组注册入口
+│   │   │   ├── admin/      # admin 服务路由（/admin/v1/*）
+│   │   │   └── api/        # api 服务路由（/api/v1/*）[可扩展]
 │   │   ├── server/         # HTTP/gRPC 启动逻辑
-│   │   ├── middleware/     # 统一中间件
+│   │   ├── middlewares/    # 统一中间件
 │   │   ├── cache/          # 缓存封装
 │   │   ├── config/         # 配置加载
 │   │   ├── constant/       # 常量/枚举
@@ -67,6 +74,13 @@ sponge-vue3-element-admin/
     ├── tsconfig.json
     └── .eslintrc / .prettierrc / stylelint.config
 ```
+
+### 多服务路由架构说明
+- **后端**：通过路由组（`RouterGroup`）区分不同服务，每个服务有独立的路由目录
+- **前端**：统一管理，不区分服务目录
+- **扩展新服务**：
+  1. 在 `server/internal/routers/` 下创建新服务目录
+  2. 在 `server/internal/handler/` 下创建新服务目录
 
 ---
 
@@ -110,6 +124,12 @@ sponge-vue3-element-admin/
 - DTO ↔ `model` 优先 `copier.Copy`，补字段显式处理。
 - 测试风格贴近现有 `gotest/sqlmock`。
 - 行长 ≤200，优先复用现有中间件与启动逻辑。
+
+### 4.3 多服务路由扩展
+- **路由组注册**：在 `routers.go` 中定义新的路由组变量（如 `ApiV1RouterFns`）
+- **路由文件组织**：每个服务的路由文件放在对应目录（如 `routers/admin/`、`routers/api/`）
+- **init() 注册**：路由文件通过 `init()` 函数自动注册到对应的路由组
+- **中间件隔离**：不同服务可配置不同的中间件链（如认证、限流）
 
 ---
 
@@ -219,7 +239,29 @@ sponge web http \
 
 ---
 
-## 10. 附录：常用文件路径速查
+### 10 CodeGraph 使用规则（必选）
+
+项目根目录存在 `.codegraph/` 时，代码查询**默认走 CodeGraph**，不回到 Read/Grep。
+
+| 场景 | 工具 |
+|------|------|
+| 查符号调用链、影响范围、依赖关系 | `codegraph_explore` |
+| 查单个符号的源码+上下游 | `codegraph_explore` 或 `codegraph_node` |
+| 查调用方/被调用方 | `codegraph_callers` / `codegraph_callees` |
+
+**例外**（允许直接 Read/Grep）：
+- 无 `.codegraph/` 的项目或子项目
+- CodeGraph 结果被截断，需要读取文件其余部分
+- 刚新建/修改、尚未重新索引的内容
+- 非源码文件：SQL 迁移、Swagger YAML、proto、二进制等
+
+执行要求：
+- `codegraph_explore` 已返回完整源码时，**直接读结果**，禁止再 Read 同一文件。
+- 文件修改后需要 `codegraph sync` 再查。
+
+---
+
+## 11. 附录：常用文件路径速查
 
 | 场景 | 路径 |
 |------|------|
@@ -235,3 +277,9 @@ sponge web http \
 | 前端全局状态 | `web/src/store/` |
 | 前端类型定义 | `web/src/types/` |
 | 前端环境变量 | `web/.env.development` / `.env.production` |
+
+### 多服务路由文件
+| 服务 | 路由目录 | 路由组变量 | 路由前缀 |
+|------|----------|------------|----------|
+| admin | `server/internal/routers/admin/` | `AdminV1RouterFns` | `/admin/v1` |
+| api | `server/internal/routers/api/` | `ApiV1RouterFns` [可扩展] | `/api/v1` |
