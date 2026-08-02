@@ -36,7 +36,7 @@ func NewDashboardHandler() DashboardHandler {
 // @Tags admin/dashboard
 // @accept json
 // @Produce json
-// @Success 200 {object} types.DashboardStatisticsReply{}
+// @Success 200 {object} DashboardStatisticsReply{}
 // @Router /admin/v1/dashboard/statistics [get]
 // @Security BearerAuth
 func (d *dashboardHandler) Statistics(c *gin.Context) {
@@ -51,8 +51,8 @@ func (d *dashboardHandler) Statistics(c *gin.Context) {
 // @Tags admin/dashboard
 // @accept json
 // @Produce json
-// @Param request query types.DashboardEchartsRequest true "query parameters"
-// @Success 200 {object} types.DashboardEchartsReply{}
+// @Param request query DashboardEchartsRequest true "query parameters"
+// @Success 200 {object} DashboardEchartsReply{}
 // @Router /admin/v1/dashboard/echarts [get]
 // @Security BearerAuth
 func (d *dashboardHandler) Echarts(c *gin.Context) {

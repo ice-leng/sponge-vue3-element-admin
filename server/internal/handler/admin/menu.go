@@ -44,8 +44,8 @@ func NewMenuHandler() MenuHandler {
 // @Tags admin/menu
 // @accept json
 // @Produce json
-// @Param data body types.CreateMenuRequest true "menu information"
-// @Success 200 {object} types.CreateMenuReply{}
+// @Param data body CreateMenuRequest true "menu information"
+// @Success 200 {object} CreateMenuReply{}
 // @Router /admin/v1/menu [post]
 // @Security BearerAuth
 func (h *menuHandler) Create(c *gin.Context) {
@@ -78,7 +78,7 @@ func (h *menuHandler) Create(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} types.DeleteMenuByIDReply{}
+// @Success 200 {object} DeleteMenuByIDReply{}
 // @Router /admin/v1/menu/{id} [delete]
 // @Security BearerAuth
 func (h *menuHandler) DeleteByID(c *gin.Context) {
@@ -110,8 +110,8 @@ func (h *menuHandler) DeleteByID(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Param data body types.UpdateMenuByIDRequest true "menu information"
-// @Success 200 {object} types.UpdateMenuByIDReply{}
+// @Param data body UpdateMenuByIDRequest true "menu information"
+// @Success 200 {object} UpdateMenuByIDReply{}
 // @Router /admin/v1/menu/{id} [put]
 // @Security BearerAuth
 func (h *menuHandler) UpdateByID(c *gin.Context) {
@@ -151,7 +151,7 @@ func (h *menuHandler) UpdateByID(c *gin.Context) {
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.GetMenuByIDReply{}
+// @Success 200 {object} GetMenuByIDReply{}
 // @Router /admin/v1/menu/{id} [get]
 // @Security BearerAuth
 func (h *menuHandler) GetByID(c *gin.Context) {
@@ -182,8 +182,8 @@ func (h *menuHandler) GetByID(c *gin.Context) {
 // @Tags admin/menu
 // @accept json
 // @Produce json
-// @Param request query types.ListMenusRequest true "query parameters"
-// @Success 200 {object} types.ListMenusReply{}
+// @Param request query ListMenusRequest true "query parameters"
+// @Success 200 {object} ListMenusReply{}
 // @Router /admin/v1/menu [get]
 // @Security BearerAuth
 func (h *menuHandler) List(c *gin.Context) {
@@ -246,7 +246,7 @@ func (h *menuHandler) Routes(c *gin.Context) {
 // @Tags admin/menu
 // @Accept json
 // @Produce json
-// @Param request query types.OptionMenusRequest true "query parameters"
+// @Param request query OptionMenusRequest true "query parameters"
 // @Success 200 {object} common.OptionsReply{}
 // @Router /admin/v1/menu/options [get]
 // @Security BearerAuth

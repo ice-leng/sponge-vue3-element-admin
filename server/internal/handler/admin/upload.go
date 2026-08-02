@@ -36,7 +36,7 @@ func NewUploadHandler() UploadHandler {
 // @accept json
 // @Produce json
 // @Param file formData file true "file"
-// @Success 200 {object} admin.UploadLocalReply{}
+// @Success 200 {object} UploadLocalReply{}
 // @Router /admin/v1/upload/local [post]
 // @Security BearerAuth
 func (h *uploadHandler) Local(c *gin.Context) {

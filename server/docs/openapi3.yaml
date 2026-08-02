@@ -1125,6 +1125,27 @@ paths:
             summary: get a captcha
             tags:
                 - admin/auth
+    /admin/v1/auth/login:
+        post:
+            description: with username and password
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/admin.LoginRequest'
+                description: login information
+                required: true
+                x-originalParamName: data
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/admin.LoginReply'
+                    description: OK
+            summary: with username and password
+            tags:
+                - admin/auth
     /admin/v1/auth/logout:
         delete:
             description: logout
@@ -2122,27 +2143,6 @@ paths:
             summary: upload local file
             tags:
                 - admin/upload
-    /api/v1/auth/login:
-        post:
-            description: with username and password
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/admin.LoginRequest'
-                description: login information
-                required: true
-                x-originalParamName: data
-            responses:
-                "200":
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/admin.LoginReply'
-                    description: OK
-            summary: with username and password
-            tags:
-                - admin/auth
 servers:
     - url: http://localhost:8080/
     - url: https://localhost:8080/

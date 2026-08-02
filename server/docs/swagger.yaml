@@ -1120,6 +1120,28 @@ paths:
       summary: get a captcha
       tags:
       - admin/auth
+  /admin/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: with username and password
+      parameters:
+      - description: login information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/admin.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.LoginReply'
+      summary: with username and password
+      tags:
+      - admin/auth
   /admin/v1/auth/logout:
     delete:
       consumes:
@@ -2120,28 +2142,6 @@ paths:
       summary: upload local file
       tags:
       - admin/upload
-  /api/v1/auth/login:
-    post:
-      consumes:
-      - application/json
-      description: with username and password
-      parameters:
-      - description: login information
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/admin.LoginRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/admin.LoginReply'
-      summary: with username and password
-      tags:
-      - admin/auth
 schemes:
 - http
 - https

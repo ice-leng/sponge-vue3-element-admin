@@ -41,8 +41,8 @@ func NewRoleMenuHandler() RoleMenuHandler {
 // @Tags admin/roleMenu
 // @accept json
 // @Produce json
-// @Param data body types.CreateRoleMenuRequest true "roleMenu information"
-// @Success 200 {object} types.CreateRoleMenuReply{}
+// @Param data body CreateRoleMenuRequest true "roleMenu information"
+// @Success 200 {object} CreateRoleMenuReply{}
 // @Router /admin/v1/roleMenu [post]
 // @Security BearerAuth
 func (h *roleMenuHandler) Create(c *gin.Context) {
@@ -75,7 +75,7 @@ func (h *roleMenuHandler) Create(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} types.DeleteRoleMenuByIDReply{}
+// @Success 200 {object} DeleteRoleMenuByIDReply{}
 // @Router /admin/v1/roleMenu/{id} [delete]
 // @Security BearerAuth
 func (h *roleMenuHandler) DeleteByID(c *gin.Context) {
@@ -107,8 +107,8 @@ func (h *roleMenuHandler) DeleteByID(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Param data body types.UpdateRoleMenuByIDRequest true "roleMenu information"
-// @Success 200 {object} types.UpdateRoleMenuByIDReply{}
+// @Param data body UpdateRoleMenuByIDRequest true "roleMenu information"
+// @Success 200 {object} UpdateRoleMenuByIDReply{}
 // @Router /admin/v1/roleMenu/{id} [put]
 // @Security BearerAuth
 func (h *roleMenuHandler) UpdateByID(c *gin.Context) {
@@ -148,7 +148,7 @@ func (h *roleMenuHandler) UpdateByID(c *gin.Context) {
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.GetRoleMenuByIDReply{}
+// @Success 200 {object} GetRoleMenuByIDReply{}
 // @Router /admin/v1/roleMenu/{id} [get]
 // @Security BearerAuth
 func (h *roleMenuHandler) GetByID(c *gin.Context) {
@@ -179,8 +179,8 @@ func (h *roleMenuHandler) GetByID(c *gin.Context) {
 // @Tags admin/roleMenu
 // @accept json
 // @Produce json
-// @Param request query types.ListRoleMenusRequest true "query parameters"
-// @Success 200 {object} types.ListRoleMenusReply{}
+// @Param request query ListRoleMenusRequest true "query parameters"
+// @Success 200 {object} ListRoleMenusReply{}
 // @Router /admin/v1/roleMenu [get]
 // @Security BearerAuth
 func (h *roleMenuHandler) List(c *gin.Context) {

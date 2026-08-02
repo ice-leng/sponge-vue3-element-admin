@@ -39,9 +39,9 @@ func NewAuthHandler() AuthHandler {
 // @Tags admin/auth
 // @Accept json
 // @Produce json
-// @Param data body types.LoginRequest true "login information"
-// @Success 200 {object} types.LoginReply{}
-// @Router /api/v1/auth/login [post]
+// @Param data body LoginRequest true "login information"
+// @Success 200 {object} LoginReply{}
+// @Router /admin/v1/auth/login [post]
 func (h *authHandler) Login(c *gin.Context) {
 	request := &types.LoginRequest{}
 	err := c.ShouldBindJSON(request)
@@ -91,7 +91,7 @@ func (h *authHandler) Logout(c *gin.Context) {
 // @Tags admin/auth
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.CaptchaReply{}
+// @Success 200 {object} CaptchaReply{}
 // @Router /admin/v1/auth/captcha [get]
 func (h *authHandler) Captcha(c *gin.Context) {
 	ctx := middleware.WrapCtx(c)

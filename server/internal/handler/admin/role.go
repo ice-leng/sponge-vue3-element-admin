@@ -45,8 +45,8 @@ func NewRoleHandler() RoleHandler {
 // @Tags admin/role
 // @accept json
 // @Produce json
-// @Param data body types.CreateRoleRequest true "role information"
-// @Success 200 {object} types.CreateRoleReply{}
+// @Param data body CreateRoleRequest true "role information"
+// @Success 200 {object} CreateRoleReply{}
 // @Router /admin/v1/role [post]
 // @Security BearerAuth
 func (h *roleHandler) Create(c *gin.Context) {
@@ -79,7 +79,7 @@ func (h *roleHandler) Create(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} types.DeleteRoleByIDReply{}
+// @Success 200 {object} DeleteRoleByIDReply{}
 // @Router /admin/v1/role/{id} [delete]
 // @Security BearerAuth
 func (h *roleHandler) DeleteByID(c *gin.Context) {
@@ -111,8 +111,8 @@ func (h *roleHandler) DeleteByID(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Param data body types.UpdateRoleByIDRequest true "role information"
-// @Success 200 {object} types.UpdateRoleByIDReply{}
+// @Param data body UpdateRoleByIDRequest true "role information"
+// @Success 200 {object} UpdateRoleByIDReply{}
 // @Router /admin/v1/role/{id} [put]
 // @Security BearerAuth
 func (h *roleHandler) UpdateByID(c *gin.Context) {
@@ -152,7 +152,7 @@ func (h *roleHandler) UpdateByID(c *gin.Context) {
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.GetRoleByIDReply{}
+// @Success 200 {object} GetRoleByIDReply{}
 // @Router /admin/v1/role/{id} [get]
 // @Security BearerAuth
 func (h *roleHandler) GetByID(c *gin.Context) {
@@ -183,8 +183,8 @@ func (h *roleHandler) GetByID(c *gin.Context) {
 // @Tags admin/role
 // @accept json
 // @Produce json
-// @Param request query types.ListRolesRequest true "query parameters"
-// @Success 200 {object} types.ListRolesReply{}
+// @Param request query ListRolesRequest true "query parameters"
+// @Success 200 {object} ListRolesReply{}
 // @Router /admin/v1/role [get]
 // @Security BearerAuth
 func (h *roleHandler) List(c *gin.Context) {
@@ -275,7 +275,7 @@ func (h *roleHandler) MenuIds(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} types.UpdateRoleByIDReply{}
+// @Success 200 {object} UpdateRoleByIDReply{}
 // @Router /admin/v1/role/{id}/menus [put]
 // @Security BearerAuth
 func (h *roleHandler) Menus(c *gin.Context) {

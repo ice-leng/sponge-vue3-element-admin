@@ -42,8 +42,8 @@ func NewConfigHandler() ConfigHandler {
 // @Tags admin/config
 // @accept json
 // @Produce json
-// @Param data body types.CreateConfigRequest true "config information"
-// @Success 200 {object} types.CreateConfigReply{}
+// @Param data body CreateConfigRequest true "config information"
+// @Success 200 {object} CreateConfigReply{}
 // @Router /admin/v1/config [post]
 // @Security BearerAuth
 func (h *configHandler) Create(c *gin.Context) {
@@ -76,7 +76,7 @@ func (h *configHandler) Create(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} types.DeleteConfigByIDReply{}
+// @Success 200 {object} DeleteConfigByIDReply{}
 // @Router /admin/v1/config/{id} [delete]
 // @Security BearerAuth
 func (h *configHandler) DeleteByID(c *gin.Context) {
@@ -108,8 +108,8 @@ func (h *configHandler) DeleteByID(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Param data body types.UpdateConfigByIDRequest true "config information"
-// @Success 200 {object} types.UpdateConfigByIDReply{}
+// @Param data body UpdateConfigByIDRequest true "config information"
+// @Success 200 {object} UpdateConfigByIDReply{}
 // @Router /admin/v1/config/{id} [put]
 // @Security BearerAuth
 func (h *configHandler) UpdateByID(c *gin.Context) {
@@ -149,7 +149,7 @@ func (h *configHandler) UpdateByID(c *gin.Context) {
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.GetConfigByIDReply{}
+// @Success 200 {object} GetConfigByIDReply{}
 // @Router /admin/v1/config/{id} [get]
 // @Security BearerAuth
 func (h *configHandler) GetByID(c *gin.Context) {
@@ -180,8 +180,8 @@ func (h *configHandler) GetByID(c *gin.Context) {
 // @Tags admin/config
 // @accept json
 // @Produce json
-// @Param request query types.ListConfigsRequest true "query parameters"
-// @Success 200 {object} types.ListConfigsReply{}
+// @Param request query ListConfigsRequest true "query parameters"
+// @Success 200 {object} ListConfigsReply{}
 // @Router /admin/v1/config [get]
 // @Security BearerAuth
 func (h *configHandler) List(c *gin.Context) {
@@ -216,7 +216,7 @@ func (h *configHandler) List(c *gin.Context) {
 // @Tags admin/config
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.GetConfigByIDReply{}
+// @Success 200 {object} GetConfigByIDReply{}
 // @Router /admin/v1/config/dict [get]
 // @Security BearerAuth
 func (h *configHandler) Dict(c *gin.Context) {

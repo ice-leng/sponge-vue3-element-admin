@@ -38,6 +38,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/v1/auth/login": {
+            "post": {
+                "description": "with username and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin/auth"
+                ],
+                "summary": "with username and password",
+                "parameters": [
+                    {
+                        "description": "login information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.LoginReply"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/v1/auth/logout": {
             "delete": {
                 "security": [
@@ -1634,40 +1668,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/admin.UploadLocalReply"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/auth/login": {
-            "post": {
-                "description": "with username and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "admin/auth"
-                ],
-                "summary": "with username and password",
-                "parameters": [
-                    {
-                        "description": "login information",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/admin.LoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/admin.LoginReply"
                         }
                     }
                 }

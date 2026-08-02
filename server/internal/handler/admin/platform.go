@@ -47,8 +47,8 @@ func NewPlatformHandler() PlatformHandler {
 // @Tags admin/platform
 // @accept json
 // @Produce json
-// @Param data body types.CreatePlatformRequest true "platform information"
-// @Success 200 {object} types.CreatePlatformReply{}
+// @Param data body CreatePlatformRequest true "platform information"
+// @Success 200 {object} CreatePlatformReply{}
 // @Router /admin/v1/platform [post]
 // @Security BearerAuth
 func (h *platformHandler) Create(c *gin.Context) {
@@ -81,7 +81,7 @@ func (h *platformHandler) Create(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} types.DeletePlatformByIDReply{}
+// @Success 200 {object} DeletePlatformByIDReply{}
 // @Router /admin/v1/platform/{id} [delete]
 // @Security BearerAuth
 func (h *platformHandler) DeleteByID(c *gin.Context) {
@@ -113,8 +113,8 @@ func (h *platformHandler) DeleteByID(c *gin.Context) {
 // @accept json
 // @Produce json
 // @Param id path string true "id"
-// @Param data body types.UpdatePlatformByIDRequest true "platform information"
-// @Success 200 {object} types.UpdatePlatformByIDReply{}
+// @Param data body UpdatePlatformByIDRequest true "platform information"
+// @Success 200 {object} UpdatePlatformByIDReply{}
 // @Router /admin/v1/platform/{id} [put]
 // @Security BearerAuth
 func (h *platformHandler) UpdateByID(c *gin.Context) {
@@ -154,7 +154,7 @@ func (h *platformHandler) UpdateByID(c *gin.Context) {
 // @Param id path string true "id"
 // @Accept json
 // @Produce json
-// @Success 200 {object} types.GetPlatformByIDReply{}
+// @Success 200 {object} GetPlatformByIDReply{}
 // @Router /admin/v1/platform/{id} [get]
 // @Security BearerAuth
 func (h *platformHandler) GetByID(c *gin.Context) {
@@ -185,8 +185,8 @@ func (h *platformHandler) GetByID(c *gin.Context) {
 // @Tags admin/platform
 // @accept json
 // @Produce json
-// @Param request query types.ListPlatformsRequest true "query parameters"
-// @Success 200 {object} types.ListPlatformsReply{}
+// @Param request query ListPlatformsRequest true "query parameters"
+// @Success 200 {object} ListPlatformsReply{}
 // @Router /admin/v1/platform [get]
 // @Security BearerAuth
 func (h *platformHandler) List(c *gin.Context) {
@@ -221,7 +221,7 @@ func (h *platformHandler) List(c *gin.Context) {
 // @Tags admin/platform
 // @accept json
 // @Produce json
-// @Success 200 {object} types.MeReply{}
+// @Success 200 {object} MeReply{}
 // @Router /admin/v1/platform/me [get]
 // @Security BearerAuth
 func (h *platformHandler) Me(c *gin.Context) {
@@ -246,7 +246,7 @@ func (h *platformHandler) Me(c *gin.Context) {
 // @Tags admin/platform
 // @accept json
 // @Produce json
-// @Success 200 {object} types.ProfileReply{}
+// @Success 200 {object} ProfileReply{}
 // @Router /admin/v1/platform/profile [get]
 // @Security BearerAuth
 func (h *platformHandler) GetProfile(c *gin.Context) {
@@ -271,7 +271,7 @@ func (h *platformHandler) GetProfile(c *gin.Context) {
 // @Tags admin/platform
 // @accept json
 // @Produce json
-// @Param data body types.UpdatePlatformByIDRequest true "platform information"
+// @Param data body UpdatePlatformByIDRequest true "platform information"
 // @Success 200 {object} common.Result{}
 // @Router /admin/v1/platform/profile [put]
 // @Security BearerAuth
@@ -304,7 +304,7 @@ func (h *platformHandler) UpdateProfile(c *gin.Context) {
 // @Tags admin/platform
 // @accept json
 // @Produce json
-// @Param data body types.ChangePasswordRequest true "platform information"
+// @Param data body ChangePasswordRequest true "platform information"
 // @Success 200 {object} common.Result{}
 // @Router /admin/v1/platform/password [put]
 // @Security BearerAuth
@@ -337,7 +337,7 @@ func (h *platformHandler) ChangePassword(c *gin.Context) {
 // @Tags admin/platform
 // @accept json
 // @Produce json
-// @Param data body types.ResetPasswordRequest true "platform information"
+// @Param data body ResetPasswordRequest true "platform information"
 // @Success 200 {object} common.Result{}
 // @Router /admin/v1/platform/password/reset [put]
 // @Security BearerAuth
