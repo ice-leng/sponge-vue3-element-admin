@@ -157,7 +157,7 @@ sponge web http \
   --db-dsn="<dsn主串>;prefix=<prefix>" \
   --db-table=<表名> \
   --embed=true \
-  --application-name=admin,api \
+  --application=admin,api \
   --suited-mono-repo=false \
   --extended-api=false \
   --out=$(pwd)
