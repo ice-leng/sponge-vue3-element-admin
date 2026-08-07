@@ -9,6 +9,7 @@ import (
 	"admin/internal/types"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/go-dev-frame/sponge/pkg/gotest"
@@ -75,6 +76,7 @@ func newRoleMenuHandler() *gotest.Handler {
 	}
 
 	h.GoRunHTTPServer(testFns)
+	time.Sleep(time.Millisecond * 200)
 	return h
 }
 

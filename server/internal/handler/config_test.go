@@ -9,6 +9,7 @@ import (
 	"admin/internal/types"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jinzhu/copier"
@@ -82,6 +83,7 @@ func newConfigHandler() *gotest.Handler {
 	}
 
 	h.GoRunHTTPServer(testFns)
+	time.Sleep(time.Millisecond * 200)
 	return h
 }
 
