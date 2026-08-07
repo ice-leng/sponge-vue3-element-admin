@@ -145,6 +145,7 @@ SHOW INDEX FROM <表名>;
 
 ### 5.2 执行生成
 ```bash
+# ⚠️ 必须在 根目录下执行
 # 从 configs/admin.yml 取 database.mysql.dsn，去 ? 前缀作 <dsn主串>
 # prefix 取表名前缀（如 t_goods -> t_）
 sponge web http \
