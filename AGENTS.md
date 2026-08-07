@@ -163,6 +163,32 @@ sponge web http \
   --out=$(pwd)
 ```
 
+### 5.2.1 关联表识别与文件清理（强制）
+**关联表判定条件**（同时满足）：
+1. 字段仅包含：`id` + `created_at`/`updated_at`/`deleted_at` + 2个外键字段
+2. 唯一索引在外键组合上（如 `uk_project_domain (project_id, domain_id)`）
+3. 无业务字段（非外键的 varchar/text/json 等）
+
+**识别为关联表后**，代码生成完成只保留：
+- `internal/model/<表名>.go` — GORM 模型
+- `internal/dao/<表名>.go` — 数据访问层
+
+**删除以下文件**：
+- `internal/handler/admin/<表名>.go` 及 `*_test.go`
+- `internal/handler/api/<表名>.go` 及 `*_test.go`
+- `internal/logic/admin/<表名>.go`
+- `internal/logic/api/<表名>.go`
+- `internal/types/admin/<表名>_types.go`
+- `internal/types/api/<表名>_types.go`
+- `internal/routers/admin/<表名>.go`
+- `internal/routers/api/<表名>.go`
+- `internal/ecode/<表名>_http.go`
+- `internal/cache/<表名>.go` 及 `*_test.go`
+- `web/src/api/<表名>.api.ts`
+- `web/src/views/<表名>/`
+
+**原因**：关联表是多对多关系表，业务逻辑由主表（如 t_project、t_domain）的 handler/logic 统一管理，不需要独立的 CRUD 接口。
+
 ### 5.3 生成后硬约束同步（`types` + `logic` + `dao`）
 | 项 | 要求 |
 |----|------|
