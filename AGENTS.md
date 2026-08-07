@@ -123,11 +123,12 @@ SHOW INDEX FROM <表名>;
 - 任一失败或表不存在 → **禁止**执行 `sponge web http`。
 
 ### 5.2 执行生成
-```bash
-# ⚠️ 必须在 项目根目录下执行（即 /，不是 server/）
-# 从 configs/admin.yml 取 database.mysql.dsn，去 ? 前缀作 <dsn主串>
-# prefix 取表名前缀（如 t_goods -> t_）
-sponge web http \
+  ```bash
+  # 1. 先定义输出目录（项目根目录目前是 sponge-vue3-element-admin/，不是 server/）
+  OUT="$(pwd)"
+  # 从 configs/admin.yml 取 database.mysql.dsn，去 ? 前缀作 <dsn主串>
+  # prefix 取表名前缀（如 t_goods -> t_）
+  sponge web http \
   --module-name=admin \
   --server-name=admin \
   --project-name=admin \
@@ -138,8 +139,8 @@ sponge web http \
   --embed=true \
   --suited-mono-repo=false \
   --extended-api=false \
-  --out=$(pwd)
-```
+  --out="$OUT"
+  ```
 
 ### 5.2.1 关联表识别与文件清理（强制）
 **关联表判定条件**（同时满足）：
