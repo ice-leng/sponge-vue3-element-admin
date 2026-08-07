@@ -141,6 +141,28 @@ sponge web http \
   --out=$(pwd)
 ```
 
+### 5.2.1 关联表识别与文件清理（强制）
+**关联表判定条件**（同时满足）：
+1. 字段仅包含：`id` + `created_at`/`updated_at`/`deleted_at` + 2个外键字段
+2. 唯一索引在外键组合上（如 `uk_project_domain (project_id, domain_id)`）
+3. 无业务字段（非外键的 varchar/text/json 等）
+
+**识别为关联表后**，代码生成完成只保留：
+- `internal/model/<表名>.go` — GORM 模型
+- `internal/dao/<表名>.go` — 数据访问层
+
+**删除以下文件**：
+- `internal/handler/<表名>.go` 及 `*_test.go`
+- `internal/logic/<表名>.go`
+- `internal/types/<表名>_types.go`
+- `internal/routers/<表名>.go`
+- `internal/ecode/<表名>_http.go`
+- `internal/cache/<表名>.go` 及 `*_test.go`
+- `web/src/api/<表名>.api.ts`
+- `web/src/views/<表名>/`
+
+**原因**：关联表是多对多关系表，业务逻辑由主表的 handler/logic 统一管理，不需要独立的 CRUD 接口。
+
 ### 5.3 生成后硬约束同步（`types` + `logic` + `dao`）
 | 项 | 要求 |
 |----|------|
@@ -219,7 +241,29 @@ sponge web http \
 
 ---
 
-## 10. 附录：常用文件路径速查
+### 10 CodeGraph 使用规则（必选）
+
+项目根目录存在 `.codegraph/` 时，代码查询**默认走 CodeGraph**，不回到 Read/Grep。
+
+| 场景 | 工具 |
+|------|------|
+| 查符号调用链、影响范围、依赖关系 | `codegraph_explore` |
+| 查单个符号的源码+上下游 | `codegraph_explore` 或 `codegraph_node` |
+| 查调用方/被调用方 | `codegraph_callers` / `codegraph_callees` |
+
+**例外**（允许直接 Read/Grep）：
+- 无 `.codegraph/` 的项目或子项目
+- CodeGraph 结果被截断，需要读取文件其余部分
+- 刚新建/修改、尚未重新索引的内容
+- 非源码文件：SQL 迁移、Swagger YAML、proto、二进制等
+
+执行要求：
+- `codegraph_explore` 已返回完整源码时，**直接读结果**，禁止再 Read 同一文件。
+- 文件修改后需要 `codegraph sync` 再查。
+
+---
+
+## 11. 附录：常用文件路径速查
 
 | 场景 | 路径 |
 |------|------|
