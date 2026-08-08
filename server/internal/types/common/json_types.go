@@ -35,6 +35,14 @@ func (s *LocalStringArray) Scan(src interface{}) error {
 	return fmt.Errorf("cannot convert %v to StringArray", src)
 }
 
+func (m *LocalStringArray) String() string {
+	if *m == nil {
+		return ""
+	}
+	bytes, _ := json.Marshal(m)
+	return string(bytes)
+}
+
 // LocalIntArray int 数组类型
 type LocalIntArray []uint64
 
@@ -62,6 +70,14 @@ func (a *LocalIntArray) Scan(src interface{}) error {
 		return json.Unmarshal([]byte(str), a)
 	}
 	return fmt.Errorf("cannot convert %v to IntArray", src)
+}
+
+func (m *LocalIntArray) String() string {
+	if *m == nil {
+		return ""
+	}
+	bytes, _ := json.Marshal(m)
+	return string(bytes)
 }
 
 // LocalMap 定义自定义字典类型
@@ -93,6 +109,14 @@ func (m *LocalMap) Scan(src interface{}) error {
 	return fmt.Errorf("cannot convert %v to JSONMap", src)
 }
 
+func (m *LocalMap) String() string {
+	if *m == nil {
+		return ""
+	}
+	bytes, _ := json.Marshal(*m)
+	return string(bytes)
+}
+
 // LocalJSON 定义自定义字典类型
 type LocalJSON []map[string]interface{}
 
@@ -120,4 +144,12 @@ func (m *LocalJSON) Scan(src interface{}) error {
 		return json.Unmarshal([]byte(str), m)
 	}
 	return fmt.Errorf("cannot convert %v to JSONMap", src)
+}
+
+func (m *LocalJSON) String() string {
+	if *m == nil {
+		return ""
+	}
+	bytes, _ := json.Marshal(m)
+	return string(bytes)
 }
